@@ -1,0 +1,3 @@
+[submodule "external/logLib"]
+	path = external/logLib
+	url = git@github.com:HE1GY/LogLib.git
