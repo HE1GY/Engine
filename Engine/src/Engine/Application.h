@@ -7,5 +7,4 @@ namespace Engine
 	public:
 		void Run();
 	};
-
 }

@@ -8,7 +8,7 @@ namespace Engine
 	{
 		while(true)
 		{
-			std::cout << "teack" << std::endl;
+			
 		}
 	}
 }
