@@ -1,3 +1,6 @@
 [submodule "external/logLib"]
 	path = external/logLib
 	url = git@github.com:HE1GY/LogLib.git
+[submodule "external/EventSys"]
+	path = external/EventSys
+	url = git@github.com:HE1GY/EventSys.git

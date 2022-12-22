@@ -5,7 +5,6 @@ extern  Engine::Application* CreateAppliction();
 int main()
 {
     LogLib::Log::Init();
-    HZ_CORE_ERROR("BLYAAAAAAA");
 
     Engine::Application* app = CreateAppliction(); //how with declaretion we know member fun of app
     app->Run();
