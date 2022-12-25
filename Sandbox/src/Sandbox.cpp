@@ -1,12 +1,10 @@
 #include "Engine.h"
 
-
-
 class SandBox:public Engine::Application
 {
 };
 
-Engine::Application* CreateAppliction()
+Engine::Application* CreateApplication()
 {
 	return new SandBox();
 }

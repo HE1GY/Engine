@@ -1,14 +1,14 @@
 #pragma once
 
-extern  Engine::Application* CreateAppliction();
+extern Engine::Application* CreateApplication();
 
 int main()
 {
-    LogLib::Log::Init();
+	Engine::Log::Init();
 
-    Engine::Application* app = CreateAppliction(); //how with declaretion we know member fun of app
-    app->Run();
-    delete app;
+	Engine::Application* app = CreateApplication(); //how with declaration we know member fun of app
+	app->Run();
+	delete app;
 
-    return 0;
+	return 0;
 }

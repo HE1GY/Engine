@@ -1,8 +1,7 @@
 #pragma once
 
-#include "LogLib/LogLib.h"
+#include "Engine/Log.h"
 #include "Engine/Application.h"
-
 
 
 //---------------------------

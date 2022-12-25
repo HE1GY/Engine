@@ -5,12 +5,14 @@ project(Engine)
 
 add_subdirectory(Engine)
 add_subdirectory(Sandbox)
-add_subdirectory(external/Loglib)
-add_subdirectory(external/EventSys)
+add_subdirectory(external/spdlog)
+add_subdirectory(external/glfw)
 
-target_link_libraries(Engine PUBLIC LogLib)
-target_link_libraries(Engine PRIVATE EventSys)
+
 target_link_libraries(Sandbox PRIVATE Engine)
+target_link_libraries(Engine PUBLIC spdlog)
+target_link_libraries(Engine PUBLIC glfw)
+
 
 
 
