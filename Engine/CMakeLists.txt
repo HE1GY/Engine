@@ -12,7 +12,7 @@ add_library(Engine STATIC src/Engine/Application.h include/Engine.h
         src/Engine/Event/MouseEvent.h
         src/Engine/Event/ApplicationEvent.h
         src/Platform/Windows/WindowsWindow.h
-        src/Platform/Windows/WindowsWindow.cpp)
+        src/Platform/Windows/WindowsWindow.cpp src/Engine/Layer.h src/Engine/LayerStack.cpp src/Engine/LayerStack.h)
 
 
 target_include_directories(Engine

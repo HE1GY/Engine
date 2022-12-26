@@ -1,10 +1,39 @@
 #include "Engine.h"
 
-class SandBox:public Engine::Application
+class ExampleLayer : public Engine::Layer
 {
+  public:
+    ExampleLayer() : Layer("ExampleLayer")
+    {
+    }
+
+    virtual void OnEvent(Engine::Event &event) override
+    {
+        Engine::EventDispatcher ed(event);
+        std::function<bool(Engine::KeyPress &)> fn = std::bind(&ExampleLayer::OnKeyEvent, this, std::placeholders::_1);
+        ed.Dispatch<Engine::KeyPress>(fn);
+    }
+
+  private:
+    bool OnKeyEvent(Engine::KeyPress &event)
+    {
+        INFO(event.ToString());
+        return false;
+    }
 };
 
-Engine::Application* CreateApplication()
+class SandBox : public Engine::Application
 {
-	return new SandBox();
+  public:
+    SandBox()
+    {
+        PushLayer(new ExampleLayer());
+    }
+
+    ~SandBox()=default;
+};
+
+Engine::Application *CreateApplication()
+{
+    return new SandBox();
 }
