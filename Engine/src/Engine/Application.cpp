@@ -1,5 +1,5 @@
 #include "Application.h"
-
+#include "Core.h"
 #include "Log.h"
 
 namespace Engine
@@ -10,6 +10,8 @@ Application::Application()
     m_window = std::unique_ptr<Window>(Window::Create());
 
     m_window->SetEventCallback(std::bind(&Application::OnEvent, this, std::placeholders::_1));
+
+    ASSERT(0);
 }
 
 void Application::Run()

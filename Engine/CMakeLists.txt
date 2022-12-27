@@ -12,12 +12,28 @@ add_library(Engine STATIC src/Engine/Application.h include/Engine.h
         src/Engine/Event/MouseEvent.h
         src/Engine/Event/ApplicationEvent.h
         src/Platform/Windows/WindowsWindow.h
-        src/Platform/Windows/WindowsWindow.cpp src/Engine/Layer.h src/Engine/LayerStack.cpp src/Engine/LayerStack.h)
+        src/Platform/Windows/WindowsWindow.cpp src/Engine/Layer.h src/Engine/LayerStack.cpp src/Engine/LayerStack.h src/Engine/Core.h)
 
 
 target_include_directories(Engine
         PUBLIC include
         PUBLIC src)
+
+
+if (DEBUG)
+    add_compile_definitions(DEBUG)
+endif (DEBUG)
+
+if (RELEASE)
+    add_compile_definitions(RELEASE)
+endif (RELEASE)
+
+if (MSVC)
+    add_compile_definitions(WINDOW)
+endif (MSVC)
+if (UNIX AND NOT APPLE)
+    add_compile_definitions(LINUX)
+endif ()
 
 
 
