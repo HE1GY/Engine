@@ -4,14 +4,14 @@
 
 namespace Engine
 {
-
+Application *Application::s_instance = nullptr;
 Application::Application()
 {
-    m_window = std::unique_ptr<Window>(Window::Create());
+    s_instance = this;
+
+    m_window = std::shared_ptr<Window>(Window::Create());
 
     m_window->SetEventCallback(std::bind(&Application::OnEvent, this, std::placeholders::_1));
-
-    ASSERT(0);
 }
 
 void Application::Run()

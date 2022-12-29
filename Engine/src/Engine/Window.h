@@ -26,5 +26,7 @@ namespace Engine
 		virtual void OnUpdate() = 0;
 
 		virtual void SetEventCallback(const EventCallbackFn& fun) = 0;
+
+        virtual void* GetNativeWindow()=0;
 	};
 }

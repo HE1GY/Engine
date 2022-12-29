@@ -7,11 +7,16 @@ class ExampleLayer : public Engine::Layer
     {
     }
 
-    virtual void OnEvent(Engine::Event &event) override
+    void OnEvent(Engine::Event &event) override
     {
         Engine::EventDispatcher ed(event);
         std::function<bool(Engine::KeyPress &)> fn = std::bind(&ExampleLayer::OnKeyEvent, this, std::placeholders::_1);
         ed.Dispatch<Engine::KeyPress>(fn);
+    }
+
+    void OnUpdate() override
+    {
+        TRACE("Mouse pos: {0},{1}", Engine::Input::GetMousePos().first, Engine::Input::GetMousePos().second);
     }
 
   private:
@@ -30,7 +35,7 @@ class SandBox : public Engine::Application
         PushLayer(new ExampleLayer());
     }
 
-    ~SandBox()=default;
+    ~SandBox() override = default;
 };
 
 Engine::Application *CreateApplication()
