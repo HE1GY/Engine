@@ -1,23 +1,55 @@
+#include "pch.h"
+
 #include "Application.h"
 #include "Core.h"
 #include "Log.h"
 
+#include "glad/glad.h"
+
 namespace Engine
 {
 Application *Application::s_instance = nullptr;
+
 Application::Application()
 {
+    ASSERT((s_instance!= nullptr));
+
     s_instance = this;
 
     m_window = std::shared_ptr<Window>(Window::Create());
 
     m_window->SetEventCallback(std::bind(&Application::OnEvent, this, std::placeholders::_1));
+
+    {
+
+        //vertices
+
+        //layout
+
+        //indices
+
+        //shaders
+    
+    }
+
+
+
 }
 
 void Application::Run()
 {
     while (m_is_running)
     {
+        //set clear color
+
+        //clear
+
+        //bind shader
+
+        //bind buffers
+
+        //draw elements
+
         for (auto layer : m_layer_stack)
         {
             layer->OnUpdate();
@@ -50,7 +82,7 @@ void Application::PushLayer(Layer *layer)
 {
     m_layer_stack.PushLayer(layer);
 }
-void Application::PushOverLay(Layer *layer)
+void Application::PushOverlay(Layer *layer)
 {
     m_layer_stack.PushOverlay(layer);
 }

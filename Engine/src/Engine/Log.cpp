@@ -1,3 +1,5 @@
+#include "pch.h"
+
 #include "Log.h"
 
 #include "spdlog/fmt/ostr.h"
