@@ -7,6 +7,10 @@ namespace Engine
 class LayerStack
 {
   public:
+    LayerStack();
+    ~LayerStack();
+
+
     void PushLayer(Layer *layer);
     void PushOverlay(Layer *layer);
 

@@ -1,5 +1,6 @@
+#include "pch.h"
+
 #include "WindowsWindow.h"
-#include <iostream>
 
 #include "Engine/Core.h"
 #include "Engine/Event/ApplicationEvent.h"

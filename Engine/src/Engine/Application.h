@@ -1,7 +1,5 @@
 #pragma once
 
-#include <memory>
-
 #include "Engine/Event/ApplicationEvent.h"
 #include "LayerStack.h"
 #include "Window.h"
@@ -17,7 +15,7 @@ class Application
     void OnEvent(Event &event);
 
     void PushLayer(Layer* layer);
-    void PushOverLay(Layer* layer);
+    void PushOverlay(Layer* layer);
     void EraseLayer(Layer* layer);
 
     inline static Application* Get()

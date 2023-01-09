@@ -1,7 +1,21 @@
+#include "pch.h"
 
 #include "LayerStack.h"
+
 namespace Engine
 {
+    LayerStack::LayerStack() 
+        : m_position{0}
+    {
+    }
+    LayerStack::~LayerStack()
+    {
+        for (auto& layer: m_layers )
+        {
+            delete layer;
+        }
+    }
+
 void LayerStack::PushLayer(Engine::Layer *layer)
 {
     m_layers.emplace(m_layers.begin() + m_position++, layer);

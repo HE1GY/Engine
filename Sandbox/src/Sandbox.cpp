@@ -12,9 +12,9 @@ class ExampleLayer : public Engine::Layer
 
     void OnEvent(Engine::Event &event) override
     {
-        Engine::EventDispatcher ed(event);
+       /* Engine::EventDispatcher ed(event);
         std::function<bool(Engine::KeyPress &)> fn = std::bind(&ExampleLayer::OnKeyEvent, this, std::placeholders::_1);
-        ed.Dispatch<Engine::KeyPress>(fn);
+        ed.Dispatch<Engine::KeyPress>(fn);*/
     }
 
     void OnUpdate() override
