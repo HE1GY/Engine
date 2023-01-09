@@ -12,7 +12,18 @@ add_library(Engine STATIC src/Engine/Application.h include/Engine.h
         src/Engine/Event/MouseEvent.h
         src/Engine/Event/ApplicationEvent.h
         src/Platform/Windows/WindowsWindow.h
-        src/Platform/Windows/WindowsWindow.cpp src/Engine/Layer.h src/Engine/LayerStack.cpp src/Engine/LayerStack.h src/Engine/Core.h src/Engine/Input.h src/Platform/Windows/WindowsInput.cpp src/Platform/Windows/WindowsInput.h src/Engine/KeyCode.h src/Engine/MouseButtonCode.h)
+        src/Platform/Windows/WindowsWindow.cpp
+        src/Engine/Layer.h
+        src/Engine/LayerStack.cpp
+        src/Engine/LayerStack.h
+        src/Engine/Core.h
+        src/Engine/Input.h
+        src/Platform/Windows/WindowsInput.cpp
+        src/Platform/Windows/WindowsInput.h
+        src/Engine/KeyCode.h
+        src/Engine/MouseButtonCode.h
+        src/Platform/OpenGL/OpenGLContext.cpp
+        src/Platform/OpenGL/OpenGLContext.h src/Engine/Renderer/Shader.cpp)
 
 
 target_include_directories(Engine
@@ -29,11 +40,13 @@ if (RELEASE)
 endif (RELEASE)
 
 if (MSVC)
-    add_compile_definitions(WINDOW)
+    add_compile_definitions(WINDOWS)
 endif (MSVC)
+
 if (UNIX AND NOT APPLE)
     add_compile_definitions(LINUX)
 endif ()
+
 
 
 

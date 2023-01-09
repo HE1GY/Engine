@@ -1,10 +1,13 @@
 #include "Engine.h"
 
+#include "glad/glad.h"
+
 class ExampleLayer : public Engine::Layer
 {
   public:
     ExampleLayer() : Layer("ExampleLayer")
     {
+        glClearColor(1,1,0,1);
     }
 
     void OnEvent(Engine::Event &event) override
@@ -16,7 +19,7 @@ class ExampleLayer : public Engine::Layer
 
     void OnUpdate() override
     {
-        TRACE("Mouse pos: {0},{1}", Engine::Input::GetMousePos().first, Engine::Input::GetMousePos().second);
+        glClear(GL_COLOR_BUFFER_BIT);
     }
 
   private:
