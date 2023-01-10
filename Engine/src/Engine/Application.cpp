@@ -8,16 +8,15 @@
 
 namespace Engine
 {
-Application *Application::s_instance = nullptr;
+	Application* Application::s_instance = nullptr;
 
 Application::Application()
 {
     ASSERT((s_instance == nullptr));
+		s_instance = this;
 
-    s_instance = this;
-
-    m_window = std::shared_ptr<Window>(Window::Create());
-    m_window->SetEventCallback(std::bind(&Application::OnEvent, this, std::placeholders::_1));
+		m_window = std::shared_ptr<Window>(Window::Create());
+		m_window->SetEventCallback(std::bind(&Application::OnEvent, this, std::placeholders::_1));
 
     std::string vertex_src = R"(
     #version 460
@@ -45,8 +44,6 @@ Application::Application()
     GLuint vao;
     glCreateVertexArrays(1, &vao);
     glBindVertexArray(vao);
-
-
 
     float data[] = {
         -0.5, -0.5, 0, 0.5, -0.5, 0, 0, 0.5, 0,

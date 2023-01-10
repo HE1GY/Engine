@@ -5,7 +5,6 @@
 
 #include "Platform/OpenGL/OpenGLContext.h"
 
-
 namespace Engine
 {
 class WindowsWindow : public Window
