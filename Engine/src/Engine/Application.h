@@ -2,8 +2,9 @@
 
 #include "Engine/Event/ApplicationEvent.h"
 #include "LayerStack.h"
-#include "Window.h"
 #include "Renderer/Buffer.h"
+#include "Renderer/Shader.h"
+#include "Window.h"
 
 namespace Engine
 {
@@ -15,11 +16,11 @@ class Application
     void Run();
     void OnEvent(Event &event);
 
-    void PushLayer(Layer* layer);
-    void PushOverlay(Layer* layer);
-    void EraseLayer(Layer* layer);
+    void PushLayer(Layer *layer);
+    void PushOverlay(Layer *layer);
+    void EraseLayer(Layer *layer);
 
-    inline static Application* Get()
+    inline static Application *Get()
     {
         return s_instance;
     }
@@ -28,8 +29,9 @@ class Application
     {
         return m_window;
     }
+
   private:
-    static Application* s_instance;
+    static Application *s_instance;
 
     bool OnWindowsClosed(WindowClosed &event);
 
@@ -39,6 +41,6 @@ class Application
 
     std::unique_ptr<VertexBuffer> m_vb;
     std::unique_ptr<IndexBuffer> m_ib;
-
+    std::unique_ptr<Shader> m_shader;
 };
-}
+} // namespace Engine

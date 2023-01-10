@@ -4,22 +4,21 @@
 
 #include "Application.h"
 #include "Core.h"
-#include "Renderer/Shader.h"
 
 namespace Engine
 {
-	Application* Application::s_instance = nullptr;
+Application *Application::s_instance = nullptr;
 
 Application::Application()
 {
     ASSERT((s_instance == nullptr));
-		s_instance = this;
+    s_instance = this;
 
-		m_window = std::shared_ptr<Window>(Window::Create());
-		m_window->SetEventCallback(std::bind(&Application::OnEvent, this, std::placeholders::_1));
+    m_window = std::shared_ptr<Window>(Window::Create());
+    m_window->SetEventCallback(std::bind(&Application::OnEvent, this, std::placeholders::_1));
 
     std::string vertex_src = R"(
-    #version 460
+    #version 460 core
     layout(location=0)in vec3 a_position;
 
     void main()
@@ -29,28 +28,26 @@ Application::Application()
     )";
 
     std::string fragment_src = R"(
-    #version 460
+    #version 460 core
     layout(location=0)out vec4 color;
 
     void main()
     {
-        color=vec4(1,1,1,1);
+        color=vec4(1,0,0,1);
     }
     )";
-
-    Shader shader(vertex_src, fragment_src);
-    shader.Bind();
+    m_shader.reset(new Shader(vertex_src, fragment_src));
+    m_shader->Bind();
 
     GLuint vao;
     glCreateVertexArrays(1, &vao);
     glBindVertexArray(vao);
 
     float data[] = {
-        -0.5, -0.5, 0, 0.5, -0.5, 0, 0, 0.5, 0,
+        -0.5, -0.5, 0, 0.7, -0.7, 0, 0, 0.5, 0,
     };
 
     m_vb.reset(VertexBuffer::Create(data, sizeof(data)));
-
 
     glEnableVertexAttribArray(0);
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (const void *)0);
@@ -60,16 +57,19 @@ Application::Application()
         1,
         2,
     };
-    m_ib.reset(IndexBuffer::Create(elements,sizeof(elements)/sizeof(uint32_t)));
+    m_ib.reset(IndexBuffer::Create(elements, sizeof(elements) / sizeof(uint32_t)));
 
-    glClearColor(0, 0, 0, 0);
+
 }
 
 void Application::Run()
 {
     while (m_is_running)
     {
+        glClearColor(0, 0, 0, 0);
         glClear(GL_COLOR_BUFFER_BIT);
+
+        m_shader->Bind();
         glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, nullptr);
 
         for (auto layer : m_layer_stack)
