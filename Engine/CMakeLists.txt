@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.23)
 project(Engine)
 
 
-add_library(Engine STATIC src/Engine/Application.h 
+add_library(Engine STATIC src/Engine/Application.h
         include/Engine.h
         src/Engine/Application.cpp
         src/Engine/EntryPoint.h
@@ -16,17 +16,18 @@ add_library(Engine STATIC src/Engine/Application.h
         src/Engine/Event/ApplicationEvent.h
         src/Platform/Windows/WindowsWindow.h
         src/Platform/Windows/WindowsWindow.cpp
-        src/Engine/Layer.h 
+        src/Engine/Layer.h
         src/Engine/LayerStack.cpp
         src/Engine/LayerStack.h
         src/Engine/Core.h
         src/Engine/Input.h
-        src/Platform/Windows/WindowsInput.cpp 
+        src/Platform/Windows/WindowsInput.cpp
         src/Platform/Windows/WindowsInput.h
-        src/Engine/KeyCode.h 
+        src/Engine/KeyCode.h
         src/Engine/MouseButtonCode.h
-        src/pch.h
-        src/pch.cpp)
+        src/Platform/OpenGL/OpenGLContext.cpp
+        src/Platform/OpenGL/OpenGLContext.h
+        src/Engine/Renderer/Shader.cpp)
 
 
 target_include_directories(Engine
@@ -35,7 +36,6 @@ target_include_directories(Engine
 
 
 target_precompile_headers(Engine PUBLIC src/pch.h)
-
 
 
 if (DEBUG)
@@ -53,6 +53,7 @@ endif (MSVC)
 if (UNIX AND NOT APPLE)
     add_compile_definitions(LINUX)
 endif ()
+
 
 
 

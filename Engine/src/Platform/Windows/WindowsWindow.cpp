@@ -22,8 +22,8 @@ WindowsWindow::WindowsWindow(const WindowsProps &props)
         ASSERT(0);
     }
 
-    /* Make the window's context current */
-    glfwMakeContextCurrent(m_native_window);
+    m_graphic_context = new OpenGLContext(m_native_window);
+    m_graphic_context->Init();
 
     glfwSetWindowUserPointer(m_native_window, &m_callback);
 
@@ -67,9 +67,7 @@ Window *Window::Create(const Window::WindowsProps &props)
 
 void WindowsWindow::OnUpdate()
 {
-    glfwSwapBuffers(m_native_window);
-
-    /* Poll for and process events */
+    m_graphic_context->SwapBuffer();
     glfwPollEvents();
 }
 void WindowsWindow::SetEventCallback(const EventCallbackFn &fun)
