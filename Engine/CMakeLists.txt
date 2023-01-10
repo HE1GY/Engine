@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.23)
 project(Engine)
 
 
-add_library(Engine STATIC src/Engine/Application.h 
+add_library(Engine STATIC src/Engine/Application.h
         include/Engine.h
         src/Engine/Application.cpp
         src/Engine/EntryPoint.h
@@ -28,8 +28,7 @@ add_library(Engine STATIC src/Engine/Application.h
         src/Platform/OpenGL/OpenGLContext.cpp
         src/Platform/OpenGL/OpenGLContext.h src/Engine/Renderer/Shader.cpp
         src/pch.h
-        src/pch.cpp)
-
+        src/pch.cpp src/Platform/OpenGL/OpenGLBuffer.h src/Engine/Renderer/Buffer.cpp src/Platform/OpenGL/OpenGLBuffer.cpp src/Engine/Renderer/Renderer.cpp)
 
 
 target_include_directories(Engine
@@ -38,7 +37,6 @@ target_include_directories(Engine
 
 
 target_precompile_headers(Engine PUBLIC src/pch.h)
-
 
 
 if (DEBUG)

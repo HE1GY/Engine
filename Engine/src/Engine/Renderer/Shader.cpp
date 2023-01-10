@@ -37,8 +37,9 @@ Shader::Shader(std::string vertex_src, std::string fragment_src)
         // We don't need the shader anymore.
         glDeleteShader(vertexShader);
 
+        CORE_ERROR("Vertex Shader doesn't compile");
+        CORE_ERROR(infoLog.data());
         ASSERT(false);
-        CORE_ERROR("Vertex Shader doesn't compiled");
     }
 
     // Create an empty fragment shader handle
@@ -68,6 +69,7 @@ Shader::Shader(std::string vertex_src, std::string fragment_src)
         glDeleteShader(vertexShader);
 
         CORE_ERROR("Fragment Shader doesn't compiled");
+        CORE_ERROR(infoLog.data());
         ASSERT(false);
 
     }
@@ -103,6 +105,7 @@ Shader::Shader(std::string vertex_src, std::string fragment_src)
         glDeleteShader(fragmentShader);
 
         CORE_ERROR("Shader program doesn't linked");
+        CORE_ERROR(infoLog.data());
         ASSERT(false);
     }
 

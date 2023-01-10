@@ -1,9 +1,10 @@
 #include "pch.h"
 
+#include "glad/glad.h"
+
 #include "Application.h"
 #include "Core.h"
-
-#include "glad/glad.h"
+#include "Renderer/Shader.h"
 
 namespace Engine
 {
@@ -11,28 +12,68 @@ Application *Application::s_instance = nullptr;
 
 Application::Application()
 {
-    ASSERT((s_instance== nullptr));
+    ASSERT((s_instance == nullptr));
 
     s_instance = this;
 
     m_window = std::shared_ptr<Window>(Window::Create());
     m_window->SetEventCallback(std::bind(&Application::OnEvent, this, std::placeholders::_1));
 
+    std::string vertex_src = R"(
+    #version 460
+    layout(location=0)in vec3 a_position;
+
+    void main()
+    {
+        gl_Position=vec4(a_position,1);
+    }
+    )";
+
+    std::string fragment_src = R"(
+    #version 460
+    layout(location=0)out vec4 color;
+
+    void main()
+    {
+        color=vec4(1,1,1,1);
+    }
+    )";
+
+    Shader shader(vertex_src, fragment_src);
+    shader.Bind();
+
+    GLuint vao;
+    glCreateVertexArrays(1, &vao);
+    glBindVertexArray(vao);
+
+
+
+    float data[] = {
+        -0.5, -0.5, 0, 0.5, -0.5, 0, 0, 0.5, 0,
+    };
+
+    m_vb.reset(VertexBuffer::Create(data, sizeof(data)));
+
+
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (const void *)0);
+
+    uint32_t elements[] = {
+        0,
+        1,
+        2,
+    };
+    m_ib.reset(IndexBuffer::Create(elements,sizeof(elements)/sizeof(uint32_t)));
+
+    glClearColor(0, 0, 0, 0);
 }
 
 void Application::Run()
 {
     while (m_is_running)
     {
-        //set clear color
-
-        //clear
-
-        //bind shader
-
-        //bind buffers
-
-        //draw elements
+        glClear(GL_COLOR_BUFFER_BIT);
+        glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, nullptr);
 
         for (auto layer : m_layer_stack)
         {
