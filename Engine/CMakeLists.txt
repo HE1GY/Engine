@@ -26,9 +26,15 @@ add_library(Engine STATIC src/Engine/Application.h
         src/Engine/KeyCode.h
         src/Engine/MouseButtonCode.h
         src/Platform/OpenGL/OpenGLContext.cpp
-        src/Platform/OpenGL/OpenGLContext.h src/Engine/Renderer/Shader.cpp
+        src/Platform/OpenGL/OpenGLContext.h
+        src/Engine/Renderer/Shader.cpp
         src/pch.h
-        src/pch.cpp src/Platform/OpenGL/OpenGLBuffer.h src/Engine/Renderer/Buffer.cpp src/Platform/OpenGL/OpenGLBuffer.cpp src/Engine/Renderer/Renderer.cpp)
+        src/pch.cpp
+        src/Platform/OpenGL/OpenGLBuffer.h
+        src/Platform/OpenGL/OpenGLBuffer.cpp
+        src/Engine/Renderer/Buffer.cpp
+        src/Engine/Renderer/Buffer.h
+        src/Engine/Renderer/Renderer.cpp)
 
 
 target_include_directories(Engine
