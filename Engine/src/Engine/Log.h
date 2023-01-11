@@ -26,13 +26,11 @@ namespace Engine
 #define CORE_INFO(...)    Engine::Log::GetCoreLogger()->info(__VA_ARGS__)
 #define CORE_WARN(...)    Engine::Log::GetCoreLogger()->warn(__VA_ARGS__)
 #define CORE_ERROR(...)  Engine::Log::GetCoreLogger()->error(__VA_ARGS__)
-//#define CORE_FATAL(...)	Engine::Log::GetCoreLogger()->fatal(__VA_ARGS__)
-
+#define CORE_ASSERT(x, ...)    if(!x)Engine::Log::GetCoreLogger()->error(__VA_ARGS__); ASSERT(x);
 
 #define TRACE(...)        Engine::Log::GetClientLogger()->trace(__VA_ARGS__)
 #define INFO(...)        Engine::Log::GetClientLogger()->info(__VA_ARGS__)
 #define WARN(...)        Engine::Log::GetClientLogger()->warn(__VA_ARGS__)
 #define ERROR(...)        Engine::Log::GetClientLogger()->error(__VA_ARGS__)
-//#define FATAL(...)		Engine::Log::GetClientLogger()->fatal(__VA_ARGS__)
 
 }

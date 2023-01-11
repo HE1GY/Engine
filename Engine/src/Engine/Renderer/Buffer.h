@@ -27,6 +27,8 @@ namespace Engine
 	class BufferLayout
 	{
 	public:
+		BufferLayout() = default;
+
 		BufferLayout(std::initializer_list<BufferElement> layout);
 
 		std::vector<BufferElement>::iterator begin()
@@ -42,11 +44,16 @@ namespace Engine
 		{
 			return m_stride;
 		}
+		inline std::vector<BufferElement>& get_elements()
+		{
+			return m_elements;
+		}
+
 	private:
 		void CalculateOffsetAndStride();
 
 		std::vector<BufferElement> m_elements;
-		uint32_t m_stride;
+		uint32_t m_stride{ 0 };
 	};
 
 	class VertexBuffer
@@ -61,6 +68,10 @@ namespace Engine
 
 		virtual void Bind() = 0;
 		virtual void UnBind() = 0;
+
+		virtual void set_layout(BufferLayout layout) = 0;
+		virtual BufferLayout& get_layout() = 0;
+
 	};
 
 	class IndexBuffer

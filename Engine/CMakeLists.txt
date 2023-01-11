@@ -34,7 +34,7 @@ add_library(Engine STATIC src/Engine/Application.h
         src/Platform/OpenGL/OpenGLBuffer.cpp
         src/Engine/Renderer/Buffer.cpp
         src/Engine/Renderer/Buffer.h
-        src/Engine/Renderer/Renderer.cpp)
+        src/Engine/Renderer/Renderer.cpp src/Engine/Renderer/VertexArray.cpp src/Engine/Renderer/VertexArray.h src/Platform/OpenGL/OpenGLVertexArray.cpp src/Platform/OpenGL/OpenGLVertexArray.h)
 
 
 target_include_directories(Engine

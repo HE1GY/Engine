@@ -5,65 +5,23 @@
 #include "Application.h"
 #include "Core.h"
 
+#include "Renderer/Buffer.h"
+
 namespace Engine
 {
-	static GLenum ShaderDataTypeToOpenGL(ShaderDataType type)
-	{
-		switch (type)
-		{
-		case ShaderDataType::None:
-			CORE_ERROR("BufferLayout None type");
-			ASSERT(false);
-			return 0;
-		case ShaderDataType::Float:
-			return GL_FLOAT;
-			break;
-		case ShaderDataType::Float2:
-			return GL_FLOAT;
-			break;
-		case ShaderDataType::Float3:
-			return GL_FLOAT;
-			break;
-		case ShaderDataType::Float4:
-			return GL_FLOAT;
-			break;
-		case ShaderDataType::Int:
-			return GL_INT;
-			break;
-		case ShaderDataType::Int2:
-			return GL_INT;
-			break;
-		case ShaderDataType::Int3:
-			return GL_INT;
-			break;
-		case ShaderDataType::Int4:
-			return GL_INT;
-			break;
-		case ShaderDataType::Mat3:
-			return GL_FLOAT;
-			break;
-		case ShaderDataType::Mat4:
-			return GL_FLOAT;
-			break;
-		case ShaderDataType::Bool:
-			return GL_BOOL;
-			break;
-		default:
-			CORE_ERROR("BufferLayout None type");
-			ASSERT(false);
-			return 0;
-		}
-	}
 
 	Application* Application::s_instance = nullptr;
 
 	Application::Application()
 	{
-		ASSERT((s_instance == nullptr));
+		CORE_ASSERT((s_instance == nullptr), "App exists");
 		s_instance = this;
 
 		m_window = std::shared_ptr<Window>(Window::Create());
 		m_window->SetEventCallback(std::bind(&Application::OnEvent, this, std::placeholders::_1));
+
+		m_vao_triangle.reset(VertexArray::Create());
+		m_vao_triangle->Bind();
 
 		std::string vertex_src = R"(
     #version 460 core
@@ -87,41 +45,97 @@ namespace Engine
         color=vec4(v_color,1);
     }
     )";
-		m_shader.reset(new Shader(vertex_src, fragment_src));
-		m_shader->Bind();
 
-		GLuint vao;
-		glCreateVertexArrays(1, &vao);
-		glBindVertexArray(vao);
+		m_shader_triangle.reset(new Shader(vertex_src, fragment_src));
+		m_shader_triangle->Bind();
 
-		float data[] = {
+		float pos[] = {
 				-0.5, -0.5, 0, 1, 0, 0,
 				0.5, -0.5, 0, 0, 1, 0,
 				0, 0.5, 0, 0, 0, 1,
 		};
-
-		m_vb.reset(VertexBuffer::Create(data, sizeof(data)));
+		std::shared_ptr<VertexBuffer> vo_data;
+		vo_data.reset(VertexBuffer::Create(pos, sizeof(pos)));
+		vo_data->Bind();
 
 		BufferLayout layout = {
 				{ "a_position", ShaderDataType::Float3, false },
 				{ "a_color", ShaderDataType::Float3, false },
 		};
 
-		uint32_t index{ 0 };
-		for (const auto& element : layout)
-		{
-			glEnableVertexAttribArray(index);
-			glVertexAttribPointer(index, element.GetComponentCount(), ShaderDataTypeToOpenGL(element.type),
-					element.normalized, layout.get_stride(), (const void*)element.offset);
-			index++;
-		}
+		vo_data->set_layout(layout);
 
 		uint32_t elements[] = {
 				0,
 				1,
 				2,
 		};
-		m_ib.reset(IndexBuffer::Create(elements, sizeof(elements) / sizeof(uint32_t)));
+		std::shared_ptr<IndexBuffer> vo_index;
+		vo_index.reset(IndexBuffer::Create(elements, sizeof(elements) / sizeof(uint32_t)));
+		vo_index->Bind();
+
+		m_vao_triangle->AddVertexBuffer(vo_data);
+		m_vao_triangle->set_indexBuffer(vo_index);
+
+		m_vao_triangle->UnBind();
+
+		{
+			std::string vertex_src_box = R"(
+    #version 460 core
+    layout(location=0)in vec3 a_position;
+
+
+	out vec3 v_color;
+    void main()
+    {
+        gl_Position=vec4(a_position,1);
+    }
+    )";
+
+			std::string fragment_src_box = R"(
+    #version 460 core
+    layout(location=0)out vec4 color;
+    void main()
+    {
+        color=vec4(0.6,0.2,0.4,1);
+    }
+    )";
+
+			m_vao_box.reset(VertexArray::Create());
+			m_vao_box->Bind();
+
+			m_shader_box.reset(new Shader(vertex_src_box, fragment_src_box));
+			m_shader_box->Bind();
+
+			float pos_box[] = {
+					-0.8, -0.8, 0,
+					0.8, -0.8, 0,
+					0.8, 0.8, 0,
+					-0.8, 0.8, 0,
+			};
+			std::shared_ptr<VertexBuffer> vo_data_box;
+			vo_data_box.reset(VertexBuffer::Create(pos_box, sizeof(pos_box)));
+			vo_data_box->Bind();
+
+			BufferLayout layout_box = {
+					{ "a_position", ShaderDataType::Float3, false }
+			};
+
+			vo_data_box->set_layout(layout_box);
+
+			uint32_t elements_box[] = {
+					0,
+					1,
+					2,
+					2, 3, 0
+			};
+			std::shared_ptr<IndexBuffer> vo_index_box;
+			vo_index_box.reset(IndexBuffer::Create(elements_box, sizeof(elements_box) / sizeof(uint32_t)));
+			vo_index_box->Bind();
+
+			m_vao_box->AddVertexBuffer(vo_data_box);
+			m_vao_box->set_indexBuffer(vo_index_box);
+		}
 
 	}
 
@@ -132,8 +146,14 @@ namespace Engine
 			glClearColor(0, 0, 0, 0);
 			glClear(GL_COLOR_BUFFER_BIT);
 
-			m_shader->Bind();
-			glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, nullptr);
+			m_shader_box->Bind();
+			m_vao_box->Bind();
+			glDrawElements(GL_TRIANGLES, m_vao_box->get_indexBuffer()->get_count(), GL_UNSIGNED_INT, nullptr);
+
+			m_vao_triangle->Bind();
+			m_shader_triangle->Bind();
+
+			glDrawElements(GL_TRIANGLES, m_vao_triangle->get_indexBuffer()->get_count(), GL_UNSIGNED_INT, nullptr);
 
 			for (auto layer : m_layer_stack)
 			{

@@ -12,8 +12,7 @@ namespace Engine
 		switch (type)
 		{
 		case ShaderDataType::None:
-			CORE_ERROR("BufferLayout None type");
-			ASSERT(false);
+		CORE_ASSERT(false, "BufferLayout None type");
 			return 0;
 			break;
 		case ShaderDataType::Float:
@@ -50,8 +49,7 @@ namespace Engine
 			return 1;
 			break;
 		default:
-			CORE_ERROR("BufferLayout None type");
-			ASSERT(false);
+		CORE_ASSERT(false, "BufferLayout None type");
 			return 0;
 		}
 	}
@@ -69,8 +67,7 @@ namespace Engine
 		{
 
 		case ShaderDataType::None:
-			CORE_ERROR("BufferLayout None type");
-			ASSERT(false);
+		CORE_ASSERT(false, "BufferLayout None type");
 			return 0;
 			break;
 		case ShaderDataType::Float:
@@ -107,8 +104,7 @@ namespace Engine
 			return 1;
 			break;
 		default:
-			CORE_ERROR("BufferLayout None type");
-			ASSERT(false);
+		CORE_ASSERT(false, "BufferLayout None type");
 			return 0;
 
 		}
@@ -137,17 +133,15 @@ namespace Engine
 		switch (Renderer::get_renderer_API())
 		{
 		case Renderer::API::None:
+		CORE_ASSERT(false, "API = None");
 			return nullptr;
-			ASSERT(0);
-			CORE_ERROR("API = None");
 
 		case Renderer::API::OpenGL:
 			return new OpenGLVertexBuffer(data, size);
 
 		default:
+		CORE_ASSERT(false, "API = None");
 			return nullptr;
-			ASSERT(0);
-			CORE_ERROR("API = None");
 		}
 	}
 
@@ -156,17 +150,15 @@ namespace Engine
 		switch (Renderer::get_renderer_API())
 		{
 		case Renderer::API::None:
+		CORE_ASSERT(false, "API = None");
 			return nullptr;
-			ASSERT(0);
-			CORE_ERROR("API = None");
 
 		case Renderer::API::OpenGL:
 			return new OpenGLIndexBuffer(data, count);
 
 		default:
+		CORE_ASSERT(false, "API = None");
 			return nullptr;
-			ASSERT(0);
-			CORE_ERROR("API = None");
 		}
 	}
 } // namespace Engine

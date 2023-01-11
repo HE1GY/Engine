@@ -10,72 +10,81 @@
 
 namespace Engine
 {
-WindowsWindow::WindowsWindow(const WindowsProps &props)
-{
-    int valid = glfwInit();
-    ASSERT(valid);
+	static void GLFWErrorCallback(int error, const char* description)
+	{
+		CORE_ERROR("GLFW Error ({0}): {1}", error, description);
+	}
 
-    m_native_window = glfwCreateWindow(props.width, props.height, props.title.c_str(), NULL, NULL);
-    if (!m_native_window)
-    {
-        glfwTerminate();
-        ASSERT(0);
-    }
+	WindowsWindow::WindowsWindow(const WindowsProps& props)
+	{
+		int valid = glfwInit();
+		ASSERT(valid);
 
-    m_graphic_context = new OpenGLContext(m_native_window);
-    m_graphic_context->Init();
+		m_native_window = glfwCreateWindow(props.width, props.height, props.title.c_str(), NULL, NULL);
+		if (!m_native_window)
+		{
+			glfwTerminate();
+			ASSERT(0);
+		}
+		glfwSetErrorCallback(GLFWErrorCallback);
 
-    glfwSetWindowUserPointer(m_native_window, &m_callback);
+		m_graphic_context = new OpenGLContext(m_native_window);
+		m_graphic_context->Init();
 
-    // Event handling
-    glfwSetKeyCallback(m_native_window, [](GLFWwindow *window, int key, int scancode, int action, int mods) {
-        EventCallbackFn *event_callback = (EventCallbackFn *)glfwGetWindowUserPointer(window);
+		glfwSetWindowUserPointer(m_native_window, &m_callback);
 
-        if (action == GLFW_PRESS)
-        {
-            KeyPress key_press(key, 0);
-            (*event_callback)(key_press);
-        }
-        else if (action == GLFW_RELEASE)
-        {
-            KeyReleased key_released(key);
-            (*event_callback)(key_released);
-        }
-        else if (action == GLFW_REPEAT)
-        {
-            KeyPress key_press(key, 1);
-            (*event_callback)(key_press);
-        }
-    });
-    glfwSetCharCallback(m_native_window, [](GLFWwindow *window, unsigned int codepoint) {
-        EventCallbackFn *event_callback = (EventCallbackFn *)glfwGetWindowUserPointer(window);
-        KeyTyped key_typed(codepoint);
-        (*event_callback)(key_typed);
-    });
+		// Event handling
+		glfwSetKeyCallback(m_native_window, [](GLFWwindow* window, int key, int scancode, int action, int mods)
+		{
+		  EventCallbackFn* event_callback = (EventCallbackFn*)glfwGetWindowUserPointer(window);
 
-    glfwSetWindowCloseCallback(m_native_window, [](GLFWwindow *window) {
-        EventCallbackFn *event_callback = (EventCallbackFn *)glfwGetWindowUserPointer(window);
-        WindowClosed close_event;
-        (*event_callback)(close_event);
-    });
-}
+		  if (action == GLFW_PRESS)
+		  {
+			  KeyPress key_press(key, 0);
+			  (*event_callback)(key_press);
+		  }
+		  else if (action == GLFW_RELEASE)
+		  {
+			  KeyReleased key_released(key);
+			  (*event_callback)(key_released);
+		  }
+		  else if (action == GLFW_REPEAT)
+		  {
+			  KeyPress key_press(key, 1);
+			  (*event_callback)(key_press);
+		  }
+		});
+		glfwSetCharCallback(m_native_window, [](GLFWwindow* window, unsigned int codepoint)
+		{
+		  EventCallbackFn* event_callback = (EventCallbackFn*)glfwGetWindowUserPointer(window);
+		  KeyTyped key_typed(codepoint);
+		  (*event_callback)(key_typed);
+		});
 
-Window *Window::Create(const Window::WindowsProps &props)
-{
-    return new WindowsWindow(props);
-}
+		glfwSetWindowCloseCallback(m_native_window, [](GLFWwindow* window)
+		{
+		  EventCallbackFn* event_callback = (EventCallbackFn*)glfwGetWindowUserPointer(window);
+		  WindowClosed close_event;
+		  (*event_callback)(close_event);
+		});
+	}
 
-void WindowsWindow::OnUpdate()
-{
-    m_graphic_context->SwapBuffer();
-    glfwPollEvents();
-}
-void WindowsWindow::SetEventCallback(const EventCallbackFn &fun)
-{
-    m_callback = fun;
-}
-void *WindowsWindow::GetNativeWindow()
-{
-    return m_native_window;
-}
+	Window* Window::Create(const Window::WindowsProps& props)
+	{
+		return new WindowsWindow(props);
+	}
+
+	void WindowsWindow::OnUpdate()
+	{
+		m_graphic_context->SwapBuffer();
+		glfwPollEvents();
+	}
+	void WindowsWindow::SetEventCallback(const EventCallbackFn& fun)
+	{
+		m_callback = fun;
+	}
+	void* WindowsWindow::GetNativeWindow()
+	{
+		return m_native_window;
+	}
 } // namespace Engine
