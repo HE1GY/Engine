@@ -41,9 +41,9 @@ namespace Engine
 		LayerStack m_layer_stack;
 
 		std::unique_ptr<Shader> m_shader_triangle;
-		std::unique_ptr<VertexArray> m_vao_triangle;
+		std::shared_ptr<VertexArray> m_vao_triangle;
 
 		std::unique_ptr<Shader> m_shader_box;
-		std::unique_ptr<VertexArray> m_vao_box;
+		std::shared_ptr<VertexArray> m_vao_box;
 	};
 } // namespace Engine

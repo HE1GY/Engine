@@ -1,11 +1,13 @@
 #include "pch.h"
 
-#include "glad/glad.h"
-
 #include "Application.h"
 #include "Core.h"
 
 #include "Renderer/Buffer.h"
+#include "Renderer/Renderer.h"
+#include "Renderer/RendererCommand.h"
+
+#include <glm/vec4.hpp>
 
 namespace Engine
 {
@@ -143,17 +145,18 @@ namespace Engine
 	{
 		while (m_is_running)
 		{
-			glClearColor(0, 0, 0, 0);
-			glClear(GL_COLOR_BUFFER_BIT);
+			RendererCommand::SetClearColor({ 0.1f, 0.1f, 0.1f, 0.1f });
+			RendererCommand::Clear();
+
+			Renderer::BeginScene();
 
 			m_shader_box->Bind();
-			m_vao_box->Bind();
-			glDrawElements(GL_TRIANGLES, m_vao_box->get_indexBuffer()->get_count(), GL_UNSIGNED_INT, nullptr);
+			Renderer::Submit(m_vao_box);
 
-			m_vao_triangle->Bind();
 			m_shader_triangle->Bind();
+			Renderer::Submit(m_vao_triangle);
 
-			glDrawElements(GL_TRIANGLES, m_vao_triangle->get_indexBuffer()->get_count(), GL_UNSIGNED_INT, nullptr);
+			Renderer::EndScene();
 
 			for (auto layer : m_layer_stack)
 			{

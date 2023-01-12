@@ -1,23 +1,22 @@
 #pragma once
+#include "RendererCommand.h"
 
 namespace Engine
 {
-class Renderer
-{
-  public:
-    enum class API
-    {
-        None,
-        OpenGL,
-    };
+	class Renderer
+	{
+	public:
+		static void BeginScene();
 
-    inline static API get_renderer_API()
-    {
-        return s_render_API;
-    }
+		static void EndScene();
 
-  private:
-    static API s_render_API;
-};
+		static void Submit(std::shared_ptr<VertexArray> vertex_array);
+
+		inline static RendererAPI::API get_renderer_API()
+		{
+			return RendererAPI::get_renderer_API();
+		}
+
+	};
 
 } // namespace Engine

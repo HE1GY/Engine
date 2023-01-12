@@ -130,13 +130,13 @@ namespace Engine
 
 	VertexBuffer* VertexBuffer::Create(void* data, uint32_t size)
 	{
-		switch (Renderer::get_renderer_API())
+		switch (RendererAPI::get_renderer_API())
 		{
-		case Renderer::API::None:
+		case RendererAPI::API::None:
 		CORE_ASSERT(false, "API = None");
 			return nullptr;
 
-		case Renderer::API::OpenGL:
+		case RendererAPI::API::OpenGL:
 			return new OpenGLVertexBuffer(data, size);
 
 		default:
@@ -147,13 +147,13 @@ namespace Engine
 
 	IndexBuffer* IndexBuffer::Create(uint32_t* data, uint32_t count)
 	{
-		switch (Renderer::get_renderer_API())
+		switch (RendererAPI::get_renderer_API())
 		{
-		case Renderer::API::None:
+		case RendererAPI::API::None:
 		CORE_ASSERT(false, "API = None");
 			return nullptr;
 
-		case Renderer::API::OpenGL:
+		case RendererAPI::API::OpenGL:
 			return new OpenGLIndexBuffer(data, count);
 
 		default:
