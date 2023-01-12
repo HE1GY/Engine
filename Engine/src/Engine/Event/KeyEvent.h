@@ -4,71 +4,72 @@
 
 namespace Engine
 {
-	class KeyEvent : public Event
-	{
-	public:
-		KeyEvent(int key_code)
-				:m_key_code(key_code)
-		{
-		}
-	protected:
-		int m_key_code;
-	};
+class KeyEvent : public Event
+{
+  public:
+    KeyEvent(int key_code) : m_key_code(key_code)
+    {
+    }
 
-	class KeyPress : public KeyEvent
-	{
-	public:
-		KeyPress(int key_code, int repeted_cout)
-				:KeyEvent(key_code), m_repeted_cout(repeted_cout)
-		{
-		}
+  protected:
+    int m_key_code;
+};
 
-		EVENT_TYPE(KeyPress)
-		virtual std::string ToString()
-		{
-			std::stringstream ss;
-			ss << "KeyPress: " << (char)m_key_code;
-			return ss.str();
-		}
+class KeyPress : public KeyEvent
+{
+  public:
+    KeyPress(int key_code, int repeated_count) : KeyEvent(key_code), m_repeated_count(repeated_count)
+    {
+    }
 
-	private:
-		int m_repeted_cout;
-	};
+    EVENT_TYPE(KeyPress)
+    virtual std::string ToString()
+    {
+        std::stringstream ss;
+        ss << "KeyPress: " << (char)m_key_code;
+        return ss.str();
+    }
+    inline int get_key()
+    {
+        return m_key_code;
+    }
 
-	class KeyReleased : public KeyEvent
-	{
-	public:
-		KeyReleased(int key_code)
-				:KeyEvent(key_code)
-		{
-		}
+  private:
+    int m_repeated_count;
+};
 
-		EVENT_TYPE(KeyReleased)
+class KeyReleased : public KeyEvent
+{
+  public:
+    KeyReleased(int key_code) : KeyEvent(key_code)
+    {
+    }
 
-		virtual std::string ToString()
-		{
-			std::stringstream ss;
-			ss << "KeyReleased: " << (char)m_key_code;
-			return ss.str();
-		}
-	};
+    EVENT_TYPE(KeyReleased)
 
-	class KeyTyped : public KeyEvent
-	{
-	public:
-		KeyTyped(int key_code)
-				:KeyEvent(key_code)
-		{
-		}
+    virtual std::string ToString()
+    {
+        std::stringstream ss;
+        ss << "KeyReleased: " << (char)m_key_code;
+        return ss.str();
+    }
+};
 
-		EVENT_TYPE(KeyTyped)
+class KeyTyped : public KeyEvent
+{
+  public:
+    KeyTyped(int key_code) : KeyEvent(key_code)
+    {
+    }
 
-		virtual std::string ToString()
-		{
-			std::stringstream ss;
-			ss << "KeyTyped: " << (char)m_key_code;
-			return ss.str();
-		}
-	};
+    EVENT_TYPE(KeyTyped)
 
-}
+    virtual std::string ToString()
+    {
+        std::stringstream ss;
+        ss << "KeyTyped: " << (char)m_key_code;
+        return ss.str();
+    }
+};
+
+} // namespace Engine

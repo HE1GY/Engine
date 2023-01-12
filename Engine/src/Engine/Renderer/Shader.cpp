@@ -4,6 +4,8 @@
 #include "Shader.h"
 #include "glad/glad.h"
 
+#include <glm/gtc/type_ptr.hpp>
+
 namespace Engine
 {
 Shader::Shader(std::string vertex_src, std::string fragment_src)
@@ -119,5 +121,21 @@ Shader::~Shader()
 void Shader::Bind()
 {
     glUseProgram(m_renderer_id);
+}
+
+void Shader::UploadUniform(const std::string &name, float value)
+{
+    ASSERT(m_renderer_id);
+
+    GLint location = glGetUniformLocation(m_renderer_id, name.c_str());
+    glUniform1f(location, value);
+}
+
+void Shader::UploadUniform(const std::string &name, const glm::mat4 &value)
+{
+    ASSERT(m_renderer_id);
+
+    GLint location = glGetUniformLocation(m_renderer_id, name.c_str());
+    glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(value));
 }
 } // namespace Engine
