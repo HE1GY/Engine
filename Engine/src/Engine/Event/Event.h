@@ -4,6 +4,8 @@
 #include <string>
 #include <sstream>
 
+#define BIND(x) std::bind(x, this,std::placeholders::_1);
+
 namespace Engine
 {
 	// all types of event for comparing and invoking appropriate func
