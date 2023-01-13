@@ -87,4 +87,10 @@ namespace Engine
 	{
 		return m_native_window;
 	}
+
+	void WindowsWindow::SetVSync(bool on)
+	{
+		m_is_vsync = on;
+		glfwSwapInterval(m_is_vsync ? 1 : 0);
+	}
 } // namespace Engine

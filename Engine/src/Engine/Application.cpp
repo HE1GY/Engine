@@ -3,13 +3,8 @@
 #include "Application.h"
 #include "Core.h"
 
-#include "Renderer/Buffer.h"
-#include "Renderer/Renderer.h"
-#include "Renderer/RendererCommand.h"
-
-#include <glm/vec4.hpp>
-
-#include "KeyCode.h"
+#include "GLFW/glfw3.h"
+#include "Core/TimeStep.h"
 
 namespace Engine
 {
@@ -22,18 +17,22 @@ namespace Engine
 		s_instance = this;
 
 		m_window = std::shared_ptr<Window>(Window::Create());
+		m_window->SetVSync(true);
 		m_window->SetEventCallback(std::bind(&Application::OnEvent, this, std::placeholders::_1));
 
 	}
 
 	void Application::Run()
 	{
-
 		while (m_is_running)
 		{
+			float time = (float)glfwGetTime();
+			TimeStep ts = time - m_last_frame_time;
+			m_last_frame_time = time;
+
 			for (auto layer : m_layer_stack)
 			{
-				layer->OnUpdate();
+				layer->OnUpdate(ts);
 			}
 			m_window->OnUpdate();
 		}

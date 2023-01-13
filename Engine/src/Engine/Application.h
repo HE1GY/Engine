@@ -37,5 +37,6 @@ namespace Engine
 		bool m_is_running{ true };
 		LayerStack m_layer_stack;
 
+		float m_last_frame_time;
 	};
 } // namespace Engine

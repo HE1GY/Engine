@@ -120,7 +120,7 @@ public:
 	{
 	}
 
-	void OnUpdate() override
+	void OnUpdate(Engine::TimeStep ts) override
 	{
 		Engine::RendererCommand::SetClearColor({ 0.1f, 0.1f, 0.1f, 0.1f });
 		Engine::RendererCommand::Clear();
@@ -135,24 +135,26 @@ public:
 
 		glm::vec3 cam_pos = m_camera.get_position();
 		float cam_rot = m_camera.get_rotation();
-		float speed = 0.01f;
-		float speed_rot = 0.1f;
+		float speed = 10.0f;
+		float speed_rot = 30.0f;
 
 		if (Engine::Input::IsKeyPress(KEY_A))
-		{ cam_pos.x += speed; }
+		{ cam_pos.x += speed * ts; }
 		if (Engine::Input::IsKeyPress(KEY_D))
-		{ cam_pos.x -= speed; }
+		{ cam_pos.x -= speed * ts; }
 		if (Engine::Input::IsKeyPress(KEY_W))
-		{ cam_pos.y -= speed; }
+		{ cam_pos.y -= speed * ts; }
 		if (Engine::Input::IsKeyPress(KEY_S))
-		{ cam_pos.y += speed; }
+		{ cam_pos.y += speed * ts; }
 		if (Engine::Input::IsKeyPress(KEY_Q))
-		{ cam_rot -= speed_rot; }
+		{ cam_rot -= speed_rot * ts; }
 		if (Engine::Input::IsKeyPress(KEY_E))
-		{ cam_rot += speed_rot; }
+		{ cam_rot += speed_rot * ts; }
 
 		m_camera.set_rotation(cam_rot);
 		m_camera.set_position(cam_pos);
+
+		TRACE("Time step {0}s {1}ms", ts.GetInSeconds(), ts.GetInMilliseconds());
 
 	}
 private:

@@ -25,6 +25,9 @@ namespace Engine
 
 		virtual void SetEventCallback(const EventCallbackFn& fun) = 0;
 
-        virtual void* GetNativeWindow()=0;
+		virtual void* GetNativeWindow() = 0;
+
+		virtual void SetVSync(bool on) = 0;
+		virtual bool ISVSync() const = 0;
 	};
 }

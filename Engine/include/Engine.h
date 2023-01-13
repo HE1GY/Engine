@@ -6,6 +6,7 @@
 #include "Engine/Event/KeyEvent.h"
 #include "Engine/Event/MouseEvent.h"
 #include "Engine/Event/ApplicationEvent.h"
+#include "Engine/Core/TimeStep.h"
 
 #include "Engine/Input.h"
 #include "Engine/KeyCode.h"
