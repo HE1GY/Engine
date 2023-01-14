@@ -1,5 +1,7 @@
-#include "Renderer.h"
 #include "pch.h"
+
+#include "Engine/Core.h"
+#include "Renderer.h"
 
 #include "Platform/OpenGL/OpenGLShader.h"
 
@@ -16,8 +18,7 @@ void Renderer::EndScene()
 {
 }
 
-void Renderer::Submit(const std::shared_ptr<Shader> &shader, std::shared_ptr<VertexArray> vertex_array,
-                      const glm::mat4 &transform)
+void Renderer::Submit(const Ref<Shader> &shader, Ref<VertexArray> vertex_array, const glm::mat4 &transform)
 {
     shader->Bind();
     std::dynamic_pointer_cast<OpenGLShader>(shader)->UploadUniform("u_view_project",

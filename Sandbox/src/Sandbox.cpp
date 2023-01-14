@@ -43,7 +43,7 @@ class ExampleLayer : public Engine::Layer
         float pos[] = {
             -0.5, -0.5, 0, 1, 0, 0, 0.5, -0.5, 0, 0, 1, 0, 0, 0.5, 0, 0, 0, 1,
         };
-        std::shared_ptr<Engine::VertexBuffer> vo_data;
+        Engine::Ref<Engine::VertexBuffer> vo_data;
         vo_data.reset(Engine::VertexBuffer::Create(pos, sizeof(pos)));
         vo_data->Bind();
 
@@ -59,7 +59,7 @@ class ExampleLayer : public Engine::Layer
             1,
             2,
         };
-        std::shared_ptr<Engine::IndexBuffer> vo_index;
+        Engine::Ref<Engine::IndexBuffer> vo_index;
         vo_index.reset(Engine::IndexBuffer::Create(elements, sizeof(elements) / sizeof(uint32_t)));
         vo_index->Bind();
 
@@ -100,7 +100,7 @@ class ExampleLayer : public Engine::Layer
             float pos_box[] = {
                 -0.5, -0.5, 0, 0.5, -0.5, 0, 0.5, 0.5, 0, -0.5, 0.5, 0,
             };
-            std::shared_ptr<Engine::VertexBuffer> vo_data_box;
+            Engine::Ref<Engine::VertexBuffer> vo_data_box;
             vo_data_box.reset(Engine::VertexBuffer::Create(pos_box, sizeof(pos_box)));
             vo_data_box->Bind();
 
@@ -109,7 +109,7 @@ class ExampleLayer : public Engine::Layer
             vo_data_box->set_layout(layout_box);
 
             uint32_t elements_box[] = {0, 1, 2, 2, 3, 0};
-            std::shared_ptr<Engine::IndexBuffer> vo_index_box;
+            Engine::Ref<Engine::IndexBuffer> vo_index_box;
             vo_index_box.reset(Engine::IndexBuffer::Create(elements_box, sizeof(elements_box) / sizeof(uint32_t)));
             vo_index_box->Bind();
 
@@ -186,11 +186,11 @@ class ExampleLayer : public Engine::Layer
     }
 
   private:
-    std::shared_ptr<Engine::Shader> m_shader_triangle;
-    std::shared_ptr<Engine::VertexArray> m_vao_triangle;
+    Engine::Ref<Engine::Shader> m_shader_triangle;
+    Engine::Ref<Engine::VertexArray> m_vao_triangle;
 
-    std::shared_ptr<Engine::Shader> m_shader_box;
-    std::shared_ptr<Engine::VertexArray> m_vao_box;
+    Engine::Ref<Engine::Shader> m_shader_box;
+    Engine::Ref<Engine::VertexArray> m_vao_box;
 
     Engine::OrthographicCamera m_camera;
 

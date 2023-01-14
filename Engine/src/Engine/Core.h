@@ -1,7 +1,5 @@
 #pragma once
 
-
-
 #ifdef DEBUG
 #ifdef WINDOWS
 #define ASSERT(a)                                                                                                      \
@@ -27,3 +25,10 @@
 #ifdef RELEASE
 #define ASSERT(a)
 #endif
+
+namespace Engine
+{
+template <typename T> using Ref = std::shared_ptr<T>;
+
+template <typename T> using Scope = std::unique_ptr<T>;
+} // namespace Engine
