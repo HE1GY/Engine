@@ -23,11 +23,21 @@ namespace Engine
 			return m_is_vsync;
 		};
 
+		inline virtual unsigned int get_width() override
+		{
+			return m_props.width;
+		};
+		inline virtual unsigned int get_height() override
+		{
+			return m_props.height;
+		};
+
 	private:
 		EventCallbackFn m_callback;
 		GLFWwindow* m_native_window;
 		GraphicContext* m_graphic_context;
 		bool m_is_vsync;
+		WindowsProps m_props;
 	};
 
 } // namespace Engine

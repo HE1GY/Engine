@@ -20,6 +20,15 @@ namespace Engine
 			return ss.str();
 		}
 
+		inline int get_x() const
+		{
+			return m_x;
+		}
+		inline int get_y() const
+		{
+			return m_y;
+		}
+
 	private:
 		int m_x, m_y;
 	};
@@ -40,6 +49,11 @@ namespace Engine
 			ss << "MouseButtonPressed: " << m_key_code;
 			return ss.str();
 		}
+
+		inline int get_key() const
+		{
+			return m_key_code;
+		};
 
 	private:
 		int m_key_code;
@@ -62,6 +76,11 @@ namespace Engine
 			return ss.str();
 		}
 
+		inline int get_key() const
+		{
+			return m_key_code;
+		};
+
 	private:
 		int m_key_code;
 	};
@@ -82,6 +101,15 @@ namespace Engine
 			ss << "MouseScrolled: " << "X_offset: " << m_x_offset << " " << "Y_offset: " << m_y_offset;
 			return ss.str();
 		}
+
+		inline int get_x_offset() const
+		{
+			return m_x_offset;
+		};
+		inline int get_y_offset() const
+		{
+			return m_y_offset;
+		};
 
 	private:
 		int m_x_offset, m_y_offset;

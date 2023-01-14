@@ -4,7 +4,7 @@
 #include <string>
 #include <sstream>
 
-#define BIND(x) std::bind(x, this,std::placeholders::_1);
+#define BIND_EVENT_FUNC(x) std::bind(&x, this,std::placeholders::_1)
 
 namespace Engine
 {
@@ -46,7 +46,7 @@ namespace Engine
 		}
 
 		template<typename T>
-		bool Dispatch(EventFn<T>& fn)
+		bool Dispatch(EventFn<T> fn)
 		{
 			if (m_event.GetEventType() == T::GetStaticEventType())
 			{

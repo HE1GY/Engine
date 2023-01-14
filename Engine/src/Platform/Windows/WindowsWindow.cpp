@@ -16,6 +16,7 @@ namespace Engine
 	}
 
 	WindowsWindow::WindowsWindow(const WindowsProps& props)
+			:m_props(props)
 	{
 		int valid = glfwInit();
 		ASSERT(valid);
@@ -67,6 +68,45 @@ namespace Engine
 		  WindowClosed close_event;
 		  (*event_callback)(close_event);
 		});
+
+		glfwSetWindowSizeCallback(m_native_window, [](GLFWwindow* window, int width, int height)
+		{
+		  EventCallbackFn* event_callback = (EventCallbackFn*)glfwGetWindowUserPointer(window);
+		  WindowResized e(width, height);
+		  (*event_callback)(e);
+		});
+
+		glfwSetMouseButtonCallback(m_native_window, [](GLFWwindow* window, int button, int action, int mods)
+		{
+		  EventCallbackFn* event_callback = (EventCallbackFn*)glfwGetWindowUserPointer(window);
+
+		  if (action == GLFW_PRESS)
+		  {
+			  MouseButtonPressed key_press(button);
+			  (*event_callback)(key_press);
+		  }
+		  else if (action == GLFW_RELEASE)
+		  {
+			  MouseButtonReleased key_released(button);
+			  (*event_callback)(key_released);
+		  }
+
+		});
+
+		glfwSetScrollCallback(m_native_window, [](GLFWwindow* window, double xoffset, double yoffset)
+		{
+		  EventCallbackFn* event_callback = (EventCallbackFn*)glfwGetWindowUserPointer(window);
+		  MouseScrolled e(xoffset, yoffset);
+		  (*event_callback)(e);
+		});
+
+		glfwSetCursorPosCallback(m_native_window, [](GLFWwindow* window, double xpos, double ypos)
+		{
+		  EventCallbackFn* event_callback = (EventCallbackFn*)glfwGetWindowUserPointer(window);
+		  MouseMoved e(xpos, ypos);
+		  (*event_callback)(e);
+		});
+
 	}
 
 	Window* Window::Create(const Window::WindowsProps& props)

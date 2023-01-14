@@ -34,7 +34,22 @@ add_library(Engine STATIC src/Engine/Application.h
         src/Platform/OpenGL/OpenGLBuffer.cpp
         src/Engine/Renderer/Buffer.cpp
         src/Engine/Renderer/Buffer.h
-        src/Engine/Renderer/Renderer.cpp src/Engine/Renderer/VertexArray.cpp src/Engine/Renderer/VertexArray.h src/Platform/OpenGL/OpenGLVertexArray.cpp src/Platform/OpenGL/OpenGLVertexArray.h src/Engine/Renderer/RendererAPI.cpp src/Engine/Renderer/RendererAPI.h src/Engine/Renderer/RendererCommand.cpp src/Engine/Renderer/RendererCommand.h src/Platform/OpenGL/OpenGLRendererAPI.cpp src/Platform/OpenGL/OpenGLRendererAPI.h src/Engine/Renderer/OrthographicCamera.cpp src/Engine/Core/TimeStep.h src/Platform/OpenGL/OpenGLShader.cpp)
+        src/Engine/Renderer/Renderer.cpp
+        src/Engine/Renderer/VertexArray.cpp
+        src/Engine/Renderer/VertexArray.h
+        src/Platform/OpenGL/OpenGLVertexArray.cpp
+        src/Platform/OpenGL/OpenGLVertexArray.h
+        src/Engine/Renderer/RendererAPI.cpp
+        src/Engine/Renderer/RendererAPI.h
+        src/Engine/Renderer/RendererCommand.cpp
+        src/Engine/Renderer/RendererCommand.h
+        src/Platform/OpenGL/OpenGLRendererAPI.cpp
+        src/Platform/OpenGL/OpenGLRendererAPI.h
+        src/Engine/Renderer/OrthographicCamera.cpp
+        src/Engine/Core/TimeStep.h
+        src/Platform/OpenGL/OpenGLShader.cpp
+        src/Engine/ImGui/ImGuiLayer.cpp
+        src/Engine/ImGui/ImGuiLayer.h)
 
 
 target_include_directories(Engine

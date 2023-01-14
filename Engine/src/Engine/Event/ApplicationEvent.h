@@ -20,6 +20,15 @@ namespace Engine
 			return ss.str();
 		}
 
+		inline int get_width() const
+		{
+			return m_width;
+		}
+		inline int get_height() const
+		{
+			return m_height;
+		}
+
 	private:
 		int m_width, m_height;
 	};

@@ -9,6 +9,7 @@ add_subdirectory(external/spdlog)
 add_subdirectory(external/glfw)
 add_subdirectory(external/glad)
 add_subdirectory(external/glm)
+add_subdirectory(external/imgui)
 
 
 target_link_libraries(Sandbox PRIVATE Engine)
@@ -16,6 +17,7 @@ target_link_libraries(Engine PUBLIC spdlog)
 target_link_libraries(Engine PUBLIC glfw)
 target_link_libraries(Engine PUBLIC glad)
 target_link_libraries(Engine PUBLIC glm)
+target_link_libraries(Engine PUBLIC imgui)
 
 
 
