@@ -19,6 +19,9 @@ namespace Engine
 		m_window = Ref<Window>(Window::Create());
 		m_window->SetVSync(true);
 		m_window->SetEventCallback(std::bind(&Application::OnEvent, this, std::placeholders::_1));
+
+		m_imGuiLayer = new ImGuiLayer();
+		PushOverlay(m_imGuiLayer);
 	}
 
 	void Application::Run()
@@ -33,6 +36,14 @@ namespace Engine
 			{
 				layer->OnUpdate(ts);
 			}
+
+			m_imGuiLayer->Begin();
+			for (auto layer : m_layer_stack)
+			{
+				layer->OnImGuiRender();
+			}
+			m_imGuiLayer->End();
+
 			m_window->OnUpdate();
 		}
 	}

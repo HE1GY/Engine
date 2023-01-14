@@ -1,8 +1,10 @@
 #pragma once
 
+#include <Engine/ImGui/ImGuiLayer.h>
 #include "Engine/Event/ApplicationEvent.h"
 #include "LayerStack.h"
 #include "Window.h"
+#include "Core.h"
 
 namespace Engine
 {
@@ -33,7 +35,10 @@ namespace Engine
 
 		bool OnWindowsClosed(WindowClosed& event);
 
-		std::shared_ptr<Window> m_window;
+		Ref<Window> m_window;
+		
+		ImGuiLayer* m_imGuiLayer;
+
 		bool m_is_running{ true };
 		LayerStack m_layer_stack;
 

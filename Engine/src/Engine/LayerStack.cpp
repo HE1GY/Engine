@@ -32,6 +32,7 @@ namespace Engine
 		if (position_iterator != m_layers.end())
 		{
 			m_layers.erase(position_iterator);
+			m_position--;
 		}
 		layer->OnDetach();
 	}

@@ -87,9 +87,10 @@ public:
 			std::string fragment_src_box = R"(
     #version 460 core
     layout(location=0)out vec4 color;
+	uniform vec4 u_color;
     void main()
     {
-        color=vec4(0.6,0.2,0.4,1);
+        color=u_color;
     }
     )";
 
@@ -171,6 +172,8 @@ public:
 			y = i * 0.11;
 			for (int j = 0; j < 20; ++j)
 			{
+				std::dynamic_pointer_cast<Engine::OpenGLShader>(m_shader_box)->UploadUniform("u_color",
+						m_uniform_color);
 				Engine::Renderer::Submit(m_shader_box, m_vao_box,
 						glm::translate(glm::mat4(1.0f), m_square_pos) *
 								glm::scale(glm::mat4(1.0f), { 0.1f, 0.1f, 0.1f }));
@@ -184,7 +187,13 @@ public:
 
 		Engine::Renderer::EndScene();
 
-		TRACE("Time step {0}s {1}ms", ts.GetInSeconds(), ts.GetInMilliseconds());
+	}
+
+	void OnImGuiRender()
+	{
+		ImGui::ColorEdit4("color", &m_uniform_color.r);
+		ImVec2 size = { 500, 100 };
+		ImGui::SetWindowSize(size);
 	}
 
 private:
@@ -197,6 +206,7 @@ private:
 	Engine::OrthographicCamera m_camera;
 
 	glm::vec3 m_square_pos;
+	glm::vec4 m_uniform_color = { 1, 0, 0, 0 };
 };
 
 class SandBox : public Engine::Application
@@ -205,7 +215,6 @@ public:
 	SandBox()
 	{
 		PushLayer(new ExampleLayer());
-		PushOverlay(new Engine::ImGuiLayer());
 	}
 
 	~SandBox() override = default;

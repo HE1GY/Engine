@@ -18,21 +18,10 @@ namespace Engine
 		virtual ~ImGuiLayer() override = default;
 
 		virtual void OnAttach() override;
-
 		virtual void OnDetach() override;
-		virtual void OnUpdate(TimeStep ts) override;
-		virtual void OnEvent(Event& event) override;
 
-	private:
-		bool OnWindowResized(WindowResized& e);
-		bool OnWindowClosed(WindowClosed& e);
-		bool OnKeyPress(KeyPress& e);
-		bool OnKeyReleased(KeyReleased& e);
-		bool OnKeyTyped(KeyTyped& e);
-		bool OnMouseButtonPressed(MouseButtonPressed& e);
-		bool OnMouseButtonReleased(MouseButtonReleased& e);
-		bool OnMouseMoved(MouseMoved& e);
-		bool OnMouseScrolled(MouseScrolled& e);
+		void Begin();
+		void End();
 
 	};
 }

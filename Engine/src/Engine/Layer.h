@@ -26,6 +26,10 @@ namespace Engine
 		{
 		}
 
+		virtual void OnImGuiRender()
+		{
+		}
+
 	private:
 		std::string m_name;
 	};

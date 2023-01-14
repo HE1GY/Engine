@@ -5,18 +5,19 @@
 
 namespace Engine
 {
-class OpenGLShader : public Shader
-{
-  public:
-    OpenGLShader(std::string vertex_src, std::string fragment_src);
-    ~OpenGLShader() override = default;
+	class OpenGLShader : public Shader
+	{
+	public:
+		OpenGLShader(std::string vertex_src, std::string fragment_src);
+		~OpenGLShader() override = default;
 
-    virtual void Bind() const override;
-    void UploadUniform(const std::string &name, float value);
-    void UploadUniform(const std::string &name, const glm::mat4 &value);
+		virtual void Bind() const override;
+		void UploadUniform(const std::string& name, float value);
+		void UploadUniform(const std::string& name, const glm::mat4& value);
+		void UploadUniform(const std::string& name, const glm::vec4& value);
 
-  private:
-    uint32_t m_renderer_id;
-};
+	private:
+		uint32_t m_renderer_id;
+	};
 
 } // namespace Engine
