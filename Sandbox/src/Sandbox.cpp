@@ -11,42 +11,11 @@ class ExampleLayer : public Engine::Layer
   public:
     ExampleLayer() : Layer("ExampleLayer"), m_camera(-1.6, 1.6, -0.9, 0.9), m_square_pos(1.0f)
     {
-        std::cout << std::filesystem::current_path().parent_path() << std::endl;
-
         m_vao_square_trexture2d.reset(Engine::VertexArray::Create());
         m_vao_square_trexture2d->Bind();
 
-        std::string vertex_src = R"(
-    #version 460 core
-    layout(location=0)in vec3 a_position;
-    layout(location=1)in vec2 a_tex_coord;
-
-    uniform mat4 u_view_project;
-    uniform mat4 u_model;
-
-	out vec2 v_tex_coord;
-    void main()
-    {
-		v_tex_coord=a_tex_coord;
-        gl_Position=u_view_project* u_model*vec4(a_position,1);
-    }
-    )";
-
-        std::string fragment_texture2D_src = R"(
-    #version 460 core
-    in vec2 v_tex_coord;
-
-	uniform sampler2D u_texture2D;
-
-    layout(location=0)out vec4 color;
-
-    void main()
-    {
-        color=texture(u_texture2D,v_tex_coord);
-    }
-    )";
-
-        m_shader_texture2D.reset(Engine::Shader::Create(vertex_src, fragment_texture2D_src));
+        m_shader_texture2D.reset(Engine::Shader::Create(
+            std::filesystem::current_path().parent_path().concat("/../Sandbox/assets/shaders/texture2D_shader.glsl")));
         m_shader_texture2D->Bind();
 
         float data[] = {
@@ -56,12 +25,10 @@ class ExampleLayer : public Engine::Layer
         vo_data.reset(Engine::VertexBuffer::Create(data, sizeof(data)));
         vo_data->Bind();
 
-        Engine::BufferLayout layout = {
+        vo_data->set_layout({
             {"a_position", Engine::ShaderDataType::Float3, false},
             {"a_tex_coord", Engine::ShaderDataType::Float2, false},
-        };
-
-        vo_data->set_layout(layout);
+        });
 
         uint32_t elements[] = {
             0, 1, 2, 2, 3, 0,
@@ -76,33 +43,11 @@ class ExampleLayer : public Engine::Layer
         m_vao_square_trexture2d->UnBind();
 
         {
-            std::string vertex_src_box = R"(
-    #version 460 core
-    layout(location=0)in vec3 a_position;
-    uniform mat4 u_view_project;
-    uniform mat4 u_model;
-
-	out vec3 v_color;
-    void main()
-    {
-        gl_Position=u_view_project*u_model*vec4(a_position,1);
-    }
-    )";
-
-            std::string fragment_src_box = R"(
-    #version 460 core
-    layout(location=0)out vec4 color;
-	uniform vec4 u_color;
-    void main()
-    {
-        color=u_color;
-    }
-    )";
-
             m_vao_box.reset(Engine::VertexArray::Create());
             m_vao_box->Bind();
 
-            m_shader_box.reset(Engine::Shader::Create(vertex_src_box, fragment_src_box));
+            m_shader_box.reset(Engine::Shader::Create(std::filesystem::current_path().parent_path().concat(
+                "/../Sandbox/assets/shaders/uniform_color_shader.glsl")));
             m_shader_box->Bind();
 
             float pos_box[] = {
@@ -112,9 +57,7 @@ class ExampleLayer : public Engine::Layer
             vo_data_box.reset(Engine::VertexBuffer::Create(pos_box, sizeof(pos_box)));
             vo_data_box->Bind();
 
-            Engine::BufferLayout layout_box = {{"a_position", Engine::ShaderDataType::Float3, false}};
-
-            vo_data_box->set_layout(layout_box);
+            vo_data_box->set_layout({{"a_position", Engine::ShaderDataType::Float3, false}});
 
             uint32_t elements_box[] = {0, 1, 2, 2, 3, 0};
             Engine::Ref<Engine::IndexBuffer> vo_index_box;

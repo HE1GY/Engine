@@ -1,24 +1,31 @@
 #pragma once
 #include "Engine/Renderer/Shader.h"
+#include "glad/glad.h"
 #include "glm/glm.hpp"
 #include <string>
 
 namespace Engine
 {
-	class OpenGLShader : public Shader
-	{
-	public:
-		OpenGLShader(std::string vertex_src, std::string fragment_src);
-		~OpenGLShader() override = default;
+class OpenGLShader : public Shader
+{
+  public:
+    OpenGLShader(const std::string &vertex_src, const std::string &fragment_src);
+    OpenGLShader(const std::string &src_path);
+    ~OpenGLShader() override;
 
-		virtual void Bind() const override;
-		void UploadUniform(const std::string& name, float value);
-		void UploadUniform(const std::string& name, const glm::mat4& value);
-		void UploadUniform(const std::string& name, const glm::vec4& value);
-		void UploadUniform(const std::string& name, int value);
+    virtual void Bind() const override;
+    void UploadUniform(const std::string &name, float value);
+    void UploadUniform(const std::string &name, const glm::mat4 &value);
+    void UploadUniform(const std::string &name, const glm::vec4 &value);
+    void UploadUniform(const std::string &name, int value);
 
-	private:
-		uint32_t m_renderer_id;
-	};
+  private:
+    std::string ReadFile(const std::string &path);
+    std::unordered_map<GLenum, std::string> PreProcess(const std::string &src);
+    void Compile(std::unordered_map<GLenum, std::string> &shaders);
+
+  private:
+    uint32_t m_renderer_id;
+};
 
 } // namespace Engine
