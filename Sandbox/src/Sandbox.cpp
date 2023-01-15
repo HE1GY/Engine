@@ -42,11 +42,13 @@ public:
 		m_shader_triangle.reset(Engine::Shader::Create(vertex_src, fragment_src));
 		m_shader_triangle->Bind();
 
-		float pos[] = {
-				-0.5, -0.5, 0, 1, 0, 0, 0.5, -0.5, 0, 0, 1, 0, 0, 0.5, 0, 0, 0, 1,
+		float data[] = {
+				-0.5, -0.5, 0, 1, 0, 0,
+				0.5, -0.5, 0, 0, 1, 0,
+				0, 0.5, 0, 0, 0, 1,
 		};
 		Engine::Ref<Engine::VertexBuffer> vo_data;
-		vo_data.reset(Engine::VertexBuffer::Create(pos, sizeof(pos)));
+		vo_data.reset(Engine::VertexBuffer::Create(data, sizeof(data)));
 		vo_data->Bind();
 
 		Engine::BufferLayout layout = {
