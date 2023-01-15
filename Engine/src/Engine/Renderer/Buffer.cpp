@@ -132,10 +132,6 @@ namespace Engine
 	{
 		switch (RendererAPI::get_renderer_API())
 		{
-		case RendererAPI::API::None:
-		CORE_ASSERT(false, "API = None");
-			return nullptr;
-
 		case RendererAPI::API::OpenGL:
 			return new OpenGLVertexBuffer(data, size);
 
@@ -149,10 +145,6 @@ namespace Engine
 	{
 		switch (RendererAPI::get_renderer_API())
 		{
-		case RendererAPI::API::None:
-		CORE_ASSERT(false, "API = None");
-			return nullptr;
-
 		case RendererAPI::API::OpenGL:
 			return new OpenGLIndexBuffer(data, count);
 

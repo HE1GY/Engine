@@ -40,6 +40,7 @@ namespace Engine
 
 			CORE_ERROR("Vertex Shader doesn't compile");
 			CORE_ERROR(infoLog.data());
+			CORE_WARN(vertex_src);
 			ASSERT(false);
 		}
 
@@ -69,8 +70,9 @@ namespace Engine
 			// Either of them. Don't leak shaders.
 			glDeleteShader(vertexShader);
 
-			CORE_ERROR("Fragment Shader doesn't compiled");
+			CORE_ERROR("Fragment Shader doesn't compile");
 			CORE_ERROR(infoLog.data());
+			CORE_WARN(fragment_src);
 			ASSERT(false);
 		}
 
@@ -135,6 +137,13 @@ namespace Engine
 		ASSERT(m_renderer_id);
 		GLint location = glGetUniformLocation(m_renderer_id, name.c_str());
 		glUniform4f(location, value.r, value.g, value.b, value.a);
+	}
+
+	void OpenGLShader::UploadUniform(const std::string& name, int value)
+	{
+		ASSERT(m_renderer_id);
+		GLint location = glGetUniformLocation(m_renderer_id, name.c_str());
+		glUniform1d(location, value);
 	}
 
 	void OpenGLShader::Bind() const

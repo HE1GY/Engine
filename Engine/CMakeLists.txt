@@ -49,7 +49,7 @@ add_library(Engine STATIC src/Engine/Application.h
         src/Engine/Core/TimeStep.h
         src/Platform/OpenGL/OpenGLShader.cpp
         src/Engine/ImGui/ImGuiLayer.cpp
-        src/Engine/ImGui/ImGuiLayer.h)
+        src/Engine/ImGui/ImGuiLayer.h src/Engine/Renderer/Texture.cpp src/Engine/Renderer/Texture.h src/Platform/OpenGL/OpenGLTexture2D.cpp src/Platform/OpenGL/OpenGLTexture2D.h)
 
 
 target_include_directories(Engine

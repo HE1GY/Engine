@@ -20,6 +20,7 @@
 #include "Engine/Renderer/RendererCommand.h"
 #include "Engine/Renderer/Shader.h"
 #include "Engine/Renderer/VertexArray.h"
+#include "Engine/Renderer/Texture.h"
 
 #include "Engine/Core.h"
 
@@ -27,7 +28,6 @@
 //
 #include "Platform/OpenGL/OpenGLShader.h"
 //
-
 
 
 //---------------------------
