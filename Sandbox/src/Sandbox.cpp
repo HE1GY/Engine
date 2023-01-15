@@ -11,8 +11,8 @@ class ExampleLayer : public Engine::Layer
   public:
     ExampleLayer() : Layer("ExampleLayer"), m_camera(-1.6, 1.6, -0.9, 0.9), m_square_pos(1.0f)
     {
-        m_vao_square_trexture2d.reset(Engine::VertexArray::Create());
-        m_vao_square_trexture2d->Bind();
+        m_vao_square_texture2d.reset(Engine::VertexArray::Create());
+        m_vao_square_texture2d->Bind();
 
         m_shader_texture2D.reset(Engine::Shader::Create(
             std::filesystem::current_path().parent_path().concat("/../Sandbox/assets/shaders/texture2D_shader.glsl")));
@@ -37,10 +37,10 @@ class ExampleLayer : public Engine::Layer
         vo_index.reset(Engine::IndexBuffer::Create(elements, sizeof(elements) / sizeof(uint32_t)));
         vo_index->Bind();
 
-        m_vao_square_trexture2d->AddVertexBuffer(vo_data);
-        m_vao_square_trexture2d->set_indexBuffer(vo_index);
+        m_vao_square_texture2d->AddVertexBuffer(vo_data);
+        m_vao_square_texture2d->set_indexBuffer(vo_index);
 
-        m_vao_square_trexture2d->UnBind();
+        m_vao_square_texture2d->UnBind();
 
         {
             m_vao_box.reset(Engine::VertexArray::Create());
@@ -140,11 +140,11 @@ class ExampleLayer : public Engine::Layer
 
         m_texture->Bind();
         std::dynamic_pointer_cast<Engine::OpenGLShader>(m_shader_texture2D)->UploadUniform("u_texture2D", 0);
-        Engine::Renderer::Submit(m_shader_texture2D, m_vao_square_trexture2d);
+        Engine::Renderer::Submit(m_shader_texture2D, m_vao_square_texture2d);
 
         m_texture_2->Bind();
         std::dynamic_pointer_cast<Engine::OpenGLShader>(m_shader_texture2D)->UploadUniform("u_texture2D", 0);
-        Engine::Renderer::Submit(m_shader_texture2D, m_vao_square_trexture2d);
+        Engine::Renderer::Submit(m_shader_texture2D, m_vao_square_texture2d);
 
         Engine::Renderer::EndScene();
     }
@@ -158,7 +158,7 @@ class ExampleLayer : public Engine::Layer
 
   private:
     Engine::Ref<Engine::Shader> m_shader_texture2D;
-    Engine::Ref<Engine::VertexArray> m_vao_square_trexture2d;
+    Engine::Ref<Engine::VertexArray> m_vao_square_texture2d;
 
     Engine::Ref<Engine::Shader> m_shader_box;
     Engine::Ref<Engine::VertexArray> m_vao_box;

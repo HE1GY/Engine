@@ -41,7 +41,7 @@ OpenGLShader::~OpenGLShader()
 
 std::string OpenGLShader::ReadFile(const std::string &path)
 {
-    std::ifstream in(path.c_str());
+    std::ifstream in(path.c_str(), std::ios_base::binary | std::ios_base::in);
     std::string result;
     if (in.is_open())
     {
@@ -85,7 +85,9 @@ std::unordered_map<GLenum, std::string> OpenGLShader::PreProcess(const std::stri
 void OpenGLShader::Compile(std::unordered_map<GLenum, std::string> &shaders)
 {
     m_renderer_id = glCreateProgram();
-    std::vector<GLuint> shaders_id(shaders.size());
+    CORE_ASSERT((shaders.size() >= 2), "too few shaders");
+    std::array<GLuint, 2> shaders_id;
+    uint8_t index{0};
     for (auto src_shader : shaders)
     {
         GLenum type = src_shader.first;
@@ -117,7 +119,7 @@ void OpenGLShader::Compile(std::unordered_map<GLenum, std::string> &shaders)
             ASSERT(false);
         }
         glAttachShader(m_renderer_id, shader);
-        shaders_id.push_back(shader);
+        shaders_id[index++] = shader;
     }
 
     glLinkProgram(m_renderer_id);
