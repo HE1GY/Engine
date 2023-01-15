@@ -132,7 +132,8 @@ public:
 		//"D:\\dev\\Engine\\Sandbox\\assets\\textures\\wallpaperflare.com_wallpaper.png"
 		m_texture = Engine::Texture2D::Create(
 				"D:\\dev\\Engine\\Sandbox\\assets\\textures\\wallpaperflare.com_wallpaper.png");
-		m_texture->Bind(0);
+		m_texture_2 = Engine::Texture2D::Create(
+				"D:\\dev\\Engine\\Sandbox\\assets\\textures\\ILTQq.png");
 	}
 
 	void OnEvent(Engine::Event& event) override
@@ -204,6 +205,11 @@ public:
 				0);
 		Engine::Renderer::Submit(m_shader_texture2D, m_vao_square_trexture2d);
 
+		m_texture_2->Bind();
+		std::dynamic_pointer_cast<Engine::OpenGLShader>(m_shader_texture2D)->UploadUniform("u_texture2D",
+				0);
+		Engine::Renderer::Submit(m_shader_texture2D, m_vao_square_trexture2d);
+
 		Engine::Renderer::EndScene();
 
 	}
@@ -223,6 +229,7 @@ private:
 	Engine::Ref<Engine::VertexArray> m_vao_box;
 
 	Engine::Ref<Engine::Texture2D> m_texture;
+	Engine::Ref<Engine::Texture2D> m_texture_2;
 
 	Engine::OrthographicCamera m_camera;
 

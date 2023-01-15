@@ -4,6 +4,8 @@
 #include "Core.h"
 
 #include "Core/TimeStep.h"
+#include "Renderer/Renderer.h"
+
 #include "GLFW/glfw3.h"
 
 namespace Engine
@@ -18,7 +20,9 @@ namespace Engine
 
 		m_window = Ref<Window>(Window::Create());
 		m_window->SetVSync(true);
-		m_window->SetEventCallback(std::bind(&Application::OnEvent, this, std::placeholders::_1));
+		m_window->SetEventCallback(BIND_EVENT_FUNC(Application::OnEvent));
+
+		Renderer::Init();
 
 		m_imGuiLayer = new ImGuiLayer();
 		PushOverlay(m_imGuiLayer);
