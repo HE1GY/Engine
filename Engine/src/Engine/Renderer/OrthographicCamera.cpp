@@ -18,5 +18,10 @@ void OrthographicCamera::RecalculateViewMatrix()
     m_view_matrix = glm::inverse(transform);
     m_view_projection_matrix = m_projection_matrix * m_view_matrix;
 }
+void OrthographicCamera::set_projection(float left, float right, float bottom, float top)
+{
+    auto projection = glm::ortho(left, right, bottom, top);
+    m_view_projection_matrix = m_projection_matrix * m_view_matrix;
+}
 
 } // namespace Engine

@@ -42,6 +42,8 @@ class OrthographicCamera
         return m_view_projection_matrix;
     }
 
+    void set_projection(float left, float right, float bottom, float top);
+
   private:
     void RecalculateViewMatrix();
 
