@@ -1,16 +1,17 @@
 #include "pch.h"
+
 #include "Renderer.h"
 #include "Engine/Core.h"
 #include "Platform/OpenGL/OpenGLVertexArray.h"
 
 namespace Engine
 {
-	VertexArray* VertexArray::Create()
+	Ref<VertexArray> VertexArray::Create()
 	{
 		switch (Renderer::get_renderer_API())
 		{
 		case RendererAPI::API::OpenGL:
-			return new OpenGLVertexArray();
+			return std::make_shared<OpenGLVertexArray>();
 
 		default:
 		CORE_ASSERT(false, "API = None");

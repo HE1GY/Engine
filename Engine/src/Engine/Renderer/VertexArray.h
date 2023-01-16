@@ -1,4 +1,5 @@
 #pragma once
+#include <Engine/Core.h>
 #include "Buffer.h"
 
 namespace Engine
@@ -6,11 +7,9 @@ namespace Engine
 	class VertexArray
 	{
 	public:
-		static VertexArray* Create();
+		static Ref<VertexArray> Create();
 
-		virtual ~VertexArray()
-		{
-		};
+		virtual ~VertexArray() = default;
 
 		virtual void Bind() = 0;
 		virtual void UnBind() = 0;

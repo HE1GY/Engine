@@ -21,10 +21,7 @@ target_link_libraries(Engine PUBLIC glm)
 target_link_libraries(Engine PUBLIC imgui)
 target_link_libraries(Engine PUBLIC stb_image)
 
-if (CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL 19.12.25835)
-    set(CMAKE_CXX20_STANDARD_COMPILE_OPTION "-std:c++latest")
-    set(CMAKE_CXX20_EXTENSION_COMPILE_OPTION "-std:c++latest")
-endif ()
+
 
 
 
