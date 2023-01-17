@@ -9,27 +9,27 @@
 
 namespace Engine
 {
-class OrthographicCameraController
-{
-  public:
-    OrthographicCameraController(float aspect_ratio, bool is_rotating);
+	class OrthographicCameraController
+	{
+	public:
+		OrthographicCameraController(float aspect_ratio, bool is_rotating);
 
-    void OnUpdate(TimeStep ts);
-    void OnEvent(Event &event);
+		void OnUpdate(TimeStep ts);
+		void OnEvent(Event& event);
 
-    OrthographicCamera& get_camera() {return m_camera;}
+		OrthographicCamera& get_camera()
+		{
+			return m_camera;
+		}
 
-  private:
-    bool OnMouseScroll(MouseScrolled &event);
-    bool OnWindowResized(WindowResized &event);
+	private:
+		bool OnMouseScroll(MouseScrolled& event);
+		bool OnWindowResized(WindowResized& event);
 
-  private:
-    float m_aspect_ratio;
-    float m_zoom_level{1};
-    OrthographicCamera m_camera;
-
-    bool m_is_rotating;
-    glm::vec3 m_position{0, 0, 0};
-    float m_rotation;
-};
+	private:
+		float m_aspect_ratio;
+		bool m_is_rotating;
+		float m_zoom_level{ 1 };
+		OrthographicCamera m_camera;
+	};
 } // namespace Engine

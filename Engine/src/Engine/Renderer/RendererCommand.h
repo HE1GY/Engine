@@ -22,6 +22,10 @@ namespace Engine
 		{
 			m_renderer_API->SetClearColor(color);
 		}
+		inline static void SetViewport(uint32_t x, uint32_t y, uint32_t width, uint32_t height)
+		{
+			m_renderer_API->SetViewport(x, y, width, height);
+		}
 
 	private:
 		static RendererAPI* m_renderer_API;

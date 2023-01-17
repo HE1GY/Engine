@@ -34,12 +34,14 @@ namespace Engine
 		static Application* s_instance;
 
 		bool OnWindowsClosed(WindowClosed& event);
+		bool OnWindowsResized(WindowResized& event);
 
 		Ref<Window> m_window;
-		
+
 		ImGuiLayer* m_imGuiLayer;
 
 		bool m_is_running{ true };
+		bool m_is_minimized{ false };
 		LayerStack m_layer_stack;
 
 		float m_last_frame_time;

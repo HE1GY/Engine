@@ -36,9 +36,12 @@ namespace Engine
 			TimeStep ts = time - m_last_frame_time;
 			m_last_frame_time = time;
 
-			for (auto layer : m_layer_stack)
+			if (!m_is_minimized)
 			{
-				layer->OnUpdate(ts);
+				for (auto layer : m_layer_stack)
+				{
+					layer->OnUpdate(ts);
+				}
 			}
 
 			m_imGuiLayer->Begin();
@@ -54,9 +57,9 @@ namespace Engine
 	void Application::OnEvent(Event& event)
 	{
 		EventDispatcher ed(event);
-		std::function<bool(WindowClosed&)> on_window_closed =
-				std::bind(&Application::OnWindowsClosed, this, std::placeholders::_1);
-		ed.Dispatch<WindowClosed>(on_window_closed);
+
+		ed.Dispatch<WindowClosed>(BIND_EVENT_FUNC(Application::OnWindowsClosed));
+		ed.Dispatch<WindowResized>(BIND_EVENT_FUNC(Application::OnWindowsResized));
 
 		for (auto it = m_layer_stack.end(); it != m_layer_stack.begin();)
 		{
@@ -71,6 +74,18 @@ namespace Engine
 	{
 		m_is_running = false;
 		return true;
+	}
+	bool Application::OnWindowsResized(WindowResized& event)
+	{
+		if (event.get_height() == 0 || event.get_width() == 0)
+		{
+			m_is_minimized = true;
+			return false;
+		}
+		m_is_minimized = false;
+
+		Renderer::OnWindowResized(event.get_width(), event.get_height());
+		return false;
 	}
 	void Application::PushLayer(Layer* layer)
 	{

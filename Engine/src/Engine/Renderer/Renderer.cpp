@@ -32,5 +32,9 @@ namespace Engine
 		vertex_array->Bind();
 		RendererCommand::DrawIndex(vertex_array);
 	}
+	void Renderer::OnWindowResized(uint32_t width, uint32_t height)
+	{
+		RendererCommand::SetViewport(0, 0, width, height);
+	}
 
 } // namespace Engine
