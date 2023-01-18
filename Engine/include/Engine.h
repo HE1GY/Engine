@@ -31,5 +31,4 @@
 #include "Platform/OpenGL/OpenGLShader.h"
 //
 
-//---------------------------
-#include "Engine/Core/EntryPoint.h"
+

@@ -1,5 +1,7 @@
+#include "Engine/Core/EntryPoint.h"
 #include "Engine.h"
 
+#include "Sandbox2D.h"
 #include "glm/gtc/matrix_transform.hpp"
 
 class ExampleLayer : public Engine::Layer
@@ -81,21 +83,20 @@ public:
 
 		float x{ 0 };
 		float y{ 0 };
-		glm::vec3 square_pos;
+		glm::vec3 square_pos{ 0, 0, 0 };
 		for (int i = 0; i < 20; ++i)
 		{
 			y = i * 0.11;
 			for (int j = 0; j < 20; ++j)
 			{
+				x = j * 0.11;
+				square_pos = { x, y, 0 };
 				auto flat_shader = m_shader_lib.Get("flat_color");
 				flat_shader->Bind();
 				std::dynamic_pointer_cast<Engine::OpenGLShader>(flat_shader)->UploadUniform("u_color", m_uniform_color);
 				Engine::Renderer::Submit(flat_shader, m_vao_square,
 						glm::translate(glm::mat4(1.0f), square_pos) *
 								glm::scale(glm::mat4(1.0f), { 0.1f, 0.1f, 0.1f }));
-				x = j * 0.11;
-
-				square_pos = { x, y, 0 };
 			}
 		}
 
@@ -140,7 +141,8 @@ class SandBox : public Engine::Application
 public:
 	SandBox()
 	{
-		PushLayer(new ExampleLayer());
+		//PushLayer(new ExampleLayer());
+		PushLayer(new Sandbox2D());
 	}
 
 	~SandBox() override = default;
