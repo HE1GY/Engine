@@ -2,7 +2,7 @@
 
 #include "glad/glad.h"
 
-#include "Engine/Core.h"
+#include "Engine/Core/Core.h"
 #include "OpenGLVertexArray.h"
 
 namespace Engine

@@ -3,28 +3,29 @@ cmake_minimum_required(VERSION 3.23)
 project(Engine)
 
 
-add_library(Engine STATIC src/Engine/Application.h
+add_library(Engine STATIC
+        src/Engine/Core/Application.h
         include/Engine.h
-        src/Engine/Application.cpp
-        src/Engine/EntryPoint.h
-        src/Engine/Window.h
-        src/Engine/Log.h
-        src/Engine/Log.cpp
+        src/Engine/Core/Application.cpp
+        src/Engine/Core/EntryPoint.h
+        src/Engine/Core/Window.h
+        src/Engine/Core/Log.h
+        src/Engine/Core/Log.cpp
         src/Engine/Event/Event.h
         src/Engine/Event/KeyEvent.h
         src/Engine/Event/MouseEvent.h
         src/Engine/Event/ApplicationEvent.h
         src/Platform/Windows/WindowsWindow.h
         src/Platform/Windows/WindowsWindow.cpp
-        src/Engine/Layer.h
-        src/Engine/LayerStack.cpp
-        src/Engine/LayerStack.h
-        src/Engine/Core.h
-        src/Engine/Input.h
+        src/Engine/Core/Layer.h
+        src/Engine/Core/LayerStack.cpp
+        src/Engine/Core/LayerStack.h
+        src/Engine/Core/Core.h
+        src/Engine/Core/Input.h
         src/Platform/Windows/WindowsInput.cpp
         src/Platform/Windows/WindowsInput.h
-        src/Engine/KeyCode.h
-        src/Engine/MouseButtonCode.h
+        src/Engine/Core/KeyCode.h
+        src/Engine/Core/MouseButtonCode.h
         src/Platform/OpenGL/OpenGLContext.cpp
         src/Platform/OpenGL/OpenGLContext.h
         src/Engine/Renderer/Shader.cpp
@@ -49,7 +50,13 @@ add_library(Engine STATIC src/Engine/Application.h
         src/Engine/Core/TimeStep.h
         src/Platform/OpenGL/OpenGLShader.cpp
         src/Engine/ImGui/ImGuiLayer.cpp
-        src/Engine/ImGui/ImGuiLayer.h src/Engine/Renderer/Texture.cpp src/Engine/Renderer/Texture.h src/Platform/OpenGL/OpenGLTexture2D.cpp src/Platform/OpenGL/OpenGLTexture2D.h src/Engine/OrthographicCameraController.h src/Engine/OrthographicCameraController.cpp)
+        src/Engine/ImGui/ImGuiLayer.h
+        src/Engine/Renderer/Texture.cpp
+        src/Engine/Renderer/Texture.h
+        src/Platform/OpenGL/OpenGLTexture2D.cpp
+        src/Platform/OpenGL/OpenGLTexture2D.h
+        src/Engine/Renderer/OrthographicCameraController.h
+        src/Engine/Renderer/OrthographicCameraController.cpp src/Engine/Renderer/OrthographicCameraController.cpp)
 
 
 target_include_directories(Engine
