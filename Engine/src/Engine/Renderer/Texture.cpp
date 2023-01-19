@@ -18,4 +18,16 @@ namespace Engine
 			return nullptr;
 		}
 	}
+	Ref<Texture2D> Texture2D::Create(uint32_t width, uint32_t height)
+	{
+		switch (RendererAPI::get_renderer_API())
+		{
+		case RendererAPI::API::OpenGL:
+			return std::make_shared<OpenGLTexture2D>(width, height);
+
+		default:
+		CORE_ASSERT(false, "API = None");
+			return nullptr;
+		}
+	}
 }

@@ -19,7 +19,6 @@ public:
 private:
 	Engine::OrthographicCameraController m_camera_controller;
 	glm::vec4 m_uniform_color{ 0.2, 0.8, 0.8, 1 };
-	Engine::Ref<Engine::VertexArray> m_vao_square;
-	Engine::ShaderLibrary m_shader_lib;
+	Engine::Ref<Engine::Texture> m_texture;
 };
 

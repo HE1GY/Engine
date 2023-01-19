@@ -10,8 +10,9 @@ namespace Engine
 	{
 	public:
 		static void Init();
-		static void BeginScene(OrthographicCamera& camera);
+		static void ShutDown();
 
+		static void BeginScene(OrthographicCamera& camera);
 		static void EndScene();
 
 		static void OnWindowResized(uint32_t width, uint32_t height);

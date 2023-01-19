@@ -18,6 +18,11 @@ namespace Engine
 		{
 			return m_name;
 		};
+
+		virtual void SetMat4(const std::string& name, const glm::mat4& mat) override;
+		virtual void SetVec4(const std::string& name, const glm::vec4& vec) override;
+		virtual void SetInt(const std::string& name, const int value) override;
+
 		void UploadUniform(const std::string& name, float value);
 		void UploadUniform(const std::string& name, const glm::mat4& value);
 		void UploadUniform(const std::string& name, const glm::vec4& value);

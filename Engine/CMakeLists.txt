@@ -56,7 +56,7 @@ add_library(Engine STATIC
         src/Platform/OpenGL/OpenGLTexture2D.cpp
         src/Platform/OpenGL/OpenGLTexture2D.h
         src/Engine/Renderer/OrthographicCameraController.h
-        src/Engine/Renderer/OrthographicCameraController.cpp src/Engine/Renderer/OrthographicCameraController.cpp)
+        src/Engine/Renderer/OrthographicCameraController.cpp src/Engine/Renderer/OrthographicCameraController.cpp src/Engine/Renderer/Renderer2D.cpp src/Engine/Renderer/Renderer2D.h)
 
 
 target_include_directories(Engine

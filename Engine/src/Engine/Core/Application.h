@@ -35,6 +35,7 @@ namespace Engine
 
 		bool OnWindowsClosed(WindowClosed& event);
 		bool OnWindowsResized(WindowResized& event);
+		void ShutDown();
 
 		Ref<Window> m_window;
 

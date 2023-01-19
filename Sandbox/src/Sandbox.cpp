@@ -11,7 +11,7 @@ public:
 	ExampleLayer()
 			:Layer("ExampleLayer"), m_camera_controller(1280.0f / 720.0f, true)
 	{
-		m_shader_lib.Load("texture", "../../Sandbox/assets/shaders/texture2D_shader.glsl");
+		m_shader_lib.Load("texture", "../../Sandbox/assets/shaders/default_2D_shader.glsl");
 		m_shader_lib.Load("flat_color", "../../Sandbox/assets/shaders/uniform_color_shader.glsl");
 
 		m_texture_2 = Engine::Texture2D::Create("../../Sandbox/assets/textures/ILTQq.png");
