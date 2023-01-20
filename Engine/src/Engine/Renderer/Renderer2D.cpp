@@ -79,6 +79,22 @@ namespace Engine
 
 		RendererCommand::DrawIndex(s_data->default_vao);
 	}
+	void Renderer2D::DrawQuad(const glm::vec3& position, const glm::vec2& scale, const float rotation,
+			const glm::vec4& color)
+	{
+		PROFILER_FUNCTION();
+
+		s_data->default_texture->Bind(0);
+		s_data->default_vao->Bind();
+
+		s_data->default_shader->SetMat4("u_model",
+				glm::translate(glm::mat4(1.0f), position) * glm::scale(glm::mat4(1.0f), { scale.x, scale.y, 1 })
+						* glm::rotate(glm::mat4(1.0f), glm::radians(rotation), glm::vec3(0, 0, 1)));
+
+		s_data->default_shader->SetVec4("u_color", color);
+
+		RendererCommand::DrawIndex(s_data->default_vao);
+	}
 
 	void Engine::Renderer2D::DrawQuad(const glm::vec2& position, const glm::vec2& scale,
 			const Engine::Ref<Engine::Texture>& texture, const glm::vec4& color)
@@ -102,4 +118,5 @@ namespace Engine
 
 		RendererCommand::DrawIndex(s_data->default_vao);
 	}
+
 }

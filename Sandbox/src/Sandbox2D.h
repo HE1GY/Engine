@@ -1,4 +1,5 @@
 #include "Engine.h"
+#include "FirstGame/RendererSys.h"
 
 class Sandbox2D : public Engine::Layer
 {
@@ -20,5 +21,8 @@ private:
 	Engine::OrthographicCameraController m_camera_controller;
 	glm::vec4 m_uniform_color{ 0.2, 0.8, 0.8, 1 };
 	Engine::Ref<Engine::Texture> m_texture;
+
+	RendererSys m_renderer_sys;
+	Engine::Ref<Quad> m_main_quad;
 };
 

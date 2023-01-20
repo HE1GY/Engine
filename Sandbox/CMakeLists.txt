@@ -2,7 +2,12 @@ cmake_minimum_required(VERSION 3.23)
 
 project(Sandbox)
 
-add_executable(Sandbox src/Sandbox.cpp src/Sandbox2D.cpp src/Sandbox2D.h)
+add_executable(Sandbox src/Sandbox.cpp
+        src/Sandbox2D.cpp src/Sandbox2D.h
+        src/FirstGame/Quad.h
+        src/FirstGame/Transform.h
+        src/FirstGame/Quad.cpp
+        src/FirstGame/RendererSys.h src/FirstGame/RendererSys.cpp)
 
 
 if (DEBUG)
