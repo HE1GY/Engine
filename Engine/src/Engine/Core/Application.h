@@ -45,6 +45,6 @@ namespace Engine
 		bool m_is_minimized{ false };
 		LayerStack m_layer_stack;
 
-		float m_last_frame_time;
+		float m_last_frame_time{ 0 };
 	};
 } // namespace Engine

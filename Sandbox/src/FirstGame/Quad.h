@@ -1,21 +1,12 @@
 #pragma once
+#include "glm/glm.hpp"
 
-#include "Transform.h"
-
-class Quad
+struct Quad
 {
-public:
-	Quad(const glm::vec4& color, const Transform transform = {});
-
-	glm::vec4& get_color()
-	{
-		return m_color;
-	};
-	Transform& get_transform()
-	{
-		return m_transform;
-	};
-private:
-	Transform m_transform;
-	glm::vec4 m_color;
+	glm::vec3 position;
+	glm::vec2 scale;
+	float rotation;
+	glm::vec4 color;
 };
+
+

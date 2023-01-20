@@ -36,7 +36,7 @@ namespace Engine
 
 		while (m_is_running)
 		{
-			float time = (float)glfwGetTime(); // TODO glfw dep
+			float time = (float)glfwGetTime();// TODO glfw dep
 			TimeStep ts = time - m_last_frame_time;
 			m_last_frame_time = time;
 
