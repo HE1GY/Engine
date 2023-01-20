@@ -23,6 +23,8 @@ namespace Engine
 	OpenGLShader::OpenGLShader(const std::string& name, const std::string& vertex_src, const std::string& fragment_src)
 			:m_name{ name }
 	{
+		PROFILER_FUNCTION();
+
 		std::unordered_map<GLuint, std::string> shaders;
 		shaders[GL_VERTEX_SHADER] = vertex_src;
 		shaders[GL_FRAGMENT_SHADER] = fragment_src;
@@ -31,6 +33,8 @@ namespace Engine
 
 	OpenGLShader::OpenGLShader(const std::string& src_path)
 	{
+		PROFILER_FUNCTION();
+
 		std::string src = ReadFile(src_path);
 		auto shaders = PreProcess(src);
 		Compile(shaders);
@@ -43,11 +47,15 @@ namespace Engine
 	}
 	OpenGLShader::~OpenGLShader()
 	{
+		PROFILER_FUNCTION();
+
 		glDeleteProgram(m_renderer_id);
 	}
 
 	std::string OpenGLShader::ReadFile(const std::string& path)
 	{
+		PROFILER_FUNCTION();
+
 		std::ifstream in(path.c_str(), std::ios_base::binary | std::ios_base::in);
 		std::string result;
 		if (in.is_open())
@@ -65,6 +73,8 @@ namespace Engine
 	}
 	std::unordered_map<GLenum, std::string> OpenGLShader::PreProcess(const std::string& src)
 	{
+		PROFILER_FUNCTION();
+
 		std::unordered_map<GLenum, std::string> shaderSources;
 
 		const char* typeToken = "#type";
@@ -91,6 +101,8 @@ namespace Engine
 	}
 	void OpenGLShader::Compile(std::unordered_map<GLenum, std::string>& shaders)
 	{
+		PROFILER_FUNCTION();
+
 		m_renderer_id = glCreateProgram();
 		CORE_ASSERT((shaders.size() >= 2), "too few shaders");
 		std::array<GLuint, 2> shaders_id;
@@ -193,18 +205,26 @@ namespace Engine
 
 	void OpenGLShader::Bind() const
 	{
+		PROFILER_FUNCTION();
+
 		glUseProgram(m_renderer_id);
 	}
 	void OpenGLShader::SetMat4(const std::string& name, const glm::mat4& mat)
 	{
+		PROFILER_FUNCTION();
+
 		UploadUniform(name, mat);
 	}
 	void OpenGLShader::SetVec4(const std::string& name, const glm::vec4& vec)
 	{
+		PROFILER_FUNCTION();
+
 		UploadUniform(name, vec);
 	}
 	void OpenGLShader::SetInt(const std::string& name, const int value)
 	{
+		PROFILER_FUNCTION();
+
 		UploadUniform(name, value);
 	}
 } // namespace Engine

@@ -1,4 +1,5 @@
 #pragma once
+#include "Engine/Core/Core.h"
 
 namespace Engine
 {
@@ -64,7 +65,7 @@ namespace Engine
 		{
 		};
 
-		static VertexBuffer* Create(void* data, uint32_t size);
+		static Ref<VertexBuffer> Create(void* data, uint32_t size);
 
 		virtual void Bind() = 0;
 		virtual void UnBind() = 0;
@@ -81,7 +82,7 @@ namespace Engine
 		{
 		};
 
-		static IndexBuffer* Create(uint32_t* data, uint32_t count);
+		static Ref<IndexBuffer> Create(uint32_t* data, uint32_t count);
 
 		virtual void Bind() = 0;
 		virtual void UnBind() = 0;

@@ -19,12 +19,10 @@ namespace Engine
 	void LayerStack::PushLayer(Engine::Layer* layer)
 	{
 		m_layers.emplace(m_layers.begin() + m_position++, layer);
-		layer->OnAttach();
 	}
 	void LayerStack::PushOverlay(Engine::Layer* layer)
 	{
 		m_layers.push_back(layer);
-		layer->OnAttach();
 	}
 	void LayerStack::EraseLayer(Engine::Layer* layer)
 	{

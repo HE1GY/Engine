@@ -25,6 +25,7 @@
 #include "Engine/Renderer/OrthographicCameraController.h"
 
 #include "Engine/Core/Core.h"
+#include "Engine/Debug/Instrumentor.h"
 
 // trash
 //

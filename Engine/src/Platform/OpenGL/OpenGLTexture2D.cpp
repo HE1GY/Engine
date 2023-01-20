@@ -9,10 +9,15 @@ namespace Engine
 	OpenGLTexture2D::OpenGLTexture2D(const std::string& path)
 			:m_path{ path }
 	{
+		PROFILER_FUNCTION();
 
 		stbi_set_flip_vertically_on_load(1);
 		int width, height, channels;
-		stbi_uc* data = stbi_load(path.c_str(), &width, &height, &channels, 0);
+		stbi_uc* data = nullptr;
+		{
+			PROFILER_SCOPE("stbi_load");
+			data = stbi_load(path.c_str(), &width, &height, &channels, 0);
+		}
 		if (!data)
 		{
 			CORE_ERROR("Failed to load image!");
@@ -58,6 +63,8 @@ namespace Engine
 	OpenGLTexture2D::OpenGLTexture2D(uint32_t width, uint32_t height)
 			:m_width{ width }, m_height{ height }
 	{
+		PROFILER_FUNCTION();
+
 		m_internal_format = GL_RGBA8;
 		m_data_format = GL_RGBA;
 
@@ -75,14 +82,20 @@ namespace Engine
 	}
 	OpenGLTexture2D::~OpenGLTexture2D() noexcept
 	{
+		PROFILER_FUNCTION();
+
 		glDeleteTextures(1, &m_renderer_id);
 	}
 	void OpenGLTexture2D::Bind(uint32_t slot)
 	{
+		PROFILER_FUNCTION();
+
 		glBindTextureUnit(slot, m_renderer_id);
 	}
 	void OpenGLTexture2D::SetData(void* data, uint32_t size)
 	{
+		PROFILER_FUNCTION();
+
 		uint32_t bpp = m_data_format == GL_RGBA ? 4 : 3;
 		CORE_ASSERT(bpp * m_width * m_height == size, "Data must be entire texture!");
 		glTextureSubImage2D(m_renderer_id, 0, 0, 0, m_width, m_height, m_data_format, GL_UNSIGNED_BYTE, data);

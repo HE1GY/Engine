@@ -56,7 +56,12 @@ add_library(Engine STATIC
         src/Platform/OpenGL/OpenGLTexture2D.cpp
         src/Platform/OpenGL/OpenGLTexture2D.h
         src/Engine/Renderer/OrthographicCameraController.h
-        src/Engine/Renderer/OrthographicCameraController.cpp src/Engine/Renderer/OrthographicCameraController.cpp src/Engine/Renderer/Renderer2D.cpp src/Engine/Renderer/Renderer2D.h)
+        src/Engine/Renderer/OrthographicCameraController.cpp
+        src/Engine/Renderer/OrthographicCameraController.cpp
+        src/Engine/Renderer/Renderer2D.cpp
+        src/Engine/Renderer/Renderer2D.h
+        src/Engine/Debug/Instrumentor.h
+        )
 
 
 target_include_directories(Engine
@@ -66,10 +71,13 @@ target_include_directories(Engine
 
 target_precompile_headers(Engine PUBLIC src/pch.h)
 
-
 if (DEBUG)
     add_compile_definitions(DEBUG)
 endif (DEBUG)
+
+if (PROFILER)
+    add_compile_definitions(PROFILER)
+endif (PROFILER)
 
 if (RELEASE)
     add_compile_definitions(RELEASE)
@@ -82,7 +90,6 @@ endif (MSVC)
 if (UNIX AND NOT APPLE)
     add_compile_definitions(LINUX)
 endif ()
-
 
 
 

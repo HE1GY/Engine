@@ -16,6 +16,8 @@ namespace Engine
 	}
 	void OpenGLContext::Init()
 	{
+		PROFILER_FUNCTION();
+
 		glfwMakeContextCurrent(m_window_handler);
 		int status = gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
 		ASSERT(status);
@@ -26,6 +28,8 @@ namespace Engine
 	};
 	void OpenGLContext::SwapBuffer()
 	{
+		PROFILER_FUNCTION();
+
 		glfwSwapBuffers(m_window_handler);
 	};
 } // namespace Engine

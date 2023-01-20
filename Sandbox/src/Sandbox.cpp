@@ -24,7 +24,7 @@ public:
 					-0.5, -0.5, 0, 0, 0, 0.5, -0.5, 0, 1, 0, 0.5, 0.5, 0, 1, 1, -0.5, 0.5, 0, 0, 1,
 			};
 			Engine::Ref<Engine::VertexBuffer> vo_data;
-			vo_data.reset(Engine::VertexBuffer::Create(data, sizeof(data)));
+			vo_data = Engine::VertexBuffer::Create(data, sizeof(data));
 			vo_data->Bind();
 
 			vo_data->set_layout({
@@ -36,7 +36,7 @@ public:
 					0, 1, 2, 2, 3, 0,
 			};
 			Engine::Ref<Engine::IndexBuffer> vo_index;
-			vo_index.reset(Engine::IndexBuffer::Create(elements, sizeof(elements) / sizeof(uint32_t)));
+			vo_index = Engine::IndexBuffer::Create(elements, sizeof(elements) / sizeof(uint32_t));
 			vo_index->Bind();
 
 			m_vao_square_texture2d->AddVertexBuffer(vo_data);
@@ -51,14 +51,14 @@ public:
 					-0.5, -0.5, 0, 0.5, -0.5, 0, 0.5, 0.5, 0, -0.5, 0.5, 0,
 			};
 			Engine::Ref<Engine::VertexBuffer> vo_data_box;
-			vo_data_box.reset(Engine::VertexBuffer::Create(pos_box, sizeof(pos_box)));
+			vo_data_box = Engine::VertexBuffer::Create(pos_box, sizeof(pos_box));
 			vo_data_box->Bind();
 
 			vo_data_box->set_layout({{ "a_position", Engine::ShaderDataType::Float3, false }});
 
 			uint32_t elements_box[] = { 0, 1, 2, 2, 3, 0 };
 			Engine::Ref<Engine::IndexBuffer> vo_index_box;
-			vo_index_box.reset(Engine::IndexBuffer::Create(elements_box, sizeof(elements_box) / sizeof(uint32_t)));
+			vo_index_box = Engine::IndexBuffer::Create(elements_box, sizeof(elements_box) / sizeof(uint32_t));
 			vo_index_box->Bind();
 
 			m_vao_square->AddVertexBuffer(vo_data_box);
