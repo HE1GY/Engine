@@ -1,4 +1,6 @@
 build
+debug-build
+release-build
 .vs
 out
 .idea
