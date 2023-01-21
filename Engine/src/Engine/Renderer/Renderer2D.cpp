@@ -11,7 +11,7 @@ namespace Engine
 	{
 		PROFILER_FUNCTION();
 
-		s_data->default_shader = Shader::Create("../../Sandbox/assets/shaders/default_2D_shader.glsl");
+		s_data->default_shader = Shader::Create("../../../Sandbox/assets/shaders/default_2D_shader.glsl");
 
 		s_data->default_texture = Texture2D::Create(1, 1);
 		uint32_t data = 0xffffffff;
