@@ -10,8 +10,7 @@ Sandbox2D::Sandbox2D()
 
 void Sandbox2D::OnAttach()
 {
-	m_texture = Engine::Texture2D::Create("../../Sandbox/assets/textures/chess.png");
-	srand(time(NULL));
+	m_texture = Engine::Texture2D::Create("../../../Sandbox/assets/textures/chess.png");
 }
 
 void Sandbox2D::OnDetach()
