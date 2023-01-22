@@ -10,18 +10,14 @@
 
 namespace Engine
 {
-	struct Renderer2DData
-	{
-		Ref<Shader> default_shader;
-		Ref<Texture> default_texture;
-		Ref<VertexArray> default_vao;
-	};
+	struct Renderer2DData;
 
 	class Renderer2D
 	{
 	public :
 		static void Init();
 		static void ShutDown();
+		static void Flush();
 
 		static void BeginScene(OrthographicCamera& camera);
 		static void EndScene();
@@ -36,6 +32,6 @@ namespace Engine
 		static void DrawQuad(const glm::vec3& position, const glm::vec2& scale, const Ref<Texture>& texture,
 				const glm::vec4& color = { 1, 1, 1, 1 });
 	private:
-		static Renderer2DData* s_data;
+		static Renderer2DData s_data;
 	};
 }

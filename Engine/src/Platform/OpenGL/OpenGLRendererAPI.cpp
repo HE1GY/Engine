@@ -20,11 +20,12 @@ namespace Engine
 		glClearColor(color.r, color.g, color.b, color.a);
 	}
 
-	void OpenGLRendererAPI::DrawIndex(Ref<VertexArray> vertex_array)
+	void OpenGLRendererAPI::DrawIndex(Ref<VertexArray> vertex_array, uint32_t index_count)
 	{
 		PROFILER_FUNCTION();
 
-		glDrawElements(GL_TRIANGLES, vertex_array->get_indexBuffer()->get_count(), GL_UNSIGNED_INT, nullptr);
+		uint32_t count = index_count ? index_count : vertex_array->get_indexBuffer()->get_count();
+		glDrawElements(GL_TRIANGLES, count, GL_UNSIGNED_INT, nullptr);
 	}
 	void OpenGLRendererAPI::Clear()
 	{

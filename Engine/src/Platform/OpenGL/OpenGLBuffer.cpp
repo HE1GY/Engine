@@ -2,6 +2,16 @@
 
 namespace Engine
 {
+	OpenGLVertexBuffer::OpenGLVertexBuffer(uint32_t size)
+	{
+		PROFILER_FUNCTION();
+
+		glCreateBuffers(1, &m_renderer_id);
+		glBindBuffer(GL_ARRAY_BUFFER, m_renderer_id);
+
+		glBufferData(GL_ARRAY_BUFFER, size, nullptr, GL_DYNAMIC_DRAW);
+	}
+
 	OpenGLVertexBuffer::OpenGLVertexBuffer(void* data, uint32_t size)
 	{
 		PROFILER_FUNCTION();
@@ -32,6 +42,15 @@ namespace Engine
 
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 	}
+
+	void OpenGLVertexBuffer::SetData(void* data, int32_t size)
+	{
+		PROFILER_FUNCTION();
+
+		glBindBuffer(GL_ARRAY_BUFFER, m_renderer_id);
+		glBufferSubData(GL_ARRAY_BUFFER, 0, size, data);
+	}
+
 	void OpenGLVertexBuffer::set_layout(BufferLayout layout)
 	{
 		m_layout = layout;
@@ -40,6 +59,7 @@ namespace Engine
 	{
 		return m_layout;
 	}
+
 
 ///////////////////////////////////////////////////
 // indexBuff//

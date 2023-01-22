@@ -40,7 +40,7 @@ public:
 			vo_index->Bind();
 
 			m_vao_square_texture2d->AddVertexBuffer(vo_data);
-			m_vao_square_texture2d->set_indexBuffer(vo_index);
+			m_vao_square_texture2d->SetIndexBuffer(vo_index);
 		}
 		m_vao_square_texture2d->UnBind();
 
@@ -62,7 +62,7 @@ public:
 			vo_index_box->Bind();
 
 			m_vao_square->AddVertexBuffer(vo_data_box);
-			m_vao_square->set_indexBuffer(vo_index_box);
+			m_vao_square->SetIndexBuffer(vo_index_box);
 		}
 		m_vao_square->UnBind();
 	}

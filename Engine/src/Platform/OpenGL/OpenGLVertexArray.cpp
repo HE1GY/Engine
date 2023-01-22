@@ -80,7 +80,7 @@ namespace Engine
 		glBindVertexArray(0);
 	}
 
-	void OpenGLVertexArray::set_indexBuffer(Ref<IndexBuffer> indexBuffer)
+	void OpenGLVertexArray::SetIndexBuffer(Ref<IndexBuffer> indexBuffer)
 	{
 		PROFILER_FUNCTION();
 

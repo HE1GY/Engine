@@ -10,9 +10,9 @@ namespace Engine
 		{
 			m_renderer_API->Init();
 		}
-		inline static void DrawIndex(std::shared_ptr<VertexArray> vertex_array)
+		inline static void DrawIndex(std::shared_ptr<VertexArray> vertex_array, uint32_t index_count = 0)
 		{
-			m_renderer_API->DrawIndex(vertex_array);
+			m_renderer_API->DrawIndex(vertex_array, index_count);
 		}
 		inline static void Clear()
 		{

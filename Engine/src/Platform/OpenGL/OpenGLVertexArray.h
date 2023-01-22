@@ -12,7 +12,7 @@ namespace Engine
 		virtual void UnBind() override;
 
 		virtual void AddVertexBuffer(std::shared_ptr<VertexBuffer> vertexBuffer) override;
-		virtual void set_indexBuffer(std::shared_ptr<IndexBuffer> indexBuffer) override;
+		virtual void SetIndexBuffer(std::shared_ptr<IndexBuffer> indexBuffer) override;
 		virtual std::shared_ptr<IndexBuffer> get_indexBuffer() override;
 
 	private:

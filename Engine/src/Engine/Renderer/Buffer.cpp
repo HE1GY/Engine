@@ -127,6 +127,19 @@ namespace Engine
 		}
 	}
 
+	Ref<VertexBuffer> VertexBuffer::Create(uint32_t size)
+	{
+		switch (RendererAPI::get_renderer_API())
+		{
+		case RendererAPI::API::OpenGL:
+			return std::make_shared<OpenGLVertexBuffer>(size);
+
+		default:
+		CORE_ASSERT(false, "API = None");
+			return nullptr;
+		}
+	}
+
 	Ref<VertexBuffer> VertexBuffer::Create(void* data, uint32_t size)
 	{
 		switch (RendererAPI::get_renderer_API())

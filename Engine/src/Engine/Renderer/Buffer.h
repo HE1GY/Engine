@@ -65,10 +65,13 @@ namespace Engine
 		{
 		};
 
+		static Ref<VertexBuffer> Create(uint32_t size);
 		static Ref<VertexBuffer> Create(void* data, uint32_t size);
 
 		virtual void Bind() = 0;
 		virtual void UnBind() = 0;
+
+		virtual void SetData(void* data, int32_t size) = 0;
 
 		virtual void set_layout(BufferLayout layout) = 0;
 		virtual BufferLayout& get_layout() = 0;

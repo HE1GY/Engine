@@ -4,61 +4,106 @@
 
 namespace Engine
 {
+	struct QuadVertex
+	{
+		glm::vec3 position;
+		glm::vec4 color;
+		glm::vec2 tex_coord;
+	};
 
-	Renderer2DData* Renderer2D::s_data = new Renderer2DData();
+	struct Renderer2DData
+	{
+		const int32_t k_max_quads = 10000;
+		const int32_t k_max_vertices = k_max_quads * 4;
+		const int32_t k_max_indices = k_max_quads * 6;
+
+		Ref<Shader> default_shader;
+		Ref<Texture> default_texture;
+		Ref<VertexArray> default_vao;
+		Ref<VertexBuffer> default_vb;
+
+		uint32_t quad_index_count{ 0 };
+		QuadVertex* quad_vertex_buffer_base{ nullptr };
+		QuadVertex* quad_vertex_buffer_ptr{ nullptr };
+	};
+
+	Renderer2DData Renderer2D::s_data;
 
 	void Engine::Renderer2D::Init()
 	{
 		PROFILER_FUNCTION();
 
-		s_data->default_shader = Shader::Create("../../../Sandbox/assets/shaders/default_2D_shader.glsl");
+		s_data.default_shader = Shader::Create("../../../Sandbox/assets/shaders/default_2D_shader.glsl");
+		s_data.default_shader->Bind();
 
-		s_data->default_texture = Texture2D::Create(1, 1);
-		uint32_t data = 0xffffffff;
-		s_data->default_texture->SetData(&data, sizeof(data));
+		s_data.default_texture = Texture2D::Create(1, 1);
+		uint32_t tex_data = 0xffffffff;
+		s_data.default_texture->SetData(&tex_data, sizeof(tex_data));
+		s_data.default_texture->Bind();
 
-		s_data->default_vao = VertexArray::Create();
-		s_data->default_vao->Bind();
-		float pos_box[] = {
-				-0.5, -0.5, 0, 0, 0,
-				0.5, -0.5, 0, 1, 0,
-				0.5, 0.5, 0, 1, 1,
-				-0.5, 0.5, 0, 0, 1,
-		};
-		Engine::Ref<Engine::VertexBuffer> vo_data_box;
-		vo_data_box = Engine::VertexBuffer::Create(pos_box, sizeof(pos_box));
-		vo_data_box->Bind();
+		s_data.default_vao = VertexArray::Create();
+		s_data.default_vao->Bind();
 
-		vo_data_box->set_layout({
+		s_data.default_vb = Engine::VertexBuffer::Create(s_data.k_max_vertices * sizeof(QuadVertex));
+		s_data.default_vb->Bind();
+		s_data.default_vb->set_layout({
 				{ "a_position", Engine::ShaderDataType::Float3, false },
+				{ "a_color", Engine::ShaderDataType::Float4, false },
 				{ "a_tex_coord", Engine::ShaderDataType::Float2, false }
 		});
+		s_data.default_vao->AddVertexBuffer(s_data.default_vb);
 
-		uint32_t elements_box[] = { 0, 1, 2, 2, 3, 0 };
-		Engine::Ref<Engine::IndexBuffer> vo_index_box;
-		vo_index_box = Engine::IndexBuffer::Create(elements_box, sizeof(elements_box) / sizeof(uint32_t));
+		s_data.quad_vertex_buffer_base = new QuadVertex[s_data.k_max_vertices];
+
+		uint32_t* quad_indices = new uint32_t[s_data.k_max_indices];
+
+		uint32_t offset = 0;
+		for (uint32_t i = 0; i < s_data.k_max_indices; i += 6)
+		{
+			quad_indices[i + 0] = offset + 0;
+			quad_indices[i + 1] = offset + 1;
+			quad_indices[i + 2] = offset + 2;
+
+			quad_indices[i + 3] = offset + 2;
+			quad_indices[i + 4] = offset + 3;
+			quad_indices[i + 5] = offset + 0;
+
+			offset += 4;
+		}
+
+		Engine::Ref<Engine::IndexBuffer> vo_index_box = Engine::IndexBuffer::Create(quad_indices, s_data.k_max_indices);
 		vo_index_box->Bind();
-
-		s_data->default_vao->AddVertexBuffer(vo_data_box);
-		s_data->default_vao->set_indexBuffer(vo_index_box);
+		s_data.default_vao->SetIndexBuffer(vo_index_box);
+		delete[] quad_indices;
 	}
 
 	void Renderer2D::ShutDown()
 	{
-		delete s_data;
 	}
 
 	void Renderer2D::BeginScene(OrthographicCamera& camera)
 	{
 		PROFILER_FUNCTION();
 
-		s_data->default_shader->Bind();
-		s_data->default_shader->SetMat4("u_view_projection", camera.get_view_projection_matrix());
+		s_data.default_shader->Bind();
+		s_data.default_shader->SetMat4("u_view_projection", camera.get_view_projection_matrix());
+
+		s_data.quad_vertex_buffer_ptr = s_data.quad_vertex_buffer_base;
+
+		s_data.quad_index_count = 0;
 	}
 	void Renderer2D::EndScene()
 	{
 		PROFILER_FUNCTION();
+
+		s_data.default_vb->SetData(s_data.quad_vertex_buffer_base, s_data.quad_index_count * sizeof(QuadVertex));
+		Flush();
 	}
+	void Renderer2D::Flush()
+	{
+		RendererCommand::DrawIndex(s_data.default_vao, s_data.quad_index_count);
+	}
+
 	void Engine::Renderer2D::DrawQuad(const glm::vec2& position, const glm::vec2& scale, const glm::vec4& color)
 	{
 		PROFILER_FUNCTION();
@@ -69,32 +114,52 @@ namespace Engine
 	{
 		PROFILER_FUNCTION();
 
-		s_data->default_texture->Bind(0);
-		s_data->default_vao->Bind();
+		s_data.quad_vertex_buffer_ptr->position = position;
+		s_data.quad_vertex_buffer_ptr->color = color;
+		s_data.quad_vertex_buffer_ptr->tex_coord = { 0, 0 };
+		s_data.quad_vertex_buffer_ptr++;
 
-		s_data->default_shader->SetMat4("u_model",
+		s_data.quad_vertex_buffer_ptr->position = { position.x + scale.x, position.y, position.z };
+		s_data.quad_vertex_buffer_ptr->color = color;
+		s_data.quad_vertex_buffer_ptr->tex_coord = { 1, 0 };
+		s_data.quad_vertex_buffer_ptr++;
+
+		s_data.quad_vertex_buffer_ptr->position = { position.x + scale.x, position.y + scale.y,
+													position.z };
+		s_data.quad_vertex_buffer_ptr->color = color;
+		s_data.quad_vertex_buffer_ptr->tex_coord = { 1, 1 };
+		s_data.quad_vertex_buffer_ptr++;
+
+		s_data.quad_vertex_buffer_ptr->position = { position.x, position.y + scale.y, position.z };
+		s_data.quad_vertex_buffer_ptr->color = color;
+		s_data.quad_vertex_buffer_ptr->tex_coord = { 0, 1 };
+		s_data.quad_vertex_buffer_ptr++;
+		s_data.quad_index_count += 6;
+
+		/*s_data.default_texture->Bind(0);
+		s_data.default_vao->Bind();
+		s_data.default_shader->SetMat4("u_model",
 				glm::translate(glm::mat4(1.0f), position) * glm::scale(glm::mat4(1.0f), { scale.x, scale.y, 1 }));
 
-		s_data->default_shader->SetVec4("u_color", color);
-
-		RendererCommand::DrawIndex(s_data->default_vao);
+		RendererCommand::DrawIndex(s_data.default_vao);*/
 	}
+
 	void Renderer2D::DrawQuad(const glm::vec3& position, const glm::vec2& scale, const float rotation,
 			const glm::vec4& color)
 	{
 		PROFILER_FUNCTION();
 
-		s_data->default_texture->Bind(0);
-		s_data->default_vao->Bind();
+		s_data.default_texture->Bind(0);
+		s_data.default_vao->Bind();
 
-		s_data->default_shader->SetMat4("u_model",
+		s_data.default_shader->SetMat4("u_model",
 				glm::translate(glm::mat4(1.0f), position)
 						* glm::rotate(glm::mat4(1.0f), glm::radians(rotation), glm::vec3(0, 0, 1))
 						* glm::scale(glm::mat4(1.0f), { scale.x, scale.y, 1 }));
 
-		s_data->default_shader->SetVec4("u_color", color);
+		s_data.default_shader->SetVec4("u_color", color);
 
-		RendererCommand::DrawIndex(s_data->default_vao);
+		RendererCommand::DrawIndex(s_data.default_vao);
 	}
 
 	void Engine::Renderer2D::DrawQuad(const glm::vec2& position, const glm::vec2& scale,
@@ -109,15 +174,15 @@ namespace Engine
 	{
 		PROFILER_FUNCTION();
 
-		s_data->default_vao->Bind();
+		s_data.default_vao->Bind();
 
-		s_data->default_shader->SetMat4("u_model",
+		s_data.default_shader->SetMat4("u_model",
 				glm::translate(glm::mat4(1.0f), position) * glm::scale(glm::mat4(1.0f), { scale.x, scale.y, 1 }));
 		texture->Bind(0);
 
-		s_data->default_shader->SetVec4("u_color", color);
+		s_data.default_shader->SetVec4("u_color", color);
 
-		RendererCommand::DrawIndex(s_data->default_vao);
+		RendererCommand::DrawIndex(s_data.default_vao);
 	}
 
 }
