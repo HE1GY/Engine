@@ -203,6 +203,13 @@ namespace Engine
 		glUniform1d(location, value);
 	}
 
+	void OpenGLShader::UploadUniform(const std::string& name, const int* value, uint32_t count)
+	{
+		ASSERT(m_renderer_id);
+		GLint location = glGetUniformLocation(m_renderer_id, name.c_str());
+		glUniform1iv(location, count, value);
+	}
+
 	void OpenGLShader::Bind() const
 	{
 		PROFILER_FUNCTION();
@@ -227,4 +234,11 @@ namespace Engine
 
 		UploadUniform(name, value);
 	}
+	void OpenGLShader::SetIntArray(const std::string& name, const int* value, uint32_t count)
+	{
+		PROFILER_FUNCTION();
+
+		UploadUniform(name, value, count);
+	}
+
 } // namespace Engine

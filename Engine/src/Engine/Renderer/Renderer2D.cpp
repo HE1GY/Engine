@@ -9,13 +9,15 @@ namespace Engine
 		glm::vec3 position;
 		glm::vec4 color;
 		glm::vec2 tex_coord;
+		float texture_slot;
 	};
 
 	struct Renderer2DData
 	{
-		const int32_t k_max_quads = 10000;
-		const int32_t k_max_vertices = k_max_quads * 4;
-		const int32_t k_max_indices = k_max_quads * 6;
+		const uint32_t k_max_quads = 10000;
+		const uint32_t k_max_vertices = k_max_quads * 4;
+		const uint32_t k_max_indices = k_max_quads * 6;
+		static const uint32_t k_max_texture_slot = 32;//TODO renderer prop
 
 		Ref<Shader> default_shader;
 		Ref<Texture> default_texture;
@@ -25,6 +27,9 @@ namespace Engine
 		uint32_t quad_index_count{ 0 };
 		QuadVertex* quad_vertex_buffer_base{ nullptr };
 		QuadVertex* quad_vertex_buffer_ptr{ nullptr };
+
+		std::array<Ref<Texture>, k_max_texture_slot> textures{ 0 };
+		uint32_t texture_index{ 1 };
 	};
 
 	Renderer2DData Renderer2D::s_data;
@@ -49,7 +54,8 @@ namespace Engine
 		s_data.default_vb->set_layout({
 				{ "a_position", Engine::ShaderDataType::Float3, false },
 				{ "a_color", Engine::ShaderDataType::Float4, false },
-				{ "a_tex_coord", Engine::ShaderDataType::Float2, false }
+				{ "a_tex_coord", Engine::ShaderDataType::Float2, false },
+				{ "a_tex_slot", Engine::ShaderDataType::Float, false }
 		});
 		s_data.default_vao->AddVertexBuffer(s_data.default_vb);
 
@@ -75,6 +81,15 @@ namespace Engine
 		vo_index_box->Bind();
 		s_data.default_vao->SetIndexBuffer(vo_index_box);
 		delete[] quad_indices;
+
+		s_data.textures[0] = s_data.default_texture;
+
+		int sampler[s_data.k_max_texture_slot];
+		for (int i = 0; i < s_data.k_max_texture_slot; ++i)
+		{
+			sampler[i] = i;
+		}
+		s_data.default_shader->SetIntArray("u_texture2D", sampler, s_data.k_max_texture_slot);
 	}
 
 	void Renderer2D::ShutDown()
@@ -101,6 +116,11 @@ namespace Engine
 	}
 	void Renderer2D::Flush()
 	{
+		for (int i = 0; i < s_data.texture_index; ++i)
+		{
+			s_data.textures[i]->Bind(i);
+		}
+
 		RendererCommand::DrawIndex(s_data.default_vao, s_data.quad_index_count);
 	}
 
@@ -113,27 +133,33 @@ namespace Engine
 	void Engine::Renderer2D::DrawQuad(const glm::vec3& position, const glm::vec2& scale, const glm::vec4& color)
 	{
 		PROFILER_FUNCTION();
+		const float texture_slot{ 0.0f };
 
 		s_data.quad_vertex_buffer_ptr->position = position;
 		s_data.quad_vertex_buffer_ptr->color = color;
 		s_data.quad_vertex_buffer_ptr->tex_coord = { 0, 0 };
+		s_data.quad_vertex_buffer_ptr->texture_slot = texture_slot;
 		s_data.quad_vertex_buffer_ptr++;
 
 		s_data.quad_vertex_buffer_ptr->position = { position.x + scale.x, position.y, position.z };
 		s_data.quad_vertex_buffer_ptr->color = color;
 		s_data.quad_vertex_buffer_ptr->tex_coord = { 1, 0 };
+		s_data.quad_vertex_buffer_ptr->texture_slot = texture_slot;
 		s_data.quad_vertex_buffer_ptr++;
 
 		s_data.quad_vertex_buffer_ptr->position = { position.x + scale.x, position.y + scale.y,
 													position.z };
 		s_data.quad_vertex_buffer_ptr->color = color;
 		s_data.quad_vertex_buffer_ptr->tex_coord = { 1, 1 };
+		s_data.quad_vertex_buffer_ptr->texture_slot = texture_slot;
 		s_data.quad_vertex_buffer_ptr++;
 
 		s_data.quad_vertex_buffer_ptr->position = { position.x, position.y + scale.y, position.z };
 		s_data.quad_vertex_buffer_ptr->color = color;
 		s_data.quad_vertex_buffer_ptr->tex_coord = { 0, 1 };
+		s_data.quad_vertex_buffer_ptr->texture_slot = texture_slot;
 		s_data.quad_vertex_buffer_ptr++;
+
 		s_data.quad_index_count += 6;
 
 		/*s_data.default_texture->Bind(0);
@@ -174,7 +200,50 @@ namespace Engine
 	{
 		PROFILER_FUNCTION();
 
-		s_data.default_vao->Bind();
+		float texture_slot{ 0.0f };
+		for (int i = 1; i < s_data.texture_index; ++i)
+		{
+			if (texture->get_renderer_id() == s_data.textures[i]->get_renderer_id())
+			{
+				texture_slot = i;
+			}
+		}
+
+		if (texture_slot == 0.0f)
+		{
+			texture_slot = (float)s_data.texture_index;
+			s_data.textures[texture_slot] = texture;
+			s_data.texture_index++;
+		}
+
+		s_data.quad_vertex_buffer_ptr->position = position;
+		s_data.quad_vertex_buffer_ptr->color = color;
+		s_data.quad_vertex_buffer_ptr->tex_coord = { 0, 0 };
+		s_data.quad_vertex_buffer_ptr->texture_slot = texture_slot;
+		s_data.quad_vertex_buffer_ptr++;
+
+		s_data.quad_vertex_buffer_ptr->position = { position.x + scale.x, position.y, position.z };
+		s_data.quad_vertex_buffer_ptr->color = color;
+		s_data.quad_vertex_buffer_ptr->tex_coord = { 1, 0 };
+		s_data.quad_vertex_buffer_ptr->texture_slot = texture_slot;
+		s_data.quad_vertex_buffer_ptr++;
+
+		s_data.quad_vertex_buffer_ptr->position = { position.x + scale.x, position.y + scale.y,
+													position.z };
+		s_data.quad_vertex_buffer_ptr->color = color;
+		s_data.quad_vertex_buffer_ptr->tex_coord = { 1, 1 };
+		s_data.quad_vertex_buffer_ptr->texture_slot = texture_slot;
+		s_data.quad_vertex_buffer_ptr++;
+
+		s_data.quad_vertex_buffer_ptr->position = { position.x, position.y + scale.y, position.z };
+		s_data.quad_vertex_buffer_ptr->color = color;
+		s_data.quad_vertex_buffer_ptr->tex_coord = { 0, 1 };
+		s_data.quad_vertex_buffer_ptr->texture_slot = texture_slot;
+		s_data.quad_vertex_buffer_ptr++;
+
+		s_data.quad_index_count += 6;
+
+		/*s_data.default_vao->Bind();
 
 		s_data.default_shader->SetMat4("u_model",
 				glm::translate(glm::mat4(1.0f), position) * glm::scale(glm::mat4(1.0f), { scale.x, scale.y, 1 }));
@@ -182,7 +251,7 @@ namespace Engine
 
 		s_data.default_shader->SetVec4("u_color", color);
 
-		RendererCommand::DrawIndex(s_data.default_vao);
+		RendererCommand::DrawIndex(s_data.default_vao);*/
 	}
 
 }

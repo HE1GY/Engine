@@ -35,7 +35,7 @@ void Sandbox2D::OnUpdate(Engine::TimeStep ts)
 
 		Engine::Renderer2D::BeginScene(m_camera_controller.get_camera());
 
-		//Engine::Renderer2D::DrawQuad({ 0, 0, -1 }, { 10, 10 }, m_texture);
+		Engine::Renderer2D::DrawQuad({ 0, 0, -1 }, { 10, 10 }, m_texture);
 
 		Engine::Renderer2D::DrawQuad({ 1, 0, 0 }, { 1, 1 }, { 0.8, 0.2, 0.3, 1 });
 		Engine::Renderer2D::DrawQuad({ -1, 0, 0 }, { 1, 1 }, { 0.2, 0.2, 0.3, 1 });

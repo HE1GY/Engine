@@ -14,6 +14,11 @@ namespace Engine
 		virtual void SetData(void* data, uint32_t size) override;
 		virtual void Bind(uint32_t slot = 0) override;
 
+		virtual uint32_t get_renderer_id()
+		{
+			return m_renderer_id;
+		}
+
 		uint32_t get_width() const override
 		{
 			return m_width;
