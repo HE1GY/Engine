@@ -14,7 +14,7 @@ namespace Engine
 
 	struct Renderer2DData
 	{
-		const uint32_t k_max_quads = 10000;
+		const uint32_t k_max_quads = 100000;
 		const uint32_t k_max_vertices = k_max_quads * 4;
 		const uint32_t k_max_indices = k_max_quads * 6;
 		static const uint32_t k_max_texture_slot = 32;//TODO renderer prop
@@ -32,6 +32,8 @@ namespace Engine
 		uint32_t texture_index{ 1 };
 
 		std::array<glm::vec4, 4> quad_vertices;
+
+		Renderer2D::Statistics stats;
 	};
 
 	Renderer2DData Renderer2D::s_data;
@@ -46,7 +48,7 @@ namespace Engine
 		s_data.default_texture = Texture2D::Create(1, 1);
 		uint32_t tex_data = 0xffffffff;
 		s_data.default_texture->SetData(&tex_data, sizeof(tex_data));
-		s_data.default_texture->Bind();
+		s_data.textures[0] = s_data.default_texture;
 
 		s_data.default_vao = VertexArray::Create();
 		s_data.default_vao->Bind();
@@ -84,8 +86,6 @@ namespace Engine
 		s_data.default_vao->SetIndexBuffer(vo_index_box);
 		delete[] quad_indices;
 
-		s_data.textures[0] = s_data.default_texture;
-
 		int sampler[s_data.k_max_texture_slot];
 		for (int i = 0; i < s_data.k_max_texture_slot; ++i)
 		{
@@ -114,12 +114,15 @@ namespace Engine
 		s_data.quad_vertex_buffer_ptr = s_data.quad_vertex_buffer_base;
 
 		s_data.quad_index_count = 0;
+
+		s_data.texture_index = 1;
 	}
 	void Renderer2D::EndScene()
 	{
 		PROFILER_FUNCTION();
 
-		s_data.default_vb->SetData(s_data.quad_vertex_buffer_base, s_data.quad_index_count * sizeof(QuadVertex));
+		uint32_t size = (s_data.quad_vertex_buffer_ptr - s_data.quad_vertex_buffer_base) * sizeof(QuadVertex);
+		s_data.default_vb->SetData(s_data.quad_vertex_buffer_base, size);
 		Flush();
 	}
 	void Renderer2D::Flush()
@@ -130,6 +133,7 @@ namespace Engine
 		}
 
 		RendererCommand::DrawIndex(s_data.default_vao, s_data.quad_index_count);
+		s_data.stats.draw_calls++;
 	}
 
 	void Engine::Renderer2D::DrawQuad(const glm::vec2& position, const glm::vec2& scale, const glm::vec4& color)
@@ -141,6 +145,12 @@ namespace Engine
 	void Engine::Renderer2D::DrawQuad(const glm::vec3& position, const glm::vec2& scale, const glm::vec4& color)
 	{
 		PROFILER_FUNCTION();
+
+		if (s_data.stats.quads >= s_data.k_max_quads)
+		{
+			FlushAndReset();
+		}
+
 		const float texture_slot{ 0.0f };
 
 		glm::mat4 transform = glm::translate(glm::mat4(1.0f), position)
@@ -172,6 +182,8 @@ namespace Engine
 
 		s_data.quad_index_count += 6;
 
+		s_data.stats.quads++;
+
 		/*s_data.default_texture->Bind(0);
 		s_data.default_vao->Bind();
 		s_data.default_shader->SetMat4("u_model",
@@ -184,6 +196,9 @@ namespace Engine
 			const glm::vec4& color)
 	{
 		PROFILER_FUNCTION();
+
+		if (s_data.stats.quads >= s_data.k_max_quads)
+			FlushAndReset();
 
 		const float texture_slot{ 0.0f };
 
@@ -217,6 +232,7 @@ namespace Engine
 
 		s_data.quad_index_count += 6;
 
+		s_data.stats.quads++;
 		/*s_data.default_texture->Bind(0);
 		s_data.default_vao->Bind();
 
@@ -241,6 +257,9 @@ namespace Engine
 			const Engine::Ref<Engine::Texture>& texture, const glm::vec4& color)
 	{
 		PROFILER_FUNCTION();
+
+		if (s_data.stats.quads >= s_data.k_max_quads)
+			FlushAndReset();
 
 		float texture_slot{ 0.0f };
 		for (int i = 1; i < s_data.texture_index; ++i)
@@ -287,6 +306,8 @@ namespace Engine
 
 		s_data.quad_index_count += 6;
 
+		s_data.stats.quads++;
+
 		/*s_data.default_vao->Bind();
 
 		s_data.default_shader->SetMat4("u_model",
@@ -296,6 +317,25 @@ namespace Engine
 		s_data.default_shader->SetVec4("u_color", color);
 
 		RendererCommand::DrawIndex(s_data.default_vao);*/
+	}
+	Renderer2D::Statistics Renderer2D::GetStats()
+	{
+		return s_data.stats;
+	}
+	void Renderer2D::FlushAndReset()
+	{
+		PROFILER_FUNCTION();
+
+		EndScene();
+
+		s_data.quad_vertex_buffer_ptr = s_data.quad_vertex_buffer_base;
+
+		s_data.quad_index_count = 0;
+		s_data.texture_index = 1;
+	}
+	void Renderer2D::ResetStats()
+	{
+		memset(&s_data.stats, 0, sizeof(Statistics));
 	}
 
 }

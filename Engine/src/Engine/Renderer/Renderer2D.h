@@ -15,6 +15,20 @@ namespace Engine
 	class Renderer2D
 	{
 	public :
+		struct Statistics
+		{
+			uint32_t draw_calls{ 0 };
+			uint32_t quads{ 0 };
+			uint32_t get_indices()
+			{
+				return quads * 6;
+			}
+			uint32_t get_vertices()
+			{
+				return quads * 4;
+			}
+		};
+
 		static void Init();
 		static void ShutDown();
 		static void Flush();
@@ -31,7 +45,11 @@ namespace Engine
 				const glm::vec4& color = { 1, 1, 1, 1 });
 		static void DrawQuad(const glm::vec3& position, const glm::vec2& scale, const Ref<Texture>& texture,
 				const glm::vec4& color = { 1, 1, 1, 1 });
+
+		static Statistics GetStats();
+		static void ResetStats();
 	private:
+		static void FlushAndReset();
 		static Renderer2DData s_data;
 	};
 }
