@@ -14,7 +14,7 @@ namespace Engine
 
 	struct Renderer2DData
 	{
-		const uint32_t k_max_quads = 100000;
+		const uint32_t k_max_quads = 100;
 		const uint32_t k_max_vertices = k_max_quads * 4;
 		const uint32_t k_max_indices = k_max_quads * 6;
 		static const uint32_t k_max_texture_slot = 32;//TODO renderer prop
@@ -146,10 +146,8 @@ namespace Engine
 	{
 		PROFILER_FUNCTION();
 
-		if (s_data.stats.quads >= s_data.k_max_quads)
-		{
+		if (s_data.quad_index_count >= s_data.k_max_indices)
 			FlushAndReset();
-		}
 
 		const float texture_slot{ 0.0f };
 
@@ -197,7 +195,7 @@ namespace Engine
 	{
 		PROFILER_FUNCTION();
 
-		if (s_data.stats.quads >= s_data.k_max_quads)
+		if (s_data.quad_index_count >= s_data.k_max_indices)
 			FlushAndReset();
 
 		const float texture_slot{ 0.0f };
@@ -258,7 +256,7 @@ namespace Engine
 	{
 		PROFILER_FUNCTION();
 
-		if (s_data.stats.quads >= s_data.k_max_quads)
+		if (s_data.quad_index_count >= s_data.k_max_indices)
 			FlushAndReset();
 
 		float texture_slot{ 0.0f };

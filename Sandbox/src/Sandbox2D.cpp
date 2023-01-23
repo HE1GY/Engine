@@ -50,13 +50,23 @@ void Sandbox2D::OnUpdate(Engine::TimeStep ts)
 
 		Engine::Renderer2D::BeginScene(m_camera_controller.get_camera());
 
-		Engine::Renderer2D::DrawQuad({ 0, 0, -1 }, { 5, 5 }, m_texture);
+		Engine::Renderer2D::DrawQuad({ 0, 0, -1 }, { 5, 5 }, { 0.2, 0.2, 0.2, 1 });
 
 		Engine::Renderer2D::DrawQuad({ 1, 0, 0.1 }, { 1, 1 }, { 0.8, 0.2, 0.3, 1 });
 
 		Engine::Renderer2D::DrawQuad({ -1, 0, 0 }, { 1, 1 }, { 0.2, 0.2, 0.3, 1 });
 
 		Engine::Renderer2D::DrawQuad({ 0, 0, 0 }, { 1, 1 }, angle, { 0.5, 0.5, 0.5, 1 });
+
+		for (int i = 0; i < 50; ++i)
+		{
+			for (int j = 0; j < 50; ++j)
+			{
+				float r = i / (float)50;
+				float g = j / float(50);
+				Engine::Renderer2D::DrawQuad({ i, j, 0 }, { 0.7, 0.7 }, { r, g, 0.3, 1 });
+			}
+		}
 
 		Engine::Renderer2D::EndScene();
 	}
