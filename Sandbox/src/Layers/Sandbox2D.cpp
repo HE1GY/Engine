@@ -1,4 +1,4 @@
-#include <Engine/Renderer/Renderer2D.h>
+#include "Engine/Renderer/Renderer2D.h"
 #include "Sandbox2D.h"
 
 #include <random>
@@ -11,6 +11,12 @@ Sandbox2D::Sandbox2D()
 void Sandbox2D::OnAttach()
 {
 	m_texture = Engine::Texture2D::Create("../../../Sandbox/assets/textures/chess.png");
+
+	ParticlesProp prop;
+	prop.life_time = 5;
+	prop.start_color = glm::vec4{ 1, 0, 0, 1 };
+	prop.end_color = glm::vec4{ 0, 1, 0, 1 };
+	m_particles.Init(prop);
 }
 
 void Sandbox2D::OnDetach()
@@ -37,8 +43,14 @@ void Sandbox2D::OnEvent(Engine::Event& event)
 }
 void Sandbox2D::OnUpdate(Engine::TimeStep ts)
 {
+	//mouse click
+
+
+
 	m_fps = (float)1 / ts;
 	m_camera_controller.OnUpdate(ts);
+
+	m_particles.OnUpdate(ts);
 
 	Engine::RendererCommand::SetClearColor({ 0.1f, 0.1f, 0.1f, 0.1f });
 	Engine::RendererCommand::Clear();
@@ -76,6 +88,8 @@ void Sandbox2D::OnUpdate(Engine::TimeStep ts)
 				Engine::Renderer2D::DrawQuad({ i + 5, j, 0 }, { 0.7, 0.7 }, { r, g, b, 1 });
 			}
 		}
+
+		m_particles.OnRenderer();
 
 		Engine::Renderer2D::EndScene();
 	}

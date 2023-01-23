@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.23)
 project(Sandbox)
 
 add_executable(Sandbox src/Sandbox.cpp
-        src/Sandbox2D.cpp src/Sandbox2D.h)
+        src/Layers/Sandbox2D.cpp src/Layers/Sandbox2D.h src/ParticlesSystem.h src/ParticlesSystem.cpp)
 
 
 if (DEBUG)

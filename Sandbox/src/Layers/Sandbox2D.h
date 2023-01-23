@@ -1,4 +1,5 @@
 #include "Engine.h"
+#include "../ParticlesSystem.h"
 
 class Sandbox2D : public Engine::Layer
 {
@@ -22,5 +23,7 @@ private:
 	Engine::Ref<Engine::Texture> m_texture;
 
 	float m_fps{ 0 };
+
+	ParticlesSystem m_particles;
 };
 
