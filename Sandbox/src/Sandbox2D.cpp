@@ -30,6 +30,11 @@ void Sandbox2D::OnUpdate(Engine::TimeStep ts)
 	m_camera_controller.OnUpdate(ts);
 
 	{
+
+		static float angle = 0.0f;
+
+		angle += 100 * ts;
+
 		Engine::RendererCommand::SetClearColor({ 0.1f, 0.1f, 0.1f, 0.1f });
 		Engine::RendererCommand::Clear();
 
@@ -39,6 +44,8 @@ void Sandbox2D::OnUpdate(Engine::TimeStep ts)
 
 		Engine::Renderer2D::DrawQuad({ 1, 0, 0 }, { 1, 1 }, { 0.8, 0.2, 0.3, 1 });
 		Engine::Renderer2D::DrawQuad({ -1, 0, 0 }, { 1, 1 }, { 0.2, 0.2, 0.3, 1 });
+
+		Engine::Renderer2D::DrawQuad({ 0, 0, 0 }, { 1, 1 }, angle, { 0.5, 0.5, 0.5, 1 });
 
 		Engine::Renderer2D::EndScene();
 	}

@@ -30,6 +30,8 @@ namespace Engine
 
 		std::array<Ref<Texture>, k_max_texture_slot> textures{ 0 };
 		uint32_t texture_index{ 1 };
+
+		std::array<glm::vec4, 4> quad_vertices;
 	};
 
 	Renderer2DData Renderer2D::s_data;
@@ -90,6 +92,12 @@ namespace Engine
 			sampler[i] = i;
 		}
 		s_data.default_shader->SetIntArray("u_texture2D", sampler, s_data.k_max_texture_slot);
+
+		s_data.quad_vertices[0] = { -0.5f, -0.5f, 0, 1 };
+		s_data.quad_vertices[1] = { 0.5f, -0.5f, 0, 1 };
+		s_data.quad_vertices[2] = { 0.5f, 0.5f, 0, 1 };
+		s_data.quad_vertices[3] = { -0.5f, 0.5f, 0, 1 };
+
 	}
 
 	void Renderer2D::ShutDown()
@@ -135,26 +143,28 @@ namespace Engine
 		PROFILER_FUNCTION();
 		const float texture_slot{ 0.0f };
 
-		s_data.quad_vertex_buffer_ptr->position = position;
+		glm::mat4 transform = glm::translate(glm::mat4(1.0f), position)
+				* glm::scale(glm::mat4(1.0f), { scale.x, scale.y, 1 });
+
+		s_data.quad_vertex_buffer_ptr->position = transform * s_data.quad_vertices[0];
 		s_data.quad_vertex_buffer_ptr->color = color;
 		s_data.quad_vertex_buffer_ptr->tex_coord = { 0, 0 };
 		s_data.quad_vertex_buffer_ptr->texture_slot = texture_slot;
 		s_data.quad_vertex_buffer_ptr++;
 
-		s_data.quad_vertex_buffer_ptr->position = { position.x + scale.x, position.y, position.z };
+		s_data.quad_vertex_buffer_ptr->position = transform * s_data.quad_vertices[1];
 		s_data.quad_vertex_buffer_ptr->color = color;
 		s_data.quad_vertex_buffer_ptr->tex_coord = { 1, 0 };
 		s_data.quad_vertex_buffer_ptr->texture_slot = texture_slot;
 		s_data.quad_vertex_buffer_ptr++;
 
-		s_data.quad_vertex_buffer_ptr->position = { position.x + scale.x, position.y + scale.y,
-													position.z };
+		s_data.quad_vertex_buffer_ptr->position = transform * s_data.quad_vertices[2];
 		s_data.quad_vertex_buffer_ptr->color = color;
 		s_data.quad_vertex_buffer_ptr->tex_coord = { 1, 1 };
 		s_data.quad_vertex_buffer_ptr->texture_slot = texture_slot;
 		s_data.quad_vertex_buffer_ptr++;
 
-		s_data.quad_vertex_buffer_ptr->position = { position.x, position.y + scale.y, position.z };
+		s_data.quad_vertex_buffer_ptr->position = transform * s_data.quad_vertices[3];
 		s_data.quad_vertex_buffer_ptr->color = color;
 		s_data.quad_vertex_buffer_ptr->tex_coord = { 0, 1 };
 		s_data.quad_vertex_buffer_ptr->texture_slot = texture_slot;
@@ -175,7 +185,39 @@ namespace Engine
 	{
 		PROFILER_FUNCTION();
 
-		s_data.default_texture->Bind(0);
+		const float texture_slot{ 0.0f };
+
+		glm::mat4 transform = glm::translate(glm::mat4(1.0f), position)
+				* glm::rotate(glm::mat4(1.0f), glm::radians(rotation), { 0, 0, 1 })
+				* glm::scale(glm::mat4(1.0f), { scale.x, scale.y, 1 });
+
+		s_data.quad_vertex_buffer_ptr->position = transform * s_data.quad_vertices[0];
+		s_data.quad_vertex_buffer_ptr->color = color;
+		s_data.quad_vertex_buffer_ptr->tex_coord = { 0, 0 };
+		s_data.quad_vertex_buffer_ptr->texture_slot = texture_slot;
+		s_data.quad_vertex_buffer_ptr++;
+
+		s_data.quad_vertex_buffer_ptr->position = transform * s_data.quad_vertices[1];
+		s_data.quad_vertex_buffer_ptr->color = color;
+		s_data.quad_vertex_buffer_ptr->tex_coord = { 1, 0 };
+		s_data.quad_vertex_buffer_ptr->texture_slot = texture_slot;
+		s_data.quad_vertex_buffer_ptr++;
+
+		s_data.quad_vertex_buffer_ptr->position = transform * s_data.quad_vertices[2];
+		s_data.quad_vertex_buffer_ptr->color = color;
+		s_data.quad_vertex_buffer_ptr->tex_coord = { 1, 1 };
+		s_data.quad_vertex_buffer_ptr->texture_slot = texture_slot;
+		s_data.quad_vertex_buffer_ptr++;
+
+		s_data.quad_vertex_buffer_ptr->position = transform * s_data.quad_vertices[3];
+		s_data.quad_vertex_buffer_ptr->color = color;
+		s_data.quad_vertex_buffer_ptr->tex_coord = { 0, 1 };
+		s_data.quad_vertex_buffer_ptr->texture_slot = texture_slot;
+		s_data.quad_vertex_buffer_ptr++;
+
+		s_data.quad_index_count += 6;
+
+		/*s_data.default_texture->Bind(0);
 		s_data.default_vao->Bind();
 
 		s_data.default_shader->SetMat4("u_model",
@@ -185,7 +227,7 @@ namespace Engine
 
 		s_data.default_shader->SetVec4("u_color", color);
 
-		RendererCommand::DrawIndex(s_data.default_vao);
+		RendererCommand::DrawIndex(s_data.default_vao);*/
 	}
 
 	void Engine::Renderer2D::DrawQuad(const glm::vec2& position, const glm::vec2& scale,
@@ -216,26 +258,28 @@ namespace Engine
 			s_data.texture_index++;
 		}
 
-		s_data.quad_vertex_buffer_ptr->position = position;
+		glm::mat4 transform = glm::translate(glm::mat4(1.0f), position)
+				* glm::scale(glm::mat4(1.0f), { scale.x, scale.y, 1 });
+
+		s_data.quad_vertex_buffer_ptr->position = transform * s_data.quad_vertices[0];
 		s_data.quad_vertex_buffer_ptr->color = color;
 		s_data.quad_vertex_buffer_ptr->tex_coord = { 0, 0 };
 		s_data.quad_vertex_buffer_ptr->texture_slot = texture_slot;
 		s_data.quad_vertex_buffer_ptr++;
 
-		s_data.quad_vertex_buffer_ptr->position = { position.x + scale.x, position.y, position.z };
+		s_data.quad_vertex_buffer_ptr->position = transform * s_data.quad_vertices[1];
 		s_data.quad_vertex_buffer_ptr->color = color;
 		s_data.quad_vertex_buffer_ptr->tex_coord = { 1, 0 };
 		s_data.quad_vertex_buffer_ptr->texture_slot = texture_slot;
 		s_data.quad_vertex_buffer_ptr++;
 
-		s_data.quad_vertex_buffer_ptr->position = { position.x + scale.x, position.y + scale.y,
-													position.z };
+		s_data.quad_vertex_buffer_ptr->position = transform * s_data.quad_vertices[2];
 		s_data.quad_vertex_buffer_ptr->color = color;
 		s_data.quad_vertex_buffer_ptr->tex_coord = { 1, 1 };
 		s_data.quad_vertex_buffer_ptr->texture_slot = texture_slot;
 		s_data.quad_vertex_buffer_ptr++;
 
-		s_data.quad_vertex_buffer_ptr->position = { position.x, position.y + scale.y, position.z };
+		s_data.quad_vertex_buffer_ptr->position = transform * s_data.quad_vertices[3];
 		s_data.quad_vertex_buffer_ptr->color = color;
 		s_data.quad_vertex_buffer_ptr->tex_coord = { 0, 1 };
 		s_data.quad_vertex_buffer_ptr->texture_slot = texture_slot;
