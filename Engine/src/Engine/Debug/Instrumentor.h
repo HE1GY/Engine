@@ -144,7 +144,14 @@ namespace Engine
 #define PROFILER_BEGIN_SESSION(name, filepath) ::Engine::Instrumentor::Get().BeginSession(name,filepath)
 #define PROFILER_END_SESSION() ::Engine::Instrumentor::Get().EndSession()
 #define PROFILER_SCOPE(name)::Engine::InstrumentationTimer timer##__LINE__(name)
+
+#ifdef LINUX
 #define PROFILER_FUNCTION()PROFILER_SCOPE(__PRETTY_FUNCTION__ )
+#endif
+
+#ifdef WINDOWS
+#define PROFILER_FUNCTION()PROFILER_SCOPE(__FUNCSIG__)
+#endif
 
 #else
 #define PROFILER_BEGIN_SESSION(name, filepath)

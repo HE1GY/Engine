@@ -23,6 +23,7 @@ void Sandbox2D::OnImGuiRender()
 
 	ImGui::Begin("Settings");
 
+	ImGui::Text("FPS: %d", (int)m_fps);
 	ImGui::Text("draw calls: %d", stats.draw_calls);
 	ImGui::Text("quads: %d", stats.quads);
 	ImGui::Text("indices: %d", stats.get_indices());
@@ -36,6 +37,7 @@ void Sandbox2D::OnEvent(Engine::Event& event)
 }
 void Sandbox2D::OnUpdate(Engine::TimeStep ts)
 {
+	m_fps = (float)1 / ts;
 	m_camera_controller.OnUpdate(ts);
 
 	Engine::RendererCommand::SetClearColor({ 0.1f, 0.1f, 0.1f, 0.1f });
@@ -50,7 +52,7 @@ void Sandbox2D::OnUpdate(Engine::TimeStep ts)
 
 		Engine::Renderer2D::BeginScene(m_camera_controller.get_camera());
 
-		Engine::Renderer2D::DrawQuad({ 0, 0, -1 }, { 5, 5 }, { 0.2, 0.2, 0.2, 1 });
+		Engine::Renderer2D::DrawQuad({ 0, 0, -1 }, { 5, 5 }, m_texture);
 
 		Engine::Renderer2D::DrawQuad({ 1, 0, 0.1 }, { 1, 1 }, { 0.8, 0.2, 0.3, 1 });
 
@@ -58,13 +60,20 @@ void Sandbox2D::OnUpdate(Engine::TimeStep ts)
 
 		Engine::Renderer2D::DrawQuad({ 0, 0, 0 }, { 1, 1 }, angle, { 0.5, 0.5, 0.5, 1 });
 
-		for (int i = 0; i < 50; ++i)
+		static float color_anim = 0.1f;
+
+		color_anim += ts * 0.5f;
+
+		if (color_anim >= 1)color_anim = 0.1f;
+
+		for (int i = 0; i < 100; ++i)
 		{
-			for (int j = 0; j < 50; ++j)
+			for (int j = 0; j < 100; ++j)
 			{
-				float r = i / (float)50;
-				float g = j / float(50);
-				Engine::Renderer2D::DrawQuad({ i, j, 0 }, { 0.7, 0.7 }, { r, g, 0.3, 1 });
+				float r = i / float(100) * color_anim;
+				float g = j / float(100) * color_anim;
+				float b = j / float(100) * color_anim;
+				Engine::Renderer2D::DrawQuad({ i + 5, j, 0 }, { 0.7, 0.7 }, { r, g, b, 1 });
 			}
 		}
 

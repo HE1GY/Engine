@@ -20,5 +20,7 @@ private:
 	Engine::OrthographicCameraController m_camera_controller;
 	glm::vec4 m_uniform_color{ 0.2, 0.8, 0.8, 1 };
 	Engine::Ref<Engine::Texture> m_texture;
+
+	float m_fps{ 0 };
 };
 
