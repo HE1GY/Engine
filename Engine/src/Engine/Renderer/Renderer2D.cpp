@@ -185,7 +185,7 @@ namespace Engine
 		/*s_data.default_texture->Bind(0);
 		s_data.default_vao->Bind();
 		s_data.default_shader->SetMat4("u_model",
-				glm::translate(glm::mat4(1.0f), position) * glm::scale(glm::mat4(1.0f), { scale.x, scale.y, 1 }));
+				glm::translate(glm::mat4(1.0f), position) * glm::size(glm::mat4(1.0f), { size.x, size.y, 1 }));
 
 		RendererCommand::DrawIndex(s_data.default_vao);*/
 	}
@@ -237,7 +237,7 @@ namespace Engine
 		s_data.default_shader->SetMat4("u_model",
 				glm::translate(glm::mat4(1.0f), position)
 						* glm::rotate(glm::mat4(1.0f), glm::radians(rotation), glm::vec3(0, 0, 1))
-						* glm::scale(glm::mat4(1.0f), { scale.x, scale.y, 1 }));
+						* glm::size(glm::mat4(1.0f), { size.x, size.y, 1 }));
 
 		s_data.default_shader->SetVec4("u_color", color);
 
@@ -309,7 +309,7 @@ namespace Engine
 		/*s_data.default_vao->Bind();
 
 		s_data.default_shader->SetMat4("u_model",
-				glm::translate(glm::mat4(1.0f), position) * glm::scale(glm::mat4(1.0f), { scale.x, scale.y, 1 }));
+				glm::translate(glm::mat4(1.0f), position) * glm::size(glm::mat4(1.0f), { size.x, size.y, 1 }));
 		texture->Bind(0);
 
 		s_data.default_shader->SetVec4("u_color", color);

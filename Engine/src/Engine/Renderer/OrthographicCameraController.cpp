@@ -6,7 +6,8 @@ namespace Engine
 {
 	OrthographicCameraController::OrthographicCameraController(float aspect_ratio, bool is_rotating)
 			:m_aspect_ratio{ aspect_ratio }, m_is_rotating{ is_rotating },
-			 m_camera(-m_aspect_ratio * m_zoom_level, m_aspect_ratio * m_zoom_level, -m_zoom_level, m_zoom_level)
+			 m_bound{ -m_aspect_ratio * m_zoom_level, m_aspect_ratio * m_zoom_level, -m_zoom_level, m_zoom_level },
+			 m_camera(m_bound.left, m_bound.right, m_bound.bottom, m_bound.top)
 	{
 	}
 	void OrthographicCameraController::OnUpdate(TimeStep ts)
@@ -59,15 +60,17 @@ namespace Engine
 	{
 		m_zoom_level -= event.get_y_offset() * 0.2f;
 		m_zoom_level = std::max(m_zoom_level, 0.25f);
-		m_camera.set_projection(-m_aspect_ratio * m_zoom_level, m_aspect_ratio * m_zoom_level, -m_zoom_level,
-				m_zoom_level);
+		m_bound = { -m_aspect_ratio * m_zoom_level, m_aspect_ratio * m_zoom_level, -m_zoom_level,
+					m_zoom_level };
+		m_camera.set_projection(m_bound.left, m_bound.right, m_bound.bottom, m_bound.top);
 		return false;
 	}
 	bool OrthographicCameraController::OnWindowResized(WindowResized& event)
 	{
 		m_aspect_ratio = (float)event.get_width() / (float)event.get_height();
-		m_camera.set_projection(-m_aspect_ratio * m_zoom_level, m_aspect_ratio * m_zoom_level, -m_zoom_level,
-				m_zoom_level);
+		m_bound = { -m_aspect_ratio * m_zoom_level, m_aspect_ratio * m_zoom_level, -m_zoom_level,
+					m_zoom_level };
+		m_camera.set_projection(m_bound.left, m_bound.right, m_bound.bottom, m_bound.top);
 		return false;
 	}
 } // namespace Engine

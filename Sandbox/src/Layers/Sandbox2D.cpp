@@ -13,9 +13,10 @@ void Sandbox2D::OnAttach()
 	m_texture = Engine::Texture2D::Create("../../../Sandbox/assets/textures/chess.png");
 
 	ParticlesProp prop;
-	prop.life_time = 5;
+	prop.life_time = 2;
+	prop.size = { 0.05, 0.05, 1 };
 	prop.start_color = glm::vec4{ 1, 0, 0, 1 };
-	prop.end_color = glm::vec4{ 0, 1, 0, 1 };
+	prop.end_color = glm::vec4{ 0, 1, 0, 0.1 };
 	m_particles.Init(prop);
 }
 
@@ -43,14 +44,33 @@ void Sandbox2D::OnEvent(Engine::Event& event)
 }
 void Sandbox2D::OnUpdate(Engine::TimeStep ts)
 {
-	//mouse click
+	if (Engine::Input::IsMouseButtonPress(MOUSE_BUTTON_LEFT))
+	{
+		auto [x, y] = Engine::Input::GetMousePos();
 
+		float width = Engine::Application::Get()->GetWindow()->get_width();
+		float height = Engine::Application::Get()->GetWindow()->get_height();
 
+		float bound_width = m_camera_controller.get_bound().get_width();
+		float bound_height = m_camera_controller.get_bound().get_height();
+
+		auto& cam_pos = m_camera_controller.get_camera().get_position();
+
+		x = (x / width) * bound_width - (bound_width * 0.5f);
+		y = (bound_height * 0.5f) - (y / height) * bound_height;
+
+		x += cam_pos.x;
+		y += cam_pos.y;
+
+		for (int i = 0; i < 50; ++i)
+		{
+			m_particles.Emit({ x, y, 0 });
+		}
+
+	}
 
 	m_fps = (float)1 / ts;
 	m_camera_controller.OnUpdate(ts);
-
-	m_particles.OnUpdate(ts);
 
 	Engine::RendererCommand::SetClearColor({ 0.1f, 0.1f, 0.1f, 0.1f });
 	Engine::RendererCommand::Clear();
@@ -59,7 +79,6 @@ void Sandbox2D::OnUpdate(Engine::TimeStep ts)
 
 	{
 		static float angle = 0.0f;
-
 		angle += 100 * ts;
 
 		Engine::Renderer2D::BeginScene(m_camera_controller.get_camera());
@@ -88,10 +107,10 @@ void Sandbox2D::OnUpdate(Engine::TimeStep ts)
 				Engine::Renderer2D::DrawQuad({ i + 5, j, 0 }, { 0.7, 0.7 }, { r, g, b, 1 });
 			}
 		}
-
-		m_particles.OnRenderer();
-
 		Engine::Renderer2D::EndScene();
+
+		m_particles.OnUpdate(ts);
+		m_particles.OnRenderer(m_camera_controller.get_camera());
 	}
 }
 
