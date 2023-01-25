@@ -8,7 +8,8 @@
 struct ParticlesProp
 {
 	float life_time;
-	glm::vec3 size;
+	glm::vec3 start_size;
+	glm::vec3 end_size;
 	glm::vec4 start_color;
 	glm::vec4 end_color;
 };

@@ -14,9 +14,10 @@ void Sandbox2D::OnAttach()
 
 	ParticlesProp prop;
 	prop.life_time = 2;
-	prop.size = { 0.05, 0.05, 1 };
-	prop.start_color = glm::vec4{ 1, 0, 0, 1 };
-	prop.end_color = glm::vec4{ 0, 1, 0, 0.1 };
+	prop.start_size = { 0.1, 0.1, 1 };
+	prop.end_size = { 0.01, 0.01, 1 };
+	prop.start_color = glm::vec4{ 0.7, 0.1, 0.2, 1 };
+	prop.end_color = glm::vec4{ 0.1, 0.2, 0.8, 0.1 };
 	m_particles.Init(prop);
 }
 
@@ -51,21 +52,17 @@ void Sandbox2D::OnUpdate(Engine::TimeStep ts)
 		float width = Engine::Application::Get()->GetWindow()->get_width();
 		float height = Engine::Application::Get()->GetWindow()->get_height();
 
-		float bound_width = m_camera_controller.get_bound().get_width();
-		float bound_height = m_camera_controller.get_bound().get_height();
+		glm::vec4 clip_space = { (x / width) * 2 - 1, 1 - 2 * (y / height), 0, 1 }; // to get -1<x<1 and -1<y<1
 
-		auto& cam_pos = m_camera_controller.get_camera().get_position();
-
-		x = (x / width) * bound_width - (bound_width * 0.5f);
-		y = (bound_height * 0.5f) - (y / height) * bound_height;
-
-		x += cam_pos.x;
-		y += cam_pos.y;
+		glm::mat4 inverse_view_proj = glm::inverse(m_camera_controller.get_camera().get_view_projection_matrix());
+		glm::vec4 world_space = inverse_view_proj * clip_space;
+		world_space /= world_space.w;
 
 		for (int i = 0; i < 50; ++i)
 		{
-			m_particles.Emit({ x, y, 0 });
+			m_particles.Emit({ world_space.x, world_space.y, 0 });
 		}
+		TRACE("x={0}, y={1}", world_space.x, world_space.y);
 
 	}
 
@@ -91,19 +88,30 @@ void Sandbox2D::OnUpdate(Engine::TimeStep ts)
 
 		Engine::Renderer2D::DrawQuad({ 0, 0, 0 }, { 1, 1 }, angle, { 0.5, 0.5, 0.5, 1 });
 
-		static float color_anim = 0.1f;
+		static float color_anim{ 0.1f };
+		static bool increase{ true };
+		static float color_step{ 0.3f };
 
-		color_anim += ts * 0.5f;
+		color_anim += ts.GetInSeconds() * color_step;
 
-		if (color_anim >= 1)color_anim = 0.1f;
-
-		for (int i = 0; i < 100; ++i)
+		if (color_anim >= 1 && increase)
 		{
-			for (int j = 0; j < 100; ++j)
+			increase = false;
+			color_step *= -1;
+		}
+		if (color_anim <= 0 && !increase)
+		{
+			increase = true;
+			color_step *= -1;
+		}
+
+		for (int i = 0; i < 50; ++i)
+		{
+			for (int j = 0; j < 50; ++j)
 			{
-				float r = i / float(100) * color_anim;
-				float g = j / float(100) * color_anim;
-				float b = j / float(100) * color_anim;
+				float r = i / float(50) * color_anim;
+				float g = j / float(50) * color_anim;
+				float b = j / float(50) * color_anim;
 				Engine::Renderer2D::DrawQuad({ i + 5, j, 0 }, { 0.7, 0.7 }, { r, g, b, 1 });
 			}
 		}

@@ -14,7 +14,7 @@ namespace Engine
 
 	struct Renderer2DData
 	{
-		const uint32_t k_max_quads = 10000;
+		const uint32_t k_max_quads = 1;
 		const uint32_t k_max_vertices = k_max_quads * 4;
 		const uint32_t k_max_indices = k_max_quads * 6;
 		static const uint32_t k_max_texture_slot = 32;//TODO renderer prop

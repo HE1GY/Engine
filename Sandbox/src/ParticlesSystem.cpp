@@ -4,7 +4,11 @@
 
 #include "Random.h"
 
-glm::vec4 Lerp(const glm::vec4& a, const glm::vec4& b, float f);
+template<typename T>
+T Lerp(const T& a, const T& b, float f)
+{
+	return T((a * (1.0f - f)) + (b * f));
+}
 
 void ParticlesSystem::Init(const ParticlesProp& prop)
 {
@@ -21,7 +25,7 @@ void ParticlesSystem::Emit(const glm::vec3 pos)
 		{
 			particle.is_active = true;
 			particle.position = pos;
-			particle.size = m_prop.size;
+			particle.size = m_prop.start_size;
 
 			float x = Random::Float() * 2 - 1;
 			float y = Random::Float() * 2 - 1;
@@ -47,7 +51,8 @@ void ParticlesSystem::OnUpdate(Engine::TimeStep ts)
 			float life = (particle.life_time_remained / m_prop.life_time - (m_prop.life_time / 2)) * -1;
 			particle.color = Lerp(m_prop.start_color, m_prop.end_color, life);
 
-			//color
+			particle.size = Lerp(m_prop.start_size, m_prop.end_size, life);
+
 			if (particle.life_time_remained <= 0)
 			{
 				particle.is_active = false;
@@ -69,7 +74,3 @@ void ParticlesSystem::OnRenderer(Engine::OrthographicCamera& cam)
 	Engine::Renderer2D::EndScene();
 }
 
-glm::vec4 Lerp(const glm::vec4& a, const glm::vec4& b, float f)
-{
-	return glm::vec4((a * (1.0f - f)) + (b * f));
-}
