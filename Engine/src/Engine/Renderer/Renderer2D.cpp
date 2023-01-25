@@ -263,8 +263,8 @@ namespace Engine
 		const uint32_t sub_tex_width = 128;
 		const uint32_t sub_tex_height = 128;
 
-		uint32_t tex_index_x = 9;
-		uint32_t tex_index_y = 16;
+		uint32_t tex_index_x = 7;
+		uint32_t tex_index_y = 6;
 
 		glm::vec2 tex_coord = { sub_tex_width * tex_index_x, tex_index_y * sub_tex_height };
 

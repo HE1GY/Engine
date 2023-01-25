@@ -15,10 +15,10 @@ void Sandbox2D::OnAttach()
 
 	ParticlesProp prop;
 	prop.life_time = 2;
-	prop.start_size = { 0.1, 0.1, 1 };
-	prop.end_size = { 0.01, 0.01, 1 };
-	prop.start_color = glm::vec4{ 0.7, 0.1, 0.2, 1 };
-	prop.end_color = glm::vec4{ 0.1, 0.2, 0.8, 0.1 };
+	prop.start_size = { 0.05, 0.05, 1 };
+	prop.end_size = { 0.005, 0.005, 1 };
+	prop.start_color = glm::vec4{ 0.9, 0.3, 0.1, 1 };
+	prop.end_color = glm::vec4{ 0.7, 0.4, 0.1, 0.1 };
 	m_particles.Init(prop);
 }
 
@@ -63,8 +63,6 @@ void Sandbox2D::OnUpdate(Engine::TimeStep ts)
 		{
 			m_particles.Emit({ world_space.x, world_space.y, 0 });
 		}
-		TRACE("x={0}, y={1}", world_space.x, world_space.y);
-
 	}
 
 	m_fps = (float)1 / ts;
