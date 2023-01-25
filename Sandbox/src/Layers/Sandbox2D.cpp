@@ -12,13 +12,15 @@ void Sandbox2D::OnAttach()
 {
 	m_texture_chess = Engine::Texture2D::Create("../../../Sandbox/assets/textures/chess.png");
 	m_texture_sprites = Engine::Texture2D::Create("../../../Sandbox/assets/textures/RPGpack_sheet_2X.png");
+	m_wall = Engine::SubTexture2D::CreateFromCoord(m_texture_sprites, { 9, 9 }, { 128, 128 }, { 128, 128 });
+	m_tree = Engine::SubTexture2D::CreateFromCoord(m_texture_sprites, { 0, 1 }, { 128, 256 }, { 128, 128 });
 
 	ParticlesProp prop;
 	prop.life_time = 2;
 	prop.start_size = { 0.05, 0.05, 1 };
 	prop.end_size = { 0.005, 0.005, 1 };
 	prop.start_color = glm::vec4{ 0.9, 0.3, 0.1, 1 };
-	prop.end_color = glm::vec4{ 0.7, 0.4, 0.1, 0.1 };
+	prop.end_color = glm::vec4{ 0.7, 0.2, 0.1, 0.1 };
 	m_particles.Init(prop);
 }
 
@@ -107,7 +109,8 @@ void Sandbox2D::OnUpdate(Engine::TimeStep ts)
 			}
 		}
 
-		Engine::Renderer2D::DrawQuad({ 0, 0, 0 }, { 1, 1 }, m_texture_sprites);
+		Engine::Renderer2D::DrawQuad({ 0, 0, 0 }, { 1, 1 }, m_wall);
+		Engine::Renderer2D::DrawQuad({ -1, 0.5f, 0 }, { 1, 2 }, m_tree);
 
 		Engine::Renderer2D::EndScene();
 

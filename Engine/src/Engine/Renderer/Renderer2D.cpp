@@ -136,6 +136,19 @@ namespace Engine
 		s_data.stats.draw_calls++;
 	}
 
+	void Renderer2D::FlushAndReset()
+	{
+		PROFILER_FUNCTION();
+
+		EndScene();
+
+		s_data.quad_vertex_buffer_ptr = s_data.quad_vertex_buffer_base;
+
+		s_data.quad_index_count = 0;
+		s_data.texture_index = 1;
+	}
+
+	//flat_color
 	void Engine::Renderer2D::DrawQuad(const glm::vec2& position, const glm::vec2& scale, const glm::vec4& color)
 	{
 		PROFILER_FUNCTION();
@@ -154,43 +167,20 @@ namespace Engine
 		glm::mat4 transform = glm::translate(glm::mat4(1.0f), position)
 				* glm::scale(glm::mat4(1.0f), { scale.x, scale.y, 1 });
 
-		s_data.quad_vertex_buffer_ptr->position = transform * s_data.quad_vertices[0];
-		s_data.quad_vertex_buffer_ptr->color = color;
-		s_data.quad_vertex_buffer_ptr->tex_coord = { 0, 0 };
-		s_data.quad_vertex_buffer_ptr->texture_slot = texture_slot;
-		s_data.quad_vertex_buffer_ptr++;
-
-		s_data.quad_vertex_buffer_ptr->position = transform * s_data.quad_vertices[1];
-		s_data.quad_vertex_buffer_ptr->color = color;
-		s_data.quad_vertex_buffer_ptr->tex_coord = { 1, 0 };
-		s_data.quad_vertex_buffer_ptr->texture_slot = texture_slot;
-		s_data.quad_vertex_buffer_ptr++;
-
-		s_data.quad_vertex_buffer_ptr->position = transform * s_data.quad_vertices[2];
-		s_data.quad_vertex_buffer_ptr->color = color;
-		s_data.quad_vertex_buffer_ptr->tex_coord = { 1, 1 };
-		s_data.quad_vertex_buffer_ptr->texture_slot = texture_slot;
-		s_data.quad_vertex_buffer_ptr++;
-
-		s_data.quad_vertex_buffer_ptr->position = transform * s_data.quad_vertices[3];
-		s_data.quad_vertex_buffer_ptr->color = color;
-		s_data.quad_vertex_buffer_ptr->tex_coord = { 0, 1 };
-		s_data.quad_vertex_buffer_ptr->texture_slot = texture_slot;
-		s_data.quad_vertex_buffer_ptr++;
+		for (int i = 0; i < 4; ++i)
+		{
+			s_data.quad_vertex_buffer_ptr->position = transform * s_data.quad_vertices[i];
+			s_data.quad_vertex_buffer_ptr->color = color;
+			s_data.quad_vertex_buffer_ptr->tex_coord = { i > 0 && i < 3 ? 1 : 0, i < 1 ? 1 : 0 };
+			s_data.quad_vertex_buffer_ptr->texture_slot = texture_slot;
+			s_data.quad_vertex_buffer_ptr++;
+		}
 
 		s_data.quad_index_count += 6;
 
 		s_data.stats.quads++;
-
-		/*s_data.default_texture->Bind(0);
-		s_data.default_vao->Bind();
-		s_data.default_shader->SetMat4("u_model",
-				glm::translate(glm::mat4(1.0f), position) * glm::size(glm::mat4(1.0f), { size.x, size.y, 1 }));
-
-		RendererCommand::DrawIndex(s_data.default_vao);*/
 	}
-
-	void Renderer2D::DrawQuad(const glm::vec3& position, const glm::vec2& scale, const float rotation,
+	void Renderer2D::DrawQuad(const glm::vec3& position, const glm::vec2& scale, const float rotation_rad,
 			const glm::vec4& color)
 	{
 		PROFILER_FUNCTION();
@@ -201,49 +191,24 @@ namespace Engine
 		const float texture_slot{ 0.0f };
 
 		glm::mat4 transform = glm::translate(glm::mat4(1.0f), position)
-				* glm::rotate(glm::mat4(1.0f), glm::radians(rotation), { 0, 0, 1 })
+				* glm::rotate(glm::mat4(1.0f), rotation_rad, { 0, 0, 1 })
 				* glm::scale(glm::mat4(1.0f), { scale.x, scale.y, 1 });
 
-		s_data.quad_vertex_buffer_ptr->position = transform * s_data.quad_vertices[0];
-		s_data.quad_vertex_buffer_ptr->color = color;
-		s_data.quad_vertex_buffer_ptr->tex_coord = { 0, 0 };
-		s_data.quad_vertex_buffer_ptr->texture_slot = texture_slot;
-		s_data.quad_vertex_buffer_ptr++;
-
-		s_data.quad_vertex_buffer_ptr->position = transform * s_data.quad_vertices[1];
-		s_data.quad_vertex_buffer_ptr->color = color;
-		s_data.quad_vertex_buffer_ptr->tex_coord = { 1, 0 };
-		s_data.quad_vertex_buffer_ptr->texture_slot = texture_slot;
-		s_data.quad_vertex_buffer_ptr++;
-
-		s_data.quad_vertex_buffer_ptr->position = transform * s_data.quad_vertices[2];
-		s_data.quad_vertex_buffer_ptr->color = color;
-		s_data.quad_vertex_buffer_ptr->tex_coord = { 1, 1 };
-		s_data.quad_vertex_buffer_ptr->texture_slot = texture_slot;
-		s_data.quad_vertex_buffer_ptr++;
-
-		s_data.quad_vertex_buffer_ptr->position = transform * s_data.quad_vertices[3];
-		s_data.quad_vertex_buffer_ptr->color = color;
-		s_data.quad_vertex_buffer_ptr->tex_coord = { 0, 1 };
-		s_data.quad_vertex_buffer_ptr->texture_slot = texture_slot;
-		s_data.quad_vertex_buffer_ptr++;
+		for (int i = 0; i < 4; ++i)
+		{
+			s_data.quad_vertex_buffer_ptr->position = transform * s_data.quad_vertices[i];
+			s_data.quad_vertex_buffer_ptr->color = color;
+			s_data.quad_vertex_buffer_ptr->tex_coord = { i > 0 && i < 3 ? 1 : 0, i < 1 ? 1 : 0 };
+			s_data.quad_vertex_buffer_ptr->texture_slot = texture_slot;
+			s_data.quad_vertex_buffer_ptr++;
+		}
 
 		s_data.quad_index_count += 6;
 
 		s_data.stats.quads++;
-		/*s_data.default_texture->Bind(0);
-		s_data.default_vao->Bind();
-
-		s_data.default_shader->SetMat4("u_model",
-				glm::translate(glm::mat4(1.0f), position)
-						* glm::rotate(glm::mat4(1.0f), glm::radians(rotation), glm::vec3(0, 0, 1))
-						* glm::size(glm::mat4(1.0f), { size.x, size.y, 1 }));
-
-		s_data.default_shader->SetVec4("u_color", color);
-
-		RendererCommand::DrawIndex(s_data.default_vao);*/
 	}
 
+	//texture
 	void Engine::Renderer2D::DrawQuad(const glm::vec2& position, const glm::vec2& scale,
 			const Engine::Ref<Engine::Texture>& texture, const glm::vec4& color)
 	{
@@ -260,14 +225,8 @@ namespace Engine
 		if (s_data.quad_index_count >= s_data.k_max_indices)
 			FlushAndReset();
 
-		const uint32_t sub_tex_width = 128;
-		const uint32_t sub_tex_height = 128;
 
-		uint32_t tex_index_x = 7;
-		uint32_t tex_index_y = 6;
-
-		glm::vec2 tex_coord = { sub_tex_width * tex_index_x, tex_index_y * sub_tex_height };
-
+		//texture batch
 		float texture_slot{ 0.0f };
 		for (int i = 1; i < s_data.texture_index; ++i)
 		{
@@ -276,7 +235,6 @@ namespace Engine
 				texture_slot = i;
 			}
 		}
-
 		if (texture_slot == 0.0f)
 		{
 			texture_slot = (float)s_data.texture_index;
@@ -287,71 +245,78 @@ namespace Engine
 		glm::mat4 transform = glm::translate(glm::mat4(1.0f), position)
 				* glm::scale(glm::mat4(1.0f), { scale.x, scale.y, 1 });
 
-		s_data.quad_vertex_buffer_ptr->position = transform * s_data.quad_vertices[0];
-		s_data.quad_vertex_buffer_ptr->color = color;
-		s_data.quad_vertex_buffer_ptr->tex_coord = { tex_coord.x / texture->get_width(),
-													 tex_coord.y / texture->get_height() };
-		s_data.quad_vertex_buffer_ptr->texture_slot = texture_slot;
-		s_data.quad_vertex_buffer_ptr++;
-
-		s_data.quad_vertex_buffer_ptr->position = transform * s_data.quad_vertices[1];
-		s_data.quad_vertex_buffer_ptr->color = color;
-		s_data.quad_vertex_buffer_ptr->tex_coord = { (tex_coord.x + sub_tex_width) / texture->get_width(),
-													 tex_coord.y / texture->get_height() };
-		s_data.quad_vertex_buffer_ptr->texture_slot = texture_slot;
-		s_data.quad_vertex_buffer_ptr++;
-
-		s_data.quad_vertex_buffer_ptr->position = transform * s_data.quad_vertices[2];
-		s_data.quad_vertex_buffer_ptr->color = color;
-		s_data.quad_vertex_buffer_ptr->tex_coord = { (tex_coord.x + sub_tex_width) / texture->get_width(),
-													 (tex_coord.y + sub_tex_height) / texture->get_height() };
-		s_data.quad_vertex_buffer_ptr->texture_slot = texture_slot;
-		s_data.quad_vertex_buffer_ptr++;
-
-		s_data.quad_vertex_buffer_ptr->position = transform * s_data.quad_vertices[3];
-		s_data.quad_vertex_buffer_ptr->color = color;
-		s_data.quad_vertex_buffer_ptr->tex_coord = { tex_coord.x / texture->get_width(),
-													 (tex_coord.y + sub_tex_height) / texture->get_height() };
-		s_data.quad_vertex_buffer_ptr->texture_slot = texture_slot;
-		s_data.quad_vertex_buffer_ptr++;
+		for (int i = 0; i < 4; ++i)
+		{
+			s_data.quad_vertex_buffer_ptr->position = transform * s_data.quad_vertices[i];
+			s_data.quad_vertex_buffer_ptr->color = color;
+			s_data.quad_vertex_buffer_ptr->tex_coord = { i > 0 && i < 3 ? 1 : 0, i < 1 ? 1 : 0 };
+			s_data.quad_vertex_buffer_ptr->texture_slot = texture_slot;
+			s_data.quad_vertex_buffer_ptr++;
+		}
 
 		s_data.quad_index_count += 6;
 
 		s_data.stats.quads++;
 
-		/*s_data.default_vao->Bind();
-
-		s_data.default_shader->SetMat4("u_model",
-				glm::translate(glm::mat4(1.0f), position) * glm::size(glm::mat4(1.0f), { size.x, size.y, 1 }));
-		texture->Bind(0);
-
-		s_data.default_shader->SetVec4("u_color", color);
-
-		RendererCommand::DrawIndex(s_data.default_vao);*/
 	}
+
+	void Renderer2D::DrawQuad(const glm::vec2& position, const glm::vec2& scale, const Ref<SubTexture2D>& sub_texture,
+			const glm::vec4& color)
+	{
+		PROFILER_FUNCTION();
+		DrawQuad({ position.x, position.y, 0 }, scale, sub_texture, color);
+	}
+
+	void Renderer2D::DrawQuad(const glm::vec3& position, const glm::vec2& scale, const Ref<SubTexture2D>& sub_texture,
+			const glm::vec4& color)
+	{
+		PROFILER_FUNCTION();
+
+		if (s_data.quad_index_count >= s_data.k_max_indices)
+			FlushAndReset();
+
+		//texture batch
+		float texture_slot{ 0.0f };
+		for (int i = 1; i < s_data.texture_index; ++i)
+		{
+			if (sub_texture->get_texture()->get_renderer_id() == s_data.textures[i]->get_renderer_id())
+			{
+				texture_slot = i;
+			}
+		}
+		if (texture_slot == 0.0f)
+		{
+			texture_slot = (float)s_data.texture_index;
+			s_data.textures[texture_slot] = sub_texture->get_texture();
+			s_data.texture_index++;
+		}
+
+		glm::mat4 transform = glm::translate(glm::mat4(1.0f), position)
+				* glm::scale(glm::mat4(1.0f), { scale.x, scale.y, 1 });
+
+		for (int i = 0; i < 4; ++i)
+		{
+			s_data.quad_vertex_buffer_ptr->position = transform * s_data.quad_vertices[i];
+			s_data.quad_vertex_buffer_ptr->color = color;
+			s_data.quad_vertex_buffer_ptr->tex_coord = sub_texture->get_coords()[i];
+			s_data.quad_vertex_buffer_ptr->texture_slot = texture_slot;
+			s_data.quad_vertex_buffer_ptr++;
+		}
+
+		s_data.quad_index_count += 6;
+
+		s_data.stats.quads++;
+
+	}
+
 	Renderer2D::Statistics Renderer2D::GetStats()
 	{
 		return s_data.stats;
 	}
-	void Renderer2D::FlushAndReset()
-	{
-		PROFILER_FUNCTION();
 
-		EndScene();
-
-		s_data.quad_vertex_buffer_ptr = s_data.quad_vertex_buffer_base;
-
-		s_data.quad_index_count = 0;
-		s_data.texture_index = 1;
-	}
 	void Renderer2D::ResetStats()
 	{
 		memset(&s_data.stats, 0, sizeof(Statistics));
-	}
-	void Renderer2D::DrawQuad(const glm::vec2& position, const glm::vec2& scale, const Ref<SubTexture2D>& texture,
-			const glm::vec4& color)
-	{
-
 	}
 
 }
