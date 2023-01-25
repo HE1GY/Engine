@@ -33,7 +33,7 @@ layout(location=0)out vec4 color;
 
 void main()
 {
-    color=texture(u_texture2D[int(v_tex_slot)], v_tex_coord*10)*v_color;
-    //color = vec4(v_tex_slot, v_tex_slot, v_tex_slot, v_tex_slot);
+    color=texture(u_texture2D[int(v_tex_slot)], v_tex_coord)*v_color;
+    //color=vec4(v_tex_coord, 0, 1);
 }
 

@@ -10,7 +10,8 @@ Sandbox2D::Sandbox2D()
 
 void Sandbox2D::OnAttach()
 {
-	m_texture = Engine::Texture2D::Create("../../../Sandbox/assets/textures/chess.png");
+	m_texture_chess = Engine::Texture2D::Create("../../../Sandbox/assets/textures/chess.png");
+	m_texture_sprites = Engine::Texture2D::Create("../../../Sandbox/assets/textures/RPGpack_sheet_2X.png");
 
 	ParticlesProp prop;
 	prop.life_time = 2;
@@ -75,46 +76,41 @@ void Sandbox2D::OnUpdate(Engine::TimeStep ts)
 	Engine::Renderer2D::ResetStats();
 
 	{
-		static float angle = 0.0f;
-		angle += 100 * ts;
 
 		Engine::Renderer2D::BeginScene(m_camera_controller.get_camera());
 
-		Engine::Renderer2D::DrawQuad({ 0, 0, -1 }, { 5, 5 }, m_texture);
-
-		Engine::Renderer2D::DrawQuad({ 1, 0, 0.1 }, { 1, 1 }, { 0.8, 0.2, 0.3, 1 });
-
-		Engine::Renderer2D::DrawQuad({ -1, 0, 0 }, { 1, 1 }, { 0.2, 0.2, 0.3, 1 });
-
-		Engine::Renderer2D::DrawQuad({ 0, 0, 0 }, { 1, 1 }, angle, { 0.5, 0.5, 0.5, 1 });
-
-		static float color_anim{ 0.1f };
-		static bool increase{ true };
-		static float color_step{ 0.3f };
-
-		color_anim += ts.GetInSeconds() * color_step;
-
-		if (color_anim >= 1 && increase)
 		{
-			increase = false;
-			color_step *= -1;
-		}
-		if (color_anim <= 0 && !increase)
-		{
-			increase = true;
-			color_step *= -1;
-		}
+			static float color_anim{ 0.1f };
+			static bool increase{ true };
+			static float color_step{ 0.3f };
 
-		for (int i = 0; i < 50; ++i)
-		{
-			for (int j = 0; j < 50; ++j)
+			color_anim += ts.GetInSeconds() * color_step;
+
+			if (color_anim >= 1 && increase)
 			{
-				float r = i / float(50) * color_anim;
-				float g = j / float(50) * color_anim;
-				float b = j / float(50) * color_anim;
-				Engine::Renderer2D::DrawQuad({ i + 5, j, 0 }, { 0.7, 0.7 }, { r, g, b, 1 });
+				increase = false;
+				color_step *= -1;
+			}
+			if (color_anim <= 0 && !increase)
+			{
+				increase = true;
+				color_step *= -1;
+			}
+
+			for (int i = 0; i < 50; ++i)
+			{
+				for (int j = 0; j < 50; ++j)
+				{
+					float r = i / float(50) * color_anim;
+					float g = j / float(50) * color_anim;
+					float b = j / float(50) * color_anim;
+					Engine::Renderer2D::DrawQuad({ i + 5, j, 0 }, { 0.7, 0.7 }, { r, g, b, 1 });
+				}
 			}
 		}
+
+		Engine::Renderer2D::DrawQuad({ 0, 0, 0 }, { 1, 1 }, m_texture_sprites);
+
 		Engine::Renderer2D::EndScene();
 
 		m_particles.OnUpdate(ts);

@@ -14,7 +14,7 @@ namespace Engine
 
 	struct Renderer2DData
 	{
-		const uint32_t k_max_quads = 1;
+		const uint32_t k_max_quads = 1000;
 		const uint32_t k_max_vertices = k_max_quads * 4;
 		const uint32_t k_max_indices = k_max_quads * 6;
 		static const uint32_t k_max_texture_slot = 32;//TODO renderer prop
@@ -251,6 +251,7 @@ namespace Engine
 
 		DrawQuad({ position.x, position.y, 0 }, scale, texture, color);
 	}
+
 	void Engine::Renderer2D::DrawQuad(const glm::vec3& position, const glm::vec2& scale,
 			const Engine::Ref<Engine::Texture>& texture, const glm::vec4& color)
 	{
@@ -258,6 +259,14 @@ namespace Engine
 
 		if (s_data.quad_index_count >= s_data.k_max_indices)
 			FlushAndReset();
+
+		const uint32_t sub_tex_width = 128;
+		const uint32_t sub_tex_height = 128;
+
+		uint32_t tex_index_x = 9;
+		uint32_t tex_index_y = 16;
+
+		glm::vec2 tex_coord = { sub_tex_width * tex_index_x, tex_index_y * sub_tex_height };
 
 		float texture_slot{ 0.0f };
 		for (int i = 1; i < s_data.texture_index; ++i)
@@ -280,25 +289,29 @@ namespace Engine
 
 		s_data.quad_vertex_buffer_ptr->position = transform * s_data.quad_vertices[0];
 		s_data.quad_vertex_buffer_ptr->color = color;
-		s_data.quad_vertex_buffer_ptr->tex_coord = { 0, 0 };
+		s_data.quad_vertex_buffer_ptr->tex_coord = { tex_coord.x / texture->get_width(),
+													 tex_coord.y / texture->get_height() };
 		s_data.quad_vertex_buffer_ptr->texture_slot = texture_slot;
 		s_data.quad_vertex_buffer_ptr++;
 
 		s_data.quad_vertex_buffer_ptr->position = transform * s_data.quad_vertices[1];
 		s_data.quad_vertex_buffer_ptr->color = color;
-		s_data.quad_vertex_buffer_ptr->tex_coord = { 1, 0 };
+		s_data.quad_vertex_buffer_ptr->tex_coord = { (tex_coord.x + sub_tex_width) / texture->get_width(),
+													 tex_coord.y / texture->get_height() };
 		s_data.quad_vertex_buffer_ptr->texture_slot = texture_slot;
 		s_data.quad_vertex_buffer_ptr++;
 
 		s_data.quad_vertex_buffer_ptr->position = transform * s_data.quad_vertices[2];
 		s_data.quad_vertex_buffer_ptr->color = color;
-		s_data.quad_vertex_buffer_ptr->tex_coord = { 1, 1 };
+		s_data.quad_vertex_buffer_ptr->tex_coord = { (tex_coord.x + sub_tex_width) / texture->get_width(),
+													 (tex_coord.y + sub_tex_height) / texture->get_height() };
 		s_data.quad_vertex_buffer_ptr->texture_slot = texture_slot;
 		s_data.quad_vertex_buffer_ptr++;
 
 		s_data.quad_vertex_buffer_ptr->position = transform * s_data.quad_vertices[3];
 		s_data.quad_vertex_buffer_ptr->color = color;
-		s_data.quad_vertex_buffer_ptr->tex_coord = { 0, 1 };
+		s_data.quad_vertex_buffer_ptr->tex_coord = { tex_coord.x / texture->get_width(),
+													 (tex_coord.y + sub_tex_height) / texture->get_height() };
 		s_data.quad_vertex_buffer_ptr->texture_slot = texture_slot;
 		s_data.quad_vertex_buffer_ptr++;
 
