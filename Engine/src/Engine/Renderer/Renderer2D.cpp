@@ -348,5 +348,10 @@ namespace Engine
 	{
 		memset(&s_data.stats, 0, sizeof(Statistics));
 	}
+	void Renderer2D::DrawQuad(const glm::vec2& position, const glm::vec2& scale, const Ref<SubTexture2D>& texture,
+			const glm::vec4& color)
+	{
+
+	}
 
 }

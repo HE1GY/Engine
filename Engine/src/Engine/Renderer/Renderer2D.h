@@ -4,6 +4,7 @@
 #include <glm/vec3.hpp>
 #include <glm/vec4.hpp>
 #include "Texture.h"
+#include "SubTexture2D.h"
 #include "Shader.h"
 #include "OrthographicCamera.h"
 #include "VertexArray.h"
@@ -44,6 +45,11 @@ namespace Engine
 		static void DrawQuad(const glm::vec2& position, const glm::vec2& scale, const Ref<Texture>& texture,
 				const glm::vec4& color = { 1, 1, 1, 1 });
 		static void DrawQuad(const glm::vec3& position, const glm::vec2& scale, const Ref<Texture>& texture,
+				const glm::vec4& color = { 1, 1, 1, 1 });
+
+		static void DrawQuad(const glm::vec2& position, const glm::vec2& scale, const Ref<SubTexture2D>& texture,
+				const glm::vec4& color = { 1, 1, 1, 1 });
+		static void DrawQuad(const glm::vec3& position, const glm::vec2& scale, const Ref<SubTexture2D>& texture,
 				const glm::vec4& color = { 1, 1, 1, 1 });
 
 		static Statistics GetStats();
