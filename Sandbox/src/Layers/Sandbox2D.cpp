@@ -41,6 +41,7 @@ void Sandbox2D::OnImGuiRender()
 	ImGui::Text("vertices: %d", stats.get_vertices());
 
 	ImGui::End();
+
 }
 void Sandbox2D::OnEvent(Engine::Event& event)
 {

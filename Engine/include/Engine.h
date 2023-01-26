@@ -2,6 +2,8 @@
 
 #include "Engine/Core/Application.h"
 #include "Engine/Core/Layer.h"
+#include "Engine/Core/Core.h"
+#include "Engine/Core/TimeStep.h"
 #include "imgui.h"
 
 #include "Engine/Event/ApplicationEvent.h"
@@ -20,17 +22,10 @@
 #include "Engine/Renderer/SubTexture2D.h"
 #include "Engine/Renderer/VertexArray.h"
 
-#include "Engine/Core/Log.h"
-
-#include "Engine/Core/TimeStep.h"
 #include "Engine/Renderer/OrthographicCameraController.h"
 
-#include "Engine/Core/Core.h"
 #include "Engine/Debug/Instrumentor.h"
+#include "Engine/Core/Log.h"
 
-// trash
-//
-#include "Platform/OpenGL/OpenGLShader.h"
-//
 
 

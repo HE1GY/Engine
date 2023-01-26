@@ -93,7 +93,7 @@ public:
 				square_pos = { x, y, 0 };
 				auto flat_shader = m_shader_lib.Get("flat_color");
 				flat_shader->Bind();
-				std::dynamic_pointer_cast<Engine::OpenGLShader>(flat_shader)->UploadUniform("u_color", m_uniform_color);
+				flat_shader->SetVec4("u_color", m_uniform_color);
 				Engine::Renderer::Submit(flat_shader, m_vao_square,
 						glm::translate(glm::mat4(1.0f), square_pos) *
 								glm::scale(glm::mat4(1.0f), { 0.1f, 0.1f, 0.1f }));
@@ -103,12 +103,12 @@ public:
 		m_texture->Bind();
 		auto texture = m_shader_lib.Get("texture");
 		texture->Bind();
-		std::dynamic_pointer_cast<Engine::OpenGLShader>(texture)->UploadUniform("u_texture2D", 0);
+		texture->SetInt("u_texture2D", 0);
 		Engine::Renderer::Submit(texture, m_vao_square_texture2d);
 
 		m_texture_2->Bind();
 		texture->Bind();
-		std::dynamic_pointer_cast<Engine::OpenGLShader>(texture)->UploadUniform("u_texture2D", 0);
+		texture->SetInt("u_texture2D", 0);
 		Engine::Renderer::Submit(texture, m_vao_square_texture2d);
 
 		Engine::Renderer::EndScene();

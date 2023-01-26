@@ -35,7 +35,7 @@ namespace Engine
 		}
 
 		Application* app = Application::Get();
-		GLFWwindow* window = static_cast<GLFWwindow*>(app->GetWindow()->GetNativeWindow());
+		GLFWwindow* window = static_cast<GLFWwindow*>(app->GetWindow()->get_native_window());
 
 		ImGui_ImplGlfw_InitForOpenGL(window, true);
 		ImGui_ImplOpenGL3_Init("#version 460");

@@ -6,8 +6,6 @@
 #include "Engine/Core/TimeStep.h"
 #include "Engine/Renderer/Renderer.h"
 
-#include "GLFW/glfw3.h"
-
 namespace Engine
 {
 
@@ -21,13 +19,20 @@ namespace Engine
 		s_instance = this;
 
 		m_window = Ref<Window>(Window::Create());
-		m_window->SetVSync(true);
-		m_window->SetEventCallback(BIND_EVENT_FUNC(Application::OnEvent));
+		m_window->set_VSync(true);
+		m_window->set_event_callback(BIND_EVENT_FUNC(Application::OnEvent));
 
 		Renderer::Init();
 
 		m_imGuiLayer = new ImGuiLayer();
 		PushOverlay(m_imGuiLayer);
+	}
+
+	void Application::Close()
+	{
+		PROFILER_FUNCTION();
+		m_is_running = false;
+		Renderer::ShutDown();
 	}
 
 	void Application::Run()
@@ -36,7 +41,7 @@ namespace Engine
 
 		while (m_is_running)
 		{
-			float time = (float)glfwGetTime();// TODO glfw dep
+			float time = m_window->get_current_time();
 			TimeStep ts = time - m_last_frame_time;
 			m_last_frame_time = time;
 
@@ -84,11 +89,11 @@ namespace Engine
 			}
 		}
 	}
+
 	bool Application::OnWindowsClosed(WindowClosed& event)
 	{
 		PROFILER_FUNCTION();
-		m_is_running = false;
-		ShutDown();
+		Close();
 		return true;
 	}
 	bool Application::OnWindowsResized(WindowResized& event)
@@ -121,11 +126,6 @@ namespace Engine
 		PROFILER_FUNCTION();
 		m_layer_stack.EraseLayer(layer);
 		layer->OnDetach();
-	}
-	void Application::ShutDown()
-	{
-		PROFILER_FUNCTION();
-		Renderer::ShutDown();
 	}
 
 } // namespace Engine

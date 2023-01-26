@@ -127,20 +127,24 @@ namespace Engine
 		m_graphic_context->SwapBuffer();
 		glfwPollEvents();
 	}
-	void WindowsWindow::SetEventCallback(const EventCallbackFn& fun)
+	void WindowsWindow::set_event_callback(const EventCallbackFn& fun)
 	{
 		m_callback = fun;
 	}
-	void* WindowsWindow::GetNativeWindow()
+	void* WindowsWindow::get_native_window()
 	{
 		return m_native_window;
 	}
 
-	void WindowsWindow::SetVSync(bool on)
+	void WindowsWindow::set_VSync(bool on)
 	{
 		PROFILER_FUNCTION();
 
 		m_is_vsync = on;
 		glfwSwapInterval(m_is_vsync ? 1 : 0);
+	}
+	float WindowsWindow::get_current_time()
+	{
+		return (float)glfwGetTime();
 	}
 } // namespace Engine
