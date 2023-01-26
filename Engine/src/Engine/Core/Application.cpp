@@ -15,7 +15,7 @@ namespace Engine
 	{
 		PROFILER_FUNCTION();
 
-		CORE_ASSERT((s_instance == nullptr), "App exists");
+		CORE_ASSERT((s_instance == nullptr), "App already exists");
 		s_instance = this;
 
 		m_window = Ref<Window>(Window::Create());

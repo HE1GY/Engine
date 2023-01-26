@@ -14,11 +14,11 @@ namespace Engine
 		{
 			return m_time;
 		}
-		inline float GetInSeconds()
+		inline float get_In_seconds()
 		{
 			return m_time;
 		}
-		inline float GetInMilliseconds()
+		inline float get_in_milliseconds()
 		{
 			return m_time * 1000;
 		}

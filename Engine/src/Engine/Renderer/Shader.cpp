@@ -69,7 +69,7 @@ namespace Engine
 	{
 		PROFILER_FUNCTION();
 
-		CORE_ASSERT((m_shaders.find(name) != m_shaders.end()), "Shader has not found");
+		CORE_ASSERT((m_shaders.find(name) != m_shaders.end()), "Shader has not been found");
 		return m_shaders[name];
 	}
 } // namespace Engine

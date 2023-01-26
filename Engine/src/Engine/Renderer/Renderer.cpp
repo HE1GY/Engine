@@ -3,7 +3,6 @@
 #include "Engine/Core/Core.h"
 #include "Renderer.h"
 
-#include "Platform/OpenGL/OpenGLShader.h"
 #include "Renderer2D.h"
 
 namespace Engine

@@ -85,7 +85,7 @@ void Sandbox2D::OnUpdate(Engine::TimeStep ts)
 			static bool increase{ true };
 			static float color_step{ 0.3f };
 
-			color_anim += ts.GetInSeconds() * color_step;
+			color_anim += ts.get_In_seconds() * color_step;
 
 			if (color_anim >= 1 && increase)
 			{

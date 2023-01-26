@@ -11,45 +11,30 @@ namespace Engine
 	{
 		switch (type)
 		{
-		case ShaderDataType::None:
-		CORE_ASSERT(false, "BufferLayout None type");
-			return 0;
-			break;
 		case ShaderDataType::Float:
 			return 4;
-			break;
 		case ShaderDataType::Float2:
 			return 2 * 4;
-			break;
 		case ShaderDataType::Float3:
 			return 3 * 4;
-			break;
 		case ShaderDataType::Float4:
 			return 4 * 4;
-			break;
 		case ShaderDataType::Int:
 			return 4;
-			break;
 		case ShaderDataType::Int2:
 			return 4 * 2;
-			break;
 		case ShaderDataType::Int3:
 			return 4 * 3;
-			break;
 		case ShaderDataType::Int4:
 			return 4 * 4;
-			break;
 		case ShaderDataType::Mat3:
 			return 3 * 3 * 4;
-			break;
 		case ShaderDataType::Mat4:
 			return 4 * 4 * 4;
-			break;
 		case ShaderDataType::Bool:
 			return 1;
-			break;
 		default:
-		CORE_ASSERT(false, "BufferLayout None type");
+		CORE_ASSERT(false, "Unsupported shader type");
 			return 0;
 		}
 	}
@@ -65,46 +50,30 @@ namespace Engine
 
 		switch (type)
 		{
-
-		case ShaderDataType::None:
-		CORE_ASSERT(false, "BufferLayout None type");
-			return 0;
-			break;
 		case ShaderDataType::Float:
 			return 1;
-			break;
 		case ShaderDataType::Float2:
 			return 2;
-			break;
 		case ShaderDataType::Float3:
 			return 3;
-			break;
 		case ShaderDataType::Float4:
 			return 4;
-			break;
 		case ShaderDataType::Int:
 			return 1;
-			break;
 		case ShaderDataType::Int2:
 			return 2;
-			break;
 		case ShaderDataType::Int3:
 			return 3;
-			break;
 		case ShaderDataType::Int4:
 			return 4;
-			break;
 		case ShaderDataType::Mat3:
 			return 3 * 3;
-			break;
 		case ShaderDataType::Mat4:
 			return 4 * 4;
-			break;
 		case ShaderDataType::Bool:
 			return 1;
-			break;
 		default:
-		CORE_ASSERT(false, "BufferLayout None type");
+		CORE_ASSERT(false, "Unsupported shader type");
 			return 0;
 		}
 	}
@@ -135,7 +104,7 @@ namespace Engine
 			return std::make_shared<OpenGLVertexBuffer>(size);
 
 		default:
-		CORE_ASSERT(false, "API = None");
+		CORE_ASSERT(false, "Renderer API = None");
 			return nullptr;
 		}
 	}
@@ -148,7 +117,7 @@ namespace Engine
 			return std::make_shared<OpenGLVertexBuffer>(data, size);
 
 		default:
-		CORE_ASSERT(false, "API = None");
+		CORE_ASSERT(false, "Renderer API = None");
 			return nullptr;
 		}
 	}
@@ -161,7 +130,7 @@ namespace Engine
 			return std::make_shared<OpenGLIndexBuffer>(data, count);
 
 		default:
-		CORE_ASSERT(false, "API = None");
+		CORE_ASSERT(false, "Renderer API = None");
 			return nullptr;
 		}
 	}
