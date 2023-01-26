@@ -23,7 +23,6 @@ private:
 	Engine::Ref<Engine::Texture2D> m_texture_chess;
 	Engine::Ref<Engine::Texture2D> m_texture_sprites;
 	Engine::Ref<Engine::SubTexture2D> m_wall, m_tree;
-	Engine::Ref<Engine::FrameBuffer> m_frame_buffer;
 
 	float m_fps{ 0 };
 

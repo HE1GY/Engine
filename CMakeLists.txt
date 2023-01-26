@@ -7,6 +7,7 @@ set(CMAKE_CXX_STANDARD 20)
 
 add_subdirectory(Engine)
 add_subdirectory(Sandbox)
+add_subdirectory(Engine-Editor)
 add_subdirectory(external/spdlog)
 add_subdirectory(external/glfw)
 add_subdirectory(external/glad)
@@ -16,6 +17,8 @@ add_subdirectory(external/stb_image)
 
 
 target_link_libraries(Sandbox PRIVATE Engine)
+target_link_libraries(Engine_Editor PRIVATE Engine)
+
 target_link_libraries(Engine PUBLIC spdlog)
 target_link_libraries(Engine PUBLIC glfw)
 target_link_libraries(Engine PUBLIC glad)

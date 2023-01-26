@@ -27,19 +27,24 @@ namespace Engine
 
 		inline virtual unsigned int get_width() override
 		{
-			return m_props.width;
+			return m_window_data.props.width;
 		};
 		inline virtual unsigned int get_height() override
 		{
-			return m_props.height;
+			return m_window_data.props.height;
 		};
 
 	private:
-		EventCallbackFn m_callback;
+		struct WindowData
+		{
+			WindowsProps props;
+			EventCallbackFn callback;
+		};
+
 		GLFWwindow* m_native_window;
 		GraphicContext* m_graphic_context;
 		bool m_is_vsync;
-		WindowsProps m_props;
+		WindowData m_window_data;
 	};
 
 } // namespace Engine

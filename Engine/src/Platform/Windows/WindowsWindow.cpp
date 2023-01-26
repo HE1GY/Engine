@@ -16,7 +16,7 @@ namespace Engine
 	}
 
 	WindowsWindow::WindowsWindow(const WindowsProps& props)
-			:m_props(props)
+			:m_window_data{ props }
 	{
 		PROFILER_FUNCTION();
 
@@ -40,78 +40,82 @@ namespace Engine
 		m_graphic_context = new OpenGLContext(m_native_window);
 		m_graphic_context->Init();
 
-		glfwSetWindowUserPointer(m_native_window, &m_callback);
+		glfwSetWindowUserPointer(m_native_window, &m_window_data);
 
 		// Event handling
 		glfwSetKeyCallback(m_native_window, [](GLFWwindow* window, int key, int scancode, int action, int mods)
 		{
-		  EventCallbackFn* event_callback = (EventCallbackFn*)glfwGetWindowUserPointer(window);
+		  WindowData* data = (WindowData*)glfwGetWindowUserPointer(window);
 
 		  if (action == GLFW_PRESS)
 		  {
 			  KeyPress key_press(key, 0);
-			  (*event_callback)(key_press);
+			  (data->callback)(key_press);
 		  }
 		  else if (action == GLFW_RELEASE)
 		  {
 			  KeyReleased key_released(key);
-			  (*event_callback)(key_released);
+			  (data->callback)(key_released);
 		  }
 		  else if (action == GLFW_REPEAT)
 		  {
 			  KeyPress key_press(key, 1);
-			  (*event_callback)(key_press);
+			  (data->callback)(key_press);
 		  }
 		});
 		glfwSetCharCallback(m_native_window, [](GLFWwindow* window, unsigned int codepoint)
 		{
-		  EventCallbackFn* event_callback = (EventCallbackFn*)glfwGetWindowUserPointer(window);
+		  WindowData* data = (WindowData*)glfwGetWindowUserPointer(window);
 		  KeyTyped key_typed(codepoint);
-		  (*event_callback)(key_typed);
+		  (data->callback)(key_typed);
 		});
 
 		glfwSetWindowCloseCallback(m_native_window, [](GLFWwindow* window)
 		{
-		  EventCallbackFn* event_callback = (EventCallbackFn*)glfwGetWindowUserPointer(window);
+		  WindowData* data = (WindowData*)glfwGetWindowUserPointer(window);
 		  WindowClosed close_event;
-		  (*event_callback)(close_event);
+		  (data->callback)(close_event);
 		});
 
 		glfwSetWindowSizeCallback(m_native_window, [](GLFWwindow* window, int width, int height)
 		{
-		  EventCallbackFn* event_callback = (EventCallbackFn*)glfwGetWindowUserPointer(window);
+		  WindowData* data = (WindowData*)glfwGetWindowUserPointer(window);
+
+		  data->props.width = width;
+		  data->props.height = height;
+
 		  WindowResized e(width, height);
-		  (*event_callback)(e);
+		  (data->callback)(e);
 		});
 
 		glfwSetMouseButtonCallback(m_native_window, [](GLFWwindow* window, int button, int action, int mods)
 		{
-		  EventCallbackFn* event_callback = (EventCallbackFn*)glfwGetWindowUserPointer(window);
+		  WindowData* data = (WindowData*)glfwGetWindowUserPointer(window);
 
 		  if (action == GLFW_PRESS)
 		  {
 			  MouseButtonPressed key_press(button);
-			  (*event_callback)(key_press);
+			  (data->callback)(key_press);
 		  }
 		  else if (action == GLFW_RELEASE)
 		  {
 			  MouseButtonReleased key_released(button);
-			  (*event_callback)(key_released);
+			  (data->callback)(key_released);
 		  }
 		});
 
 		glfwSetScrollCallback(m_native_window, [](GLFWwindow* window, double xoffset, double yoffset)
 		{
-		  EventCallbackFn* event_callback = (EventCallbackFn*)glfwGetWindowUserPointer(window);
+		  WindowData* data = (WindowData*)glfwGetWindowUserPointer(window);
 		  MouseScrolled e(xoffset, yoffset);
-		  (*event_callback)(e);
+		  (data->callback)(e);
 		});
 
 		glfwSetCursorPosCallback(m_native_window, [](GLFWwindow* window, double xpos, double ypos)
 		{
-		  EventCallbackFn* event_callback = (EventCallbackFn*)glfwGetWindowUserPointer(window);
+		  WindowData* data = (WindowData*)glfwGetWindowUserPointer(window);
 		  MouseMoved e(xpos, ypos);
-		  (*event_callback)(e);
+		  (data->callback)(e);
 		});
 	}
 
@@ -129,7 +133,7 @@ namespace Engine
 	}
 	void WindowsWindow::set_event_callback(const EventCallbackFn& fun)
 	{
-		m_callback = fun;
+		m_window_data.callback = fun;
 	}
 	void* WindowsWindow::get_native_window()
 	{

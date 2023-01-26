@@ -16,6 +16,7 @@
 
 #include "Engine/Renderer/Buffer.h"
 #include "Engine/Renderer/Renderer.h"
+#include "Engine/Renderer/Renderer2D.h"
 #include "Engine/Renderer/RendererCommand.h"
 #include "Engine/Renderer/Shader.h"
 #include "Engine/Renderer/Texture.h"
@@ -27,6 +28,10 @@
 
 #include "Engine/Debug/Instrumentor.h"
 #include "Engine/Core/Log.h"
+
+//systems
+#include "Engine/Systems/ParticlesSystem.h"
+#include "Engine/Systems/Random.h"
 
 
 
