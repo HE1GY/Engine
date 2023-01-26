@@ -23,6 +23,10 @@ target_link_libraries(Engine PUBLIC glm)
 target_link_libraries(Engine PUBLIC imgui)
 target_link_libraries(Engine PUBLIC stb_image)
 
+target_link_libraries(imgui PUBLIC glfw)
+
+
+
 
 
 

@@ -61,7 +61,7 @@ add_library(Engine STATIC
         src/Engine/Renderer/Renderer2D.cpp
         src/Engine/Renderer/Renderer2D.h
         src/Engine/Debug/Instrumentor.h
-        src/Engine/Renderer/SubTexture2D.cpp src/Engine/Renderer/SubTexture2D.h)
+        src/Engine/Renderer/SubTexture2D.cpp src/Engine/Renderer/SubTexture2D.h src/Engine/Renderer/FrameBuffer.cpp src/Engine/Renderer/FrameBuffer.h src/Platform/OpenGL/OpenGLFrameBuffer.cpp src/Platform/OpenGL/OpenGLFrameBuffer.h)
 
 
 target_include_directories(Engine

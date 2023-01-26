@@ -22,6 +22,13 @@ void Sandbox2D::OnAttach()
 	prop.start_color = glm::vec4{ 0.9, 0.3, 0.1, 1 };
 	prop.end_color = glm::vec4{ 0.7, 0.2, 0.1, 0.1 };
 	m_particles.Init(prop);
+
+	Engine::FrameBufferSpecification fb_spec;
+	fb_spec.width = 1280;
+	fb_spec.height = 720;
+
+	m_frame_buffer = Engine::FrameBuffer::Create(fb_spec);
+
 }
 
 void Sandbox2D::OnDetach()
@@ -40,6 +47,9 @@ void Sandbox2D::OnImGuiRender()
 	ImGui::Text("indices: %d", stats.get_indices());
 	ImGui::Text("vertices: %d", stats.get_vertices());
 
+	uint32_t tex_id = m_frame_buffer->get_color_attachment_renderer_id();
+	uint32_t tex_id2 = m_texture_chess->get_renderer_id();
+	ImGui::Image((void*)tex_id, ImVec2{ 1280, 720 });
 	ImGui::End();
 
 }
@@ -49,6 +59,8 @@ void Sandbox2D::OnEvent(Engine::Event& event)
 }
 void Sandbox2D::OnUpdate(Engine::TimeStep ts)
 {
+	m_frame_buffer->UnBind();
+
 	if (Engine::Input::IsMouseButtonPress(MOUSE_BUTTON_LEFT))
 	{
 		auto [x, y] = Engine::Input::GetMousePos();
@@ -117,6 +129,8 @@ void Sandbox2D::OnUpdate(Engine::TimeStep ts)
 
 		m_particles.OnUpdate(ts);
 		m_particles.OnRenderer(m_camera_controller.get_camera());
+
+		m_frame_buffer->UnBind();
 	}
 }
 
