@@ -4,11 +4,11 @@
 
 namespace Engine
 {
-	class Engine_EditorLayer : public Layer
+	class EngineEditorLayer : public Layer
 	{
 	public:
-		Engine_EditorLayer();
-		~Engine_EditorLayer() = default;
+		EngineEditorLayer();
+		~EngineEditorLayer() = default;
 
 		virtual void OnAttach() override;
 
@@ -26,6 +26,8 @@ namespace Engine
 		Engine::Ref<Engine::Texture2D> m_texture_chess;
 		Engine::Ref<Engine::Texture2D> m_texture_sprites;
 		Engine::Ref<Engine::SubTexture2D> m_wall, m_tree;
+
+		glm::vec2 m_viewport_size{ 0, 0 };
 
 		Ref<FrameBuffer> m_frame_buffer;
 

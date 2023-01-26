@@ -12,10 +12,17 @@ namespace Engine
 	OpenGLFrameBuffer::~OpenGLFrameBuffer()
 	{
 		glDeleteFramebuffers(1, &m_renderer_id);
+		glDeleteTextures(1, &m_color_attachment);
+		glDeleteTextures(1, &m_depth_attachment);
 	}
 
 	void Engine::OpenGLFrameBuffer::Invalidate()
 	{
+		if (m_renderer_id != 0)
+		{
+			glDeleteTextures(1, &m_color_attachment);
+			glDeleteTextures(1, &m_depth_attachment);
+		}
 		glCreateFramebuffers(1, &m_renderer_id);
 		glBindFramebuffer(GL_FRAMEBUFFER, m_renderer_id);
 
@@ -47,6 +54,14 @@ namespace Engine
 	void OpenGLFrameBuffer::UnBind()
 	{
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	}
+	void OpenGLFrameBuffer::Resize(uint32_t x, uint32_t y)
+	{
+		m_specification.width = x;
+		m_specification.height = y;
+
+		Invalidate();
+
 	}
 }
 

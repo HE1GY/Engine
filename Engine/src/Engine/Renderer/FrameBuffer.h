@@ -22,5 +22,7 @@ namespace Engine
 
 		virtual void Bind() = 0;
 		virtual void UnBind() = 0;
+
+		virtual void Resize(uint32_t x, uint32_t y) = 0;
 	};
 }

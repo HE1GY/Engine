@@ -1,12 +1,12 @@
-#include "Engine_EditorLayer.h"
+#include "EngineEditorLayer.h"
 namespace Engine
 {
-	Engine_EditorLayer::Engine_EditorLayer()
+	EngineEditorLayer::EngineEditorLayer()
 			:Layer("Engine-EditorLayer"), m_camera_controller(1280.0f / 720.0f, true)
 	{
 	}
 
-	void Engine_EditorLayer::OnAttach()
+	void EngineEditorLayer::OnAttach()
 	{
 		m_texture_chess = Engine::Texture2D::Create("../../../Sandbox/assets/textures/chess.png");
 		m_texture_sprites = Engine::Texture2D::Create("../../../Sandbox/assets/textures/RPGpack_sheet_2X.png");
@@ -27,10 +27,10 @@ namespace Engine
 		m_frame_buffer = FrameBuffer::Create(fb_spec);
 
 	}
-	void Engine_EditorLayer::OnDetach()
+	void EngineEditorLayer::OnDetach()
 	{
 	}
-	void Engine_EditorLayer::OnUpdate(Engine::TimeStep ts)
+	void EngineEditorLayer::OnUpdate(Engine::TimeStep ts)
 	{
 
 		if (Engine::Input::IsMouseButtonPress(MOUSE_BUTTON_LEFT))
@@ -107,11 +107,11 @@ namespace Engine
 			m_frame_buffer->UnBind();
 		}
 	}
-	void Engine_EditorLayer::OnEvent(Event& event)
+	void EngineEditorLayer::OnEvent(Event& event)
 	{
 		m_camera_controller.OnEvent(event);
 	}
-	void Engine_EditorLayer::OnImGuiRender()
+	void EngineEditorLayer::OnImGuiRender()
 	{
 		// If you strip some features of, this demo is pretty much equivalent to calling DockSpaceOverViewport()!
 		// In most cases you should be able to just call DockSpaceOverViewport() and ignore all the code below!
@@ -213,15 +213,26 @@ namespace Engine
 
 		}
 
-		auto stats = Engine::Renderer2D::GetStats();
+		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
 
 		ImGui::Begin("Viewport");
 
+		ImVec2 size = ImGui::GetContentRegionAvail();
+
+		if (size.x != m_viewport_size.x || size.y != m_viewport_size.y)
+		{
+			m_viewport_size = { size.x, size.y };
+			m_frame_buffer->Resize(size.x, size.y);
+			m_camera_controller.OnResize(size.x, size.y);
+		}
 		uint32_t tex_id = m_frame_buffer->get_color_attachment_renderer_id();
-		ImGui::Image((void*)tex_id, ImVec2{ 1280, 720 }, ImVec2{ 0, 1 }, ImVec2{ 1, 0 });
+		ImGui::Image((void*)tex_id, ImVec2{ size.x, size.y }, ImVec2{ 0, 1 }, ImVec2{ 1, 0 });
 
 		ImGui::End();
 
+		ImGui::PopStyleVar();
+
+		auto stats = Engine::Renderer2D::GetStats();
 		ImGui::Begin("Settings");
 
 		ImGui::Text("FPS: %d", (int)m_fps);

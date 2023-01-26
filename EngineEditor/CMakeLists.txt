@@ -1,8 +1,8 @@
 cmake_minimum_required(VERSION 3.23)
 
-project(Engine_Editor)
+project(EngineEditor)
 
-add_executable(Engine_Editor src/Engine_EditorApp.cpp src/Engine_EditorLayer.cpp)
+add_executable(EngineEditor src/EngineEditorApp.cpp src/EngineEditorLayer.cpp)
 
 
 if (DEBUG)

@@ -21,13 +21,15 @@ namespace Engine
 		virtual void Bind() override;
 		virtual void UnBind() override;
 
+		virtual void Resize(uint32_t x, uint32_t y) override;
+
 	private:
 		void Invalidate();
 
-		uint32_t m_renderer_id;
+		uint32_t m_renderer_id{ 0 };
 
-		uint32_t m_color_attachment;
-		uint32_t m_depth_attachment;
+		uint32_t m_color_attachment{ 0 };
+		uint32_t m_depth_attachment{ 0 };
 
 		FrameBufferSpecification m_specification;
 	};

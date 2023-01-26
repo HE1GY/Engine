@@ -27,5 +27,4 @@ namespace Engine
 		m_projection_matrix = glm::ortho(left, right, bottom, top, -1.0f, 1.0f);
 		m_view_projection_matrix = m_projection_matrix * m_view_matrix;
 	}
-
 } // namespace Engine

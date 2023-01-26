@@ -67,10 +67,14 @@ namespace Engine
 	}
 	bool OrthographicCameraController::OnWindowResized(WindowResized& event)
 	{
-		m_aspect_ratio = (float)event.get_width() / (float)event.get_height();
+		OnResize(event.get_width(), event.get_height());
+		return false;
+	}
+	void OrthographicCameraController::OnResize(float width, float height)
+	{
+		m_aspect_ratio = width / height;
 		m_bound = { -m_aspect_ratio * m_zoom_level, m_aspect_ratio * m_zoom_level, -m_zoom_level,
 					m_zoom_level };
 		m_camera.set_projection(m_bound.left, m_bound.right, m_bound.bottom, m_bound.top);
-		return false;
 	}
 } // namespace Engine

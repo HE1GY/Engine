@@ -1,7 +1,7 @@
 #include "Engine.h"
 #include "Engine/Core/EntryPoint.h"
 
-#include "Engine_EditorLayer.h"
+#include "EngineEditorLayer.h"
 
 namespace Engine
 {
@@ -10,7 +10,7 @@ namespace Engine
 	public:
 		Engine_Editor()
 		{
-			PushLayer(new Engine_EditorLayer());
+			PushLayer(new EngineEditorLayer());
 		}
 
 		~Engine_Editor() override = default;

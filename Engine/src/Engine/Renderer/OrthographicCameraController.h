@@ -44,6 +44,7 @@ namespace Engine
 			return m_bound;
 		}
 
+		void OnResize(float width, float height);
 	private:
 		bool OnMouseScroll(MouseScrolled& event);
 		bool OnWindowResized(WindowResized& event);
