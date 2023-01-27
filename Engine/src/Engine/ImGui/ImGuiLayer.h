@@ -8,18 +8,28 @@
 
 namespace Engine
 {
-class ImGuiLayer : public Layer
-{
-  public:
-    ImGuiLayer() : Layer("ImGuiLayer")
-    {
-    }
-    virtual ~ImGuiLayer() override = default;
+	class ImGuiLayer : public Layer
+	{
+	public:
+		ImGuiLayer()
+				:Layer("ImGuiLayer")
+		{
+		}
+		virtual ~ImGuiLayer() override = default;
 
-    virtual void OnAttach() override;
-    virtual void OnDetach() override;
+		virtual void OnAttach() override;
+		virtual void OnDetach() override;
+		virtual void OnEvent(Event& event) override;
 
-    void Begin();
-    void End();
-};
+		void Begin();
+		void End();
+
+		inline void set_block_event(bool on)
+		{
+			m_block_event = on;
+		};
+
+	private:
+		bool m_block_event{ false };
+	};
 } // namespace Engine

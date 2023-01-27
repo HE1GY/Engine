@@ -29,6 +29,8 @@ namespace Engine
 			return m_y;
 		}
 
+		EVENT_CLASS_CATEGORY(EventCategoryMouse);
+
 	private:
 		int m_x, m_y;
 	};
@@ -55,6 +57,8 @@ namespace Engine
 			return m_key_code;
 		};
 
+		EVENT_CLASS_CATEGORY(EventCategoryMouse | EventCategoryMouseButton);
+
 	private:
 		int m_key_code;
 	};
@@ -80,6 +84,8 @@ namespace Engine
 		{
 			return m_key_code;
 		};
+
+		EVENT_CLASS_CATEGORY(EventCategoryMouse | EventCategoryMouseButton);
 
 	private:
 		int m_key_code;
@@ -110,6 +116,8 @@ namespace Engine
 		{
 			return m_y_offset;
 		};
+
+		EVENT_CLASS_CATEGORY(EventCategoryMouse | EventCategoryMouseButton);
 
 	private:
 		int m_x_offset, m_y_offset;

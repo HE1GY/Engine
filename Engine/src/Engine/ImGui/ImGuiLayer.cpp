@@ -34,7 +34,7 @@ namespace Engine
 			style.Colors[ImGuiCol_WindowBg].w = 1.0f;
 		}
 
-		Application* app = Application::Get();
+		Application* app = Application::get();
 		GLFWwindow* window = static_cast<GLFWwindow*>(app->GetWindow()->get_native_window());
 
 		ImGui_ImplGlfw_InitForOpenGL(window, true);
@@ -50,6 +50,15 @@ namespace Engine
 		ImGui::DestroyContext();
 	}
 
+	void ImGuiLayer::OnEvent(Event& event)
+	{
+		if (m_block_event)
+		{
+			ImGuiIO& io = ImGui::GetIO();
+			event.Handled |= event.IsInCategory(EventCategoryMouse) & io.WantCaptureMouse;
+			event.Handled |= event.IsInCategory(EventCategoryKeyboard) & io.WantCaptureKeyboard;
+		}
+	}
 	void ImGuiLayer::Begin()
 	{
 		PROFILER_FUNCTION();
@@ -63,7 +72,7 @@ namespace Engine
 		PROFILER_FUNCTION();
 
 		ImGuiIO& io = ImGui::GetIO();
-		Application* app = Application::Get();
+		Application* app = Application::get();
 		io.DisplaySize = ImVec2(app->GetWindow()->get_width(), app->GetWindow()->get_height());
 
 		ImGui::Render();

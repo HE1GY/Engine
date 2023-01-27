@@ -24,8 +24,8 @@ namespace Engine
 
 		Renderer::Init();
 
-		m_imGuiLayer = new ImGuiLayer();
-		PushOverlay(m_imGuiLayer);
+		m_imgui_layer = new ImGuiLayer();
+		PushOverlay(m_imgui_layer);
 	}
 
 	void Application::Close()
@@ -59,12 +59,12 @@ namespace Engine
 				{
 					PROFILER_SCOPE("Layers ImGuiRenderer");
 
-					m_imGuiLayer->Begin();
+					m_imgui_layer->Begin();
 					for (auto layer : m_layer_stack)
 					{
 						layer->OnImGuiRender();
 					}
-					m_imGuiLayer->End();
+					m_imgui_layer->End();
 				}
 			}
 

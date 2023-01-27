@@ -37,8 +37,8 @@ namespace Engine
 		{
 			auto [x, y] = Engine::Input::GetMousePos();
 
-			float width = Application::Get()->GetWindow()->get_width();
-			float height = Application::Get()->GetWindow()->get_width();
+			float width = Application::get()->GetWindow()->get_width();
+			float height = Application::get()->GetWindow()->get_width();
 
 			glm::vec4 clip_space = { (x / width) * 2 - 1, 1 - 2 * (y / height), 0, 1 }; // to get -1<x<1 and -1<y<1
 
@@ -234,6 +234,8 @@ namespace Engine
 
 		auto stats = Engine::Renderer2D::GetStats();
 		ImGui::Begin("Settings");
+
+		Application::get()->get_imgui_layer()->set_block_event(ImGui::IsWindowFocused() || ImGui::IsWindowHovered());
 
 		ImGui::Text("FPS: %d", (int)m_fps);
 		ImGui::Text("draw calls: %d", stats.draw_calls);

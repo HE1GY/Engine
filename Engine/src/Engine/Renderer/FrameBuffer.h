@@ -15,6 +15,7 @@ namespace Engine
 	class FrameBuffer
 	{
 	public:
+		virtual ~FrameBuffer() = default;
 		static Ref<FrameBuffer> Create(const FrameBufferSpecification& spec);
 
 		virtual const FrameBufferSpecification& get_specification() const = 0;

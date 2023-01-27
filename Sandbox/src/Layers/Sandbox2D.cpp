@@ -54,8 +54,8 @@ void Sandbox2D::OnUpdate(Engine::TimeStep ts)
 	{
 		auto [x, y] = Engine::Input::GetMousePos();
 
-		float width = Engine::Application::Get()->GetWindow()->get_width();
-		float height = Engine::Application::Get()->GetWindow()->get_height();
+		float width = Engine::Application::get()->GetWindow()->get_width();
+		float height = Engine::Application::get()->GetWindow()->get_height();
 
 		glm::vec4 clip_space = { (x / width) * 2 - 1, 1 - 2 * (y / height), 0, 1 }; // to get -1<x<1 and -1<y<1
 

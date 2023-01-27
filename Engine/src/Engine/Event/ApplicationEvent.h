@@ -29,6 +29,8 @@ namespace Engine
 			return m_height;
 		}
 
+		EVENT_CLASS_CATEGORY(EventCategoryApplication);
+
 	private:
 		int m_width, m_height;
 	};
@@ -44,5 +46,7 @@ namespace Engine
 			ss << "WindowClosed";
 			return ss.str();
 		}
+
+		EVENT_CLASS_CATEGORY(EventCategoryApplication);
 	};
 }

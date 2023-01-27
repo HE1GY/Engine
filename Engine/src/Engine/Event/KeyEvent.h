@@ -16,6 +16,8 @@ namespace Engine
 			return m_key_code;
 		}
 
+		EVENT_CLASS_CATEGORY(EventCategoryInput | EventCategoryKeyboard);
+
 	protected:
 		int m_key_code;
 	};

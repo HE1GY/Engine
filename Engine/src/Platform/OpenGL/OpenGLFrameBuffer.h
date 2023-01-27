@@ -7,7 +7,7 @@ namespace Engine
 	{
 	public:
 		OpenGLFrameBuffer(const FrameBufferSpecification& spec);
-		~OpenGLFrameBuffer();
+		virtual ~OpenGLFrameBuffer() override;
 
 		virtual const FrameBufferSpecification& get_specification() const override
 		{

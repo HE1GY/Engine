@@ -23,7 +23,6 @@ add_library(Engine STATIC
         src/Engine/Core/Core.h
         src/Engine/Core/Input.h
         src/Platform/Windows/WindowsInput.cpp
-        src/Platform/Windows/WindowsInput.h
         src/Engine/Core/KeyCode.h
         src/Engine/Core/MouseButtonCode.h
         src/Platform/OpenGL/OpenGLContext.cpp

@@ -3,12 +3,12 @@
 
 // Usage: include this header file somewhere in your code (eg. precompiled header), and then use like:
 //
-// Instrumentor::Get().BeginSession("Session Name");        // Begin session
+// Instrumentor::get().BeginSession("Session Name");        // Begin session
 // {
 //     InstrumentationTimer timer("Profiled Scope Name");   // Place code like this in scopes you'd like to include in profiling
 //     // Code
 // }
-// Instrumentor::Get().EndSession();                        // End Session
+// Instrumentor::get().EndSession();                        // End Session
 //
 // You will probably want to macro-fy this, to switch on/off easily and use things like __FUNCSIG__ for the profile name.
 //
@@ -142,7 +142,7 @@ namespace Engine
 
 #ifdef PROFILER
 #define PROFILER_BEGIN_SESSION(name, filepath) ::Engine::Instrumentor::Get().BeginSession(name,filepath)
-#define PROFILER_END_SESSION() ::Engine::Instrumentor::Get().EndSession()
+#define PROFILER_END_SESSION() ::Engine::Instrumentor::get().EndSession()
 #define PROFILER_SCOPE(name)::Engine::InstrumentationTimer timer##__LINE__(name)
 
 #ifdef LINUX

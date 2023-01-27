@@ -20,14 +20,18 @@ namespace Engine
 		void PushOverlay(Layer* layer);
 		void EraseLayer(Layer* layer);
 
-		inline static Application* Get()
+		inline static Application* get()
 		{
 			return s_instance;
 		}
 
-		inline std::shared_ptr<Window> GetWindow()
+		inline std::shared_ptr<Window> GetWindow() const
 		{
 			return m_window;
+		}
+		inline ImGuiLayer* get_imgui_layer() const
+		{
+			return m_imgui_layer;
 		}
 
 	private:
@@ -39,7 +43,7 @@ namespace Engine
 
 		Ref<Window> m_window;
 
-		ImGuiLayer* m_imGuiLayer;
+		ImGuiLayer* m_imgui_layer;
 
 		bool m_is_running{ true };
 		bool m_is_minimized{ false };
