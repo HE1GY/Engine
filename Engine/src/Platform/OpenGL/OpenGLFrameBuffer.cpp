@@ -3,6 +3,7 @@
 
 namespace Engine
 {
+	static const uint32_t s_max_framebuffer_size = 8192;
 	OpenGLFrameBuffer::OpenGLFrameBuffer(const FrameBufferSpecification& spec)
 			:m_specification{ spec }
 	{
@@ -58,17 +59,15 @@ namespace Engine
 	}
 	void OpenGLFrameBuffer::Resize(uint32_t x, uint32_t y)
 	{
-		if (x > 0 && y > 0)
+		if (x <= 0 || y <= 0 || x > s_max_framebuffer_size || y > s_max_framebuffer_size)
 		{
-			m_specification.width = x;
-			m_specification.height = y;
+			CORE_ERROR("Framebuffer is too small size. Don't resize so");
+			return;
+		}
+		m_specification.width = x;
+		m_specification.height = y;
 
-			Invalidate();
-		}
-		else
-		{
-			CORE_ERROR("too small size");
-		}
+		Invalidate();
 	}
 }
 
