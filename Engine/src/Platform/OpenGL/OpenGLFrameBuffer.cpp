@@ -57,11 +57,17 @@ namespace Engine
 	}
 	void OpenGLFrameBuffer::Resize(uint32_t x, uint32_t y)
 	{
-		m_specification.width = x;
-		m_specification.height = y;
+		if (x > 0 && y > 0)
+		{
+			m_specification.width = x;
+			m_specification.height = y;
 
-		Invalidate();
-
+			Invalidate();
+		}
+		else
+		{
+			CORE_ERROR("too small size");
+		}
 	}
 }
 

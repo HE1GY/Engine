@@ -84,14 +84,14 @@ namespace Engine
 					color_step *= -1;
 				}
 
-				for (int i = 0; i < 50; ++i)
+				for (int i = 0; i < 15; ++i)
 				{
-					for (int j = 0; j < 50; ++j)
+					for (int j = 0; j < 15; ++j)
 					{
-						float r = i / float(50) * color_anim;
-						float g = j / float(50) * color_anim;
-						float b = j / float(50) * color_anim;
-						Engine::Renderer2D::DrawQuad({ i + 5, j, 0 }, { 0.7, 0.7 }, { r, g, b, 1 });
+						float r = i / float(15) * color_anim;
+						float g = j / float(15) * color_anim;
+						float b = j / float(15) * color_anim;
+						Engine::Renderer2D::DrawQuad({ i - 7, j - 7, 0 }, { 0.7, 0.7 }, { r, g, b, 1 });
 					}
 				}
 			}
