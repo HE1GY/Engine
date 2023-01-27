@@ -50,6 +50,7 @@ namespace Engine
 	void OpenGLFrameBuffer::Bind()
 	{
 		glBindFramebuffer(GL_FRAMEBUFFER, m_renderer_id);
+		glViewport(0, 0, m_specification.width, m_specification.height);
 	}
 	void OpenGLFrameBuffer::UnBind()
 	{
