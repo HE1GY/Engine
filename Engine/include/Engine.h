@@ -26,6 +26,10 @@
 
 #include "Engine/Renderer/OrthographicCameraController.h"
 
+#include "Engine/Scene/Scene.h"
+#include "Engine/Scene/Entity.h"
+#include "Engine/Scene/Components.h"
+
 #include "Engine/Debug/Instrumentor.h"
 #include "Engine/Core/Log.h"
 

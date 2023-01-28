@@ -34,6 +34,8 @@ namespace Engine
 		float m_fps{ 0 };
 
 		ParticlesSystem m_particles;
+
+		Scene m_scene;
 	};
 
 }

@@ -1,4 +1,5 @@
 #include "EngineEditorLayer.h"
+
 namespace Engine
 {
 	EngineEditorLayer::EngineEditorLayer()
@@ -25,6 +26,9 @@ namespace Engine
 		fb_spec.width = 1280;
 		fb_spec.height = 720;
 		m_frame_buffer = FrameBuffer::Create(fb_spec);
+
+		Entity quad = m_scene.CreateEntity("Quad Entity");
+		quad.AddComponent<SpriteRendererComponent>(glm::vec4{ 0, 1, 0, 1 });
 
 	}
 	void EngineEditorLayer::OnDetach()
@@ -55,18 +59,21 @@ namespace Engine
 		m_fps = (float)1 / ts;
 		m_camera_controller.OnUpdate(ts);
 
-		m_frame_buffer->Bind();
+		{
+			m_frame_buffer->Bind();
 
-		Engine::RendererCommand::SetClearColor({ 0.1f, 0.1f, 0.1f, 0.1f });
-		Engine::RendererCommand::Clear();
+			Engine::RendererCommand::SetClearColor({ 0.1f, 0.1f, 0.1f, 0.1f });
+			Engine::RendererCommand::Clear();
 
-		Engine::Renderer2D::ResetStats();
-
+			Engine::Renderer2D::ResetStats();
+		}
 		{
 
 			Engine::Renderer2D::BeginScene(m_camera_controller.get_camera());
 
-			{
+			m_scene.OnUpdate(ts);
+
+			/*{
 				static float color_anim{ 0.1f };
 				static bool increase{ true };
 				static float color_step{ 0.3f };
@@ -98,7 +105,7 @@ namespace Engine
 
 			Engine::Renderer2D::DrawQuad({ 0, 0, 0 }, { 1, 1 }, m_wall);
 			Engine::Renderer2D::DrawQuad({ -1, 0.5f, 0 }, { 1, 2 }, m_tree);
-
+*/
 			Engine::Renderer2D::EndScene();
 
 			m_particles.OnUpdate(ts);
