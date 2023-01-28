@@ -15,6 +15,7 @@ add_subdirectory(external/glad)
 add_subdirectory(external/glm)
 add_subdirectory(external/imgui)
 add_subdirectory(external/stb_image)
+add_subdirectory(external/entt)
 
 
 target_link_libraries(Sandbox PRIVATE Engine)
@@ -26,6 +27,7 @@ target_link_libraries(Engine PUBLIC glad)
 target_link_libraries(Engine PUBLIC glm)
 target_link_libraries(Engine PUBLIC imgui)
 target_link_libraries(Engine PUBLIC stb_image)
+target_link_libraries(Engine PUBLIC EnTT)
 
 target_link_libraries(imgui PUBLIC glfw)
 
