@@ -1,6 +1,7 @@
 #pragma once
 #include "glm/glm.hpp"
 #include "SceneCamera.h"
+#include "ScriptableEntity.h"
 
 namespace Engine
 {
@@ -36,5 +37,27 @@ namespace Engine
 		bool primary{ false };
 		bool fix_aspectratio{ false };
 		SceneCamera camera;
+	};
+
+	struct NativeScriptComponent
+	{
+		ScriptableEntity* instance{ nullptr };
+
+		ScriptableEntity* (* InstantiateScript)();
+		void (* DestroyScript)(NativeScriptComponent* nsc);
+
+		template<typename T>
+		void Bind()
+		{
+			InstantiateScript = []()
+			{ return (ScriptableEntity*)new T(); };
+			DestroyScript = [](NativeScriptComponent* nsc)
+			{
+			  delete nsc->instance;
+			  nsc->instance = nullptr;
+			};
+
+		}
+
 	};
 }

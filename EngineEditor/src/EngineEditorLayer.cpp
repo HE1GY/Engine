@@ -37,6 +37,36 @@ namespace Engine
 		auto& cc = m_main_cam.AddComponent<CameraComponent>();
 		cc.primary = true;
 
+		class CameraController : public ScriptableEntity
+		{
+		public:
+			virtual void OnUpdate(TimeStep ts) override
+			{
+				auto& transform = GetComponent<TransformComponent>();
+
+				float speed = 5.0f;
+
+				if (Engine::Input::IsKeyPress(KEY_A))
+				{
+					transform.transform[3][0] -= speed * ts;
+				}
+				if (Engine::Input::IsKeyPress(KEY_D))
+				{
+					transform.transform[3][0] += speed * ts;
+				}
+				if (Engine::Input::IsKeyPress(KEY_W))
+				{
+					transform.transform[3][1] += speed * ts;
+				}
+				if (Engine::Input::IsKeyPress(KEY_S))
+				{
+					transform.transform[3][1] -= speed * ts;
+				}
+			}
+		};
+
+		m_main_cam.AddComponent<NativeScriptComponent>().Bind<CameraController>();
+
 	}
 	void EngineEditorLayer::OnDetach()
 	{

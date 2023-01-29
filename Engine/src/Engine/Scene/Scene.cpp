@@ -18,6 +18,20 @@ namespace Engine
 	}
 	void Scene::OnUpdate(TimeStep ts)
 	{
+		//scripts
+		{
+			m_registry.view<NativeScriptComponent>().each([=](auto entity, auto& nsc)
+			{
+			  if (!nsc.instance)
+			  {
+				  nsc.instance = nsc.InstantiateScript();
+				  nsc.instance->m_entity = Entity(entity, this);
+				  nsc.instance->OnCreate();
+			  }
+			  nsc.instance->OnUpdate(ts);
+			});
+		}
+
 		Camera* main_camera{ nullptr };
 		glm::mat4* cam_transform{ nullptr };
 
