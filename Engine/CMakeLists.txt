@@ -66,7 +66,7 @@ add_library(Engine STATIC
         src/Engine/Renderer/FrameBuffer.h
         src/Platform/OpenGL/OpenGLFrameBuffer.cpp
         src/Platform/OpenGL/OpenGLFrameBuffer.h
-        src/Engine/Systems/ParticlesSystem.cpp src/Engine/Systems/Random.cpp src/Engine/Scene/Scene.h src/Engine/Scene/Scene.cpp src/Engine/Scene/Entity.h src/Engine/Scene/Components.h src/Engine/Renderer/Camera.h)
+        src/Engine/Systems/ParticlesSystem.cpp src/Engine/Systems/Random.cpp src/Engine/Scene/Scene.h src/Engine/Scene/Scene.cpp src/Engine/Scene/Entity.h src/Engine/Scene/Components.h src/Engine/Renderer/Camera.h src/Engine/Scene/SceneCamera.h src/Engine/Scene/SceneCamera.cpp)
 
 
 target_include_directories(Engine

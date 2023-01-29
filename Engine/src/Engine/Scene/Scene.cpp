@@ -21,10 +21,10 @@ namespace Engine
 		Camera* main_camera{ nullptr };
 		glm::mat4* cam_transform{ nullptr };
 
-		auto group = m_registry.view<TransformComponent, CameraComponent>();
-		for (auto entity : group)
+		auto view = m_registry.view<TransformComponent, CameraComponent>();
+		for (auto entity : view)
 		{
-			auto [transform, cameraComponent] = group.get<TransformComponent, CameraComponent>(entity);
+			auto [transform, cameraComponent] = view.get<TransformComponent, CameraComponent>(entity);
 
 			if (cameraComponent.primary)
 			{
@@ -49,5 +49,18 @@ namespace Engine
 			Renderer2D::EndScene();
 		}
 
+	}
+	void Scene::OnViewResize(uint32_t width, uint32_t height)
+	{
+		auto view = m_registry.view<CameraComponent>();
+
+		for (auto entity : view)
+		{
+			auto& camera = view.get<CameraComponent>(entity);
+			if (!camera.fix_aspectratio)
+			{
+				camera.camera.set_viewport(width, height);
+			}
+		}
 	}
 }

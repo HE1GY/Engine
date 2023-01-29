@@ -36,6 +36,7 @@ namespace Engine
 		ParticlesSystem m_particles;
 
 		Scene m_scene;
+		Entity m_main_cam;
 	};
 
 }

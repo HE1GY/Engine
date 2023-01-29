@@ -33,9 +33,8 @@ namespace Engine
 		Entity quad = m_scene.CreateEntity("Quad Entity");
 		quad.AddComponent<SpriteRendererComponent>(glm::vec4{ 0, 1, 0, 1 });
 
-		Entity cam = m_scene.CreateEntity("main cam");
-		auto& cc = cam.AddComponent<CameraComponent>(
-				glm::ortho(-(float)1280 / 720, (float)1280 / 720, -1.0f, 1.0f, -1.0f, 1.0f));
+		m_main_cam = m_scene.CreateEntity("main cam");
+		auto& cc = m_main_cam.AddComponent<CameraComponent>();
 		cc.primary = true;
 
 	}
@@ -238,7 +237,8 @@ namespace Engine
 		{
 			m_viewport_size = { size.x, size.y };
 			m_frame_buffer->Resize(size.x, size.y);
-			//m_camera_controller.OnResize(size.x, size.y);
+			m_scene.OnViewResize(size.x, size.y);
+			//m_camera_controller.OnViewResize(size.x, size.y);
 		}
 		uint32_t tex_id = m_frame_buffer->get_color_attachment_renderer_id();
 		ImGui::Image((void*)tex_id, ImVec2{ size.x, size.y }, ImVec2{ 0, 1 }, ImVec2{ 1, 0 });
@@ -257,6 +257,10 @@ namespace Engine
 		ImGui::Text("quads: %d", stats.quads);
 		ImGui::Text("indices: %d", stats.get_indices());
 		ImGui::Text("vertices: %d", stats.get_vertices());
+
+		float ortho_size = m_main_cam.GetComponent<CameraComponent>().camera.get_orthographic_size();
+		ImGui::DragFloat("Cam ortho size ", &ortho_size);
+		m_main_cam.GetComponent<CameraComponent>().camera.set_orthographic_size(ortho_size);
 
 		ImGui::End();
 

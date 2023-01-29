@@ -11,11 +11,19 @@ namespace Engine
 	{
 
 	public:
+		Entity() = default;
 		Entity(entt::entity entity_handler, Scene* scene)
 				:
 				m_entity_handler{ entity_handler }, m_scene{ scene }
 		{
 		};
+
+		template<typename T>
+		T& GetComponent()
+		{
+			CORE_ASSERT(HasComponent<T>(), "Entity doesn't have component");
+			return m_scene->m_registry.get<T>(m_entity_handler);
+		}
 
 		template<typename T, typename... Args>
 		T& AddComponent(Args&& ... args)

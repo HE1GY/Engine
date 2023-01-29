@@ -7,17 +7,15 @@ namespace Engine
 	class Camera
 	{
 	public:
-		Camera(const glm::mat4& projection)
-				:m_projection{ projection }
-		{
-		}
-		
+		Camera() = default;
+		virtual ~Camera() = default;
+
 		const glm::mat4& get_projection() const
 		{
 			return m_projection;
 		}
 
-	private:
+	protected:
 		glm::mat4 m_projection;
 	};
 }

@@ -1,6 +1,6 @@
 #pragma once
 #include "glm/glm.hpp"
-#include "Engine/Renderer/Camera.h"
+#include "SceneCamera.h"
 
 namespace Engine
 {
@@ -31,12 +31,10 @@ namespace Engine
 
 	struct CameraComponent
 	{
-		CameraComponent(const glm::mat4& projection)
-				:camera(projection)
-		{
-		}
+		CameraComponent() = default;
 
 		bool primary{ false };
-		Camera camera;
+		bool fix_aspectratio{ false };
+		SceneCamera camera;
 	};
 }
