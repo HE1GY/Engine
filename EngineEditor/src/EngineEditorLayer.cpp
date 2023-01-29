@@ -1,4 +1,7 @@
+#include <glm/ext/matrix_clip_space.hpp>
 #include "EngineEditorLayer.h"
+
+#include "glm/glm.hpp"
 
 namespace Engine
 {
@@ -19,7 +22,7 @@ namespace Engine
 		prop.start_size = { 0.05, 0.05, 1 };
 		prop.end_size = { 0.005, 0.005, 1 };
 		prop.start_color = glm::vec4{ 0.9, 0.3, 0.1, 1 };
-		prop.end_color = glm::vec4{ 0.7, 0.2, 0.1, 0.1 };
+		prop.end_color = glm::vec4{ 0.2, 0.3, 0.8, 0.1 };
 		m_particles.Init(prop);
 
 		FrameBufferSpecification fb_spec;
@@ -29,6 +32,11 @@ namespace Engine
 
 		Entity quad = m_scene.CreateEntity("Quad Entity");
 		quad.AddComponent<SpriteRendererComponent>(glm::vec4{ 0, 1, 0, 1 });
+
+		Entity cam = m_scene.CreateEntity("main cam");
+		auto& cc = cam.AddComponent<CameraComponent>(
+				glm::ortho(-(float)1280 / 720, (float)1280 / 720, -1.0f, 1.0f, -1.0f, 1.0f));
+		cc.primary = true;
 
 	}
 	void EngineEditorLayer::OnDetach()
@@ -69,7 +77,7 @@ namespace Engine
 		}
 		{
 
-			Engine::Renderer2D::BeginScene(m_camera_controller.get_camera());
+			/*Engine::Renderer2D::BeginScene(m_camera_controller.get_camera());*/
 
 			m_scene.OnUpdate(ts);
 
@@ -106,17 +114,17 @@ namespace Engine
 			Engine::Renderer2D::DrawQuad({ 0, 0, 0 }, { 1, 1 }, m_wall);
 			Engine::Renderer2D::DrawQuad({ -1, 0.5f, 0 }, { 1, 2 }, m_tree);
 */
-			Engine::Renderer2D::EndScene();
+			/*Engine::Renderer2D::EndScene();*/
 
-			m_particles.OnUpdate(ts);
-			m_particles.OnRenderer(m_camera_controller.get_camera());
+			/*m_particles.OnUpdate(ts);
+			m_particles.OnRenderer(m_camera_controller.get_camera());*/
 
 			m_frame_buffer->UnBind();
 		}
 	}
 	void EngineEditorLayer::OnEvent(Event& event)
 	{
-		m_camera_controller.OnEvent(event);
+		/*m_camera_controller.OnEvent(event);*/
 	}
 	void EngineEditorLayer::OnImGuiRender()
 	{
@@ -230,7 +238,7 @@ namespace Engine
 		{
 			m_viewport_size = { size.x, size.y };
 			m_frame_buffer->Resize(size.x, size.y);
-			m_camera_controller.OnResize(size.x, size.y);
+			//m_camera_controller.OnResize(size.x, size.y);
 		}
 		uint32_t tex_id = m_frame_buffer->get_color_attachment_renderer_id();
 		ImGui::Image((void*)tex_id, ImVec2{ size.x, size.y }, ImVec2{ 0, 1 }, ImVec2{ 1, 0 });

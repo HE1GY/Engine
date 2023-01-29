@@ -104,6 +104,22 @@ namespace Engine
 	{
 	}
 
+	void Renderer2D::BeginScene(Camera& camera, const glm::mat4& transform)
+	{
+		PROFILER_FUNCTION();
+
+		glm::mat4 view_proj = camera.get_projection() * glm::inverse(transform);
+
+		s_data.default_shader->Bind();
+		s_data.default_shader->SetMat4("u_view_projection", view_proj);
+
+		s_data.quad_vertex_buffer_ptr = s_data.quad_vertex_buffer_base;
+
+		s_data.quad_index_count = 0;
+
+		s_data.texture_index = 1;
+	}
+
 	void Renderer2D::BeginScene(OrthographicCamera& camera)
 	{
 		PROFILER_FUNCTION();

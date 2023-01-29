@@ -4,6 +4,7 @@
 #include "Entity.h"
 #include "Components.h"
 #include "Engine/Renderer/Renderer2D.h"
+#include "Engine/Renderer/Camera.h"
 
 namespace Engine
 {
@@ -17,12 +18,36 @@ namespace Engine
 	}
 	void Scene::OnUpdate(TimeStep ts)
 	{
-		auto group = m_registry.group<TransformComponent>(entt::get<SpriteRendererComponent>);
+		Camera* main_camera{ nullptr };
+		glm::mat4* cam_transform{ nullptr };
 
+		auto group = m_registry.view<TransformComponent, CameraComponent>();
 		for (auto entity : group)
 		{
-			auto [transform, sprite_renderer] = m_registry.get<TransformComponent, SpriteRendererComponent>(entity);
-			Renderer2D::DrawQuad(transform, sprite_renderer.color);
+			auto [transform, cameraComponent] = group.get<TransformComponent, CameraComponent>(entity);
+
+			if (cameraComponent.primary)
+			{
+				main_camera = &cameraComponent.camera;
+				cam_transform = &transform.transform;
+				break;
+			}
 		}
+
+		if (main_camera)
+		{
+			Renderer2D::BeginScene(*main_camera, *cam_transform);
+
+			auto group = m_registry.group<TransformComponent>(entt::get<SpriteRendererComponent>);
+
+			for (auto entity : group)
+			{
+				auto [transform, sprite_renderer] = m_registry.get<TransformComponent, SpriteRendererComponent>(entity);
+				Renderer2D::DrawQuad(transform, sprite_renderer.color);
+			}
+
+			Renderer2D::EndScene();
+		}
+
 	}
 }

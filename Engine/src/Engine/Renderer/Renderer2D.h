@@ -8,6 +8,7 @@
 #include "Shader.h"
 #include "OrthographicCamera.h"
 #include "VertexArray.h"
+#include "Camera.h"
 
 namespace Engine
 {
@@ -34,6 +35,7 @@ namespace Engine
 		static void ShutDown();
 		static void Flush();
 
+		static void BeginScene(Camera& camera, const glm::mat4& transform);
 		static void BeginScene(OrthographicCamera& camera);
 		static void EndScene();
 

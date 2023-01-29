@@ -3,6 +3,7 @@
 #include "OrthographicCamera.h"
 #include "RendererCommand.h"
 #include "Shader.h"
+#include "Camera.h"
 
 namespace Engine
 {

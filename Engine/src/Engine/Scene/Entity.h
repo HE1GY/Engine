@@ -11,7 +11,6 @@ namespace Engine
 	{
 
 	public:
-		Entity();
 		Entity(entt::entity entity_handler, Scene* scene)
 				:
 				m_entity_handler{ entity_handler }, m_scene{ scene }
@@ -19,7 +18,7 @@ namespace Engine
 		};
 
 		template<typename T, typename... Args>
-		T AddComponent(Args&& ... args)
+		T& AddComponent(Args&& ... args)
 		{
 			CORE_ASSERT(!HasComponent<T>(), "Entity already has component");
 			return m_scene->m_registry.emplace<T>(m_entity_handler, std::forward<Args>(args)...);
@@ -40,12 +39,12 @@ namespace Engine
 
 		operator bool()
 		{
-			return (uint32_t)m_entity_handler != 0;
+			return m_entity_handler != entt::null;
 		}
 
 	private:
 
-		entt::entity m_entity_handler{ 0 };
+		entt::entity m_entity_handler{ entt::null };
 		Scene* m_scene{ nullptr };
 	};
 }
