@@ -16,8 +16,9 @@ namespace Engine
 
 	private:
 		void DrawEntityNode(Entity entity);
+		void DrawEntityProperties(Entity entity);
 
 		Ref<Scene> m_context;
-		Entity m_selected;
+		Entity m_selection_context;
 	};
 }

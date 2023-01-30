@@ -25,6 +25,17 @@ namespace Engine
 			return m_scene->m_registry.get<T>(m_entity_handler);
 		}
 
+		template<typename T>
+		bool TryGetComponent(T*& component)
+		{
+			bool has = HasComponent<T>();
+			if (has)
+			{
+				component = &GetComponent<T>();
+			}
+			return has;
+		}
+
 		template<typename T, typename... Args>
 		T& AddComponent(Args&& ... args)
 		{
