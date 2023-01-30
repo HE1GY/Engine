@@ -8,7 +8,6 @@ namespace Engine
 
 	SceneCamera::SceneCamera()
 	{
-
 	}
 	void SceneCamera::set_viewport(uint32_t width, uint32_t height)
 	{

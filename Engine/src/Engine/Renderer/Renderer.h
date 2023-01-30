@@ -4,6 +4,7 @@
 #include "RendererCommand.h"
 #include "Shader.h"
 #include "Camera.h"
+#include "Engine/Scene/SceneCamera.h"
 
 namespace Engine
 {
@@ -14,6 +15,7 @@ namespace Engine
 		static void ShutDown();
 
 		static void BeginScene(OrthographicCamera& camera);
+		static void BeginScene(SceneCamera& camera);
 		static void EndScene();
 
 		static void OnWindowResized(uint32_t width, uint32_t height);

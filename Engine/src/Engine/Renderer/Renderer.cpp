@@ -21,6 +21,10 @@ namespace Engine
 	{
 		s_scene_data->view_projection_matrix = camera.get_view_projection_matrix();
 	}
+	void Renderer::BeginScene(SceneCamera& camera)
+	{
+		s_scene_data->view_projection_matrix = camera.get_projection();
+	}
 
 	void Renderer::EndScene()
 	{

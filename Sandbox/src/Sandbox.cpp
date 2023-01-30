@@ -3,14 +3,19 @@
 
 #include "Layers/Sandbox2D.h"
 #include "glm/gtc/matrix_transform.hpp"
+#include "glm/gtc/type_ptr.hpp"
 
 class ExampleLayer : public Engine::Layer
 {
 
 public:
 	ExampleLayer()
-			:Layer("ExampleLayer"), m_camera_controller(1280.0f / 720.0f, true)
+			:Layer("ExampleLayer")//, m_camera_controller(1280.0f / 720.0f, true)
 	{
+		m_camera.set_viewport(1280, 720);
+		m_camera.set_projection_type(Engine::SceneCamera::ProjectionType::Perspective);
+		m_camera.set_perspective(glm::radians(45.0f), 0.01f, 1000);
+
 		m_shader_lib.Load("texture", "../../../Sandbox/assets/shaders/default_2D_shader.glsl");
 
 		auto shader = m_shader_lib.Load("vertex_color", "../../../Sandbox/assets/shaders/vertex_color_shader.glsl");
@@ -49,15 +54,15 @@ public:
 		m_vao_box->Bind();
 		{
 			float pos_box[] = {
-					-0.5, -0.5, 0, 0.3f, 0, 0, 1,//0
-					0.5, -0.5, 0, 0.6f, 0, 0, 1,//1
-					0.5, 0.5, 0, 0.9f, 0, 0, 1,//2
-					-0.5, 0.5, 0, 0, 0.3f, 0, 1,//3
+					-0.5, -0.5, 0.5, 1, 0, 0, 1,//0
+					0.5, -0.5, 0.5, 1, 0, 0, 1,//1
+					0.5, 0.5, 0.5, 1, 0, 0, 1,//2
+					-0.5, 0.5, 0.5, 1, 0, 0, 1,//3
 
-					-0.5, -0.5, -1, 0, 0.6f, 0, 1,//4
-					0.5, -0.5, -1, 0, 0.9f, 0, 1,//5
-					0.5, 0.5, -1, 0, 0, 0.3f, 1,//6
-					-0.5, 0.5, -1, 0., 0, 0.6f, 1,//7
+					-0.5, -0.5, -0.5, 0, 1, 0, 1,//4
+					0.5, -0.5, -0.5, 0, 1, 0, 1,//5
+					0.5, 0.5, -0.5, 0, 1, 0, 1,//6
+					-0.5, 0.5, -0.5, 0, 1, 0, 1,//7
 			};
 			Engine::Ref<Engine::VertexBuffer> vo_data_box;
 			vo_data_box = Engine::VertexBuffer::Create(pos_box, sizeof(pos_box));
@@ -88,17 +93,17 @@ public:
 
 	void OnEvent(Engine::Event& event) override
 	{
-		m_camera_controller.OnEvent(event);
+		//m_camera_controller.OnEvent(event);
 	}
 
 	void OnUpdate(Engine::TimeStep ts) override
 	{
-		m_camera_controller.OnUpdate(ts);
+		//m_camera_controller.OnUpdate(ts);
 
 		Engine::RendererCommand::SetClearColor({ 0.1f, 0.1f, 0.1f, 0.1f });
 		Engine::RendererCommand::Clear();
 
-		Engine::Renderer::BeginScene(m_camera_controller.get_camera());
+		Engine::Renderer::BeginScene(m_camera);
 
 		/*float x{ 0 };
 		float y{ 0 };
@@ -123,8 +128,12 @@ public:
 		Engine::Ref<Engine::Shader> shader = m_shader_lib.Get("vertex_color");
 		shader->Bind();
 
-		glm::mat4 rotation = glm::rotate(glm::mat4(1.0f), glm::radians(45.0f), { 0, 0, 1 })
-				* glm::rotate(glm::mat4(1.0f), glm::radians(45.0f), { 0, 1, 0 });
+		glm::mat4 rotation =
+				glm::translate(glm::mat4(1.0f), { 0, 0, -1 })
+						* glm::scale(glm::mat4(1.0f), { 0.3f, 0.3f, 0.3f })
+						* glm::rotate(glm::mat4(1.0f), m_cube_rotation.x, { 1, 0, 0 })
+						* glm::rotate(glm::mat4(1.0f), m_cube_rotation.y, { 0, 1, 0 })
+						* glm::rotate(glm::mat4(1.0f), m_cube_rotation.z, { 0, 0, 1 });
 		Engine::Renderer::Submit(shader, m_vao_box, rotation);
 
 		Engine::Renderer::EndScene();
@@ -135,6 +144,10 @@ public:
 		/*ImGui::ColorEdit4("color", &m_uniform_color.r);
 		ImVec2 size = { 500, 100 };
 		ImGui::SetWindowSize(size);*/
+
+		ImGui::Begin("Rotate Cube");
+		ImGui::DragFloat3("Rotation", glm::value_ptr(m_cube_rotation));
+		ImGui::End();
 	}
 
 private:
@@ -147,9 +160,12 @@ private:
 	Engine::Ref<Engine::Texture2D> m_texture;
 	Engine::Ref<Engine::Texture2D> m_texture_2;
 
-	Engine::OrthographicCameraController m_camera_controller;
+	//Engine::OrthographicCameraController m_camera_controller;
+	Engine::SceneCamera m_camera;
 
 	glm::vec4 m_uniform_color{ 0.2, 0.8, 0.8, 1 };
+
+	glm::vec3 m_cube_rotation{ 0 };
 };
 
 class SandBox : public Engine::Application

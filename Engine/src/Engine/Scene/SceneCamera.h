@@ -21,6 +21,7 @@ namespace Engine
 		}
 
 		void set_viewport(uint32_t width, uint32_t height);
+
 		void set_orthographic(float size, float near_clip, float far_clip);
 
 		void set_orthographic_size(float orthographic_size)
