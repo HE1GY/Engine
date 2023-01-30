@@ -290,10 +290,6 @@ namespace Engine
 		ImGui::Text("indices: %d", stats.get_indices());
 		ImGui::Text("vertices: %d", stats.get_vertices());
 
-		float ortho_size = m_main_cam.GetComponent<CameraComponent>().camera.get_orthographic_size();
-		ImGui::DragFloat("Cam ortho size ", &ortho_size);
-		m_main_cam.GetComponent<CameraComponent>().camera.set_orthographic_size(ortho_size);
-
 		ImGui::End();
 
 		m_scene_hierarchy.OnImGuiRender();

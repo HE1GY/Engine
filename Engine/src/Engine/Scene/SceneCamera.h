@@ -105,7 +105,7 @@ namespace Engine
 		float m_orthographic_far{ 1 };
 
 		float m_perspective_FOV{ glm::radians(45.0f) };
-		float m_perspective_near{ -0.01f };
+		float m_perspective_near{ 0.01f };
 		float m_perspective_far{ 1000.0f };
 		float m_aspect_ration;
 	};

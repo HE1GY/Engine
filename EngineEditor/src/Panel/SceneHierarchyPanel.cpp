@@ -7,6 +7,20 @@
 
 namespace Engine
 {
+	template<typename T>
+	static void DrawComponent(const char* label, Entity& entity, std::function<void(T&)> drawFn)
+	{
+		if (entity.HasComponent<T>())
+		{
+			if (ImGui::TreeNodeEx((void*)(typeid(T)).hash_code(), ImGuiTreeNodeFlags_DefaultOpen,
+					label))
+			{
+				auto& tag = entity.GetComponent<T>();
+				drawFn(tag);
+				ImGui::TreePop();
+			}
+		}
+	}
 
 	void SceneHierarchyPanel::SetContext(const Ref<Scene>& context)
 	{
@@ -55,97 +69,85 @@ namespace Engine
 	}
 	void SceneHierarchyPanel::DrawEntityProperties(Entity entity)
 	{
-		if (entity.HasComponent<TagComponent>())
+
+		DrawComponent<TagComponent>("Tag", entity, [](TagComponent& tag_component)
 		{
-			auto& tag = entity.GetComponent<TagComponent>();
+		  char buffer[256];
+		  memset(buffer, 0, sizeof(buffer));
+		  strcpy(buffer,/* sizeof(buffer), */tag_component.tag.c_str());//on linux
+		  if (ImGui::InputText("Tag", buffer, sizeof(buffer)))
+		  {
+			  tag_component = std::string(buffer);
+		  }
+		});
 
-			char buffer[256];
-			memset(buffer, 0, sizeof(buffer));
-			strcpy_s(buffer, sizeof(buffer), tag.tag.c_str());
-			if (ImGui::InputText("Tag", buffer, sizeof(buffer)))
-			{
-				tag = std::string(buffer);
-			}
-		}
+		DrawComponent<TransformComponent>("Transform", entity, [](TransformComponent& transform_component)
+				{
+				  ImGui::DragFloat3("Position", glm::value_ptr(transform_component.transform[3]), 0.1f);
+				}
+		);
 
-		if (entity.HasComponent<TransformComponent>())
+		DrawComponent<CameraComponent>("Camera", entity, [](CameraComponent& cam_cmp)
 		{
-			if (ImGui::TreeNodeEx((void*)(typeid(TransformComponent)).hash_code(), ImGuiTreeNodeFlags_DefaultOpen,
-					"Transform"))
-			{
-				auto& transform_cmp = entity.GetComponent<TransformComponent>();
-				ImGui::DragFloat3("Position", glm::value_ptr(transform_cmp.transform[3]), 0.1f);
-				ImGui::TreePop();
-			}
+		  ImGui::Checkbox("Primary", &cam_cmp.primary);
 
-		}
+		  const char* projection_type_string[] = { "Perspective", "Orthographic" };
+		  const char* current_projection_type_string = projection_type_string[(int)cam_cmp.camera.get_projection_type()];
+		  if (ImGui::BeginCombo("Projection", current_projection_type_string))
+		  {
+			  for (int i = 0; i < 2; ++i)
+			  {
+				  bool is_selected = current_projection_type_string == projection_type_string[i];
+				  if (ImGui::Selectable(projection_type_string[i], is_selected))
+				  {
+					  current_projection_type_string = projection_type_string[i];
+					  cam_cmp.camera.set_projection_type((SceneCamera::ProjectionType)i);
+				  }
 
-		if (entity.HasComponent<CameraComponent>())
+				  if (is_selected)
+					  ImGui::SetItemDefaultFocus();
+			  }
+
+			  ImGui::EndCombo();
+		  }
+
+		  if (cam_cmp.camera.get_projection_type() == SceneCamera::ProjectionType::Perspective)
+		  {
+			  float persp_FOV = glm::degrees(cam_cmp.camera.get_perspective_FOV());
+			  float persp_near_clip = cam_cmp.camera.get_perspective_near_clip();
+			  float persp_far_clip = cam_cmp.camera.get_perspective_far_clip();
+
+			  ImGui::DragFloat("FOV", &persp_FOV);
+			  ImGui::DragFloat("Near clip", &persp_near_clip);
+			  ImGui::DragFloat("Far clip", &persp_far_clip);
+
+			  cam_cmp.camera.set_perspective_FOV(glm::radians(persp_FOV));
+			  cam_cmp.camera.set_perspective_near_clip(persp_near_clip);
+			  cam_cmp.camera.set_perspective_far_clip(persp_far_clip);
+		  }
+
+		  if (cam_cmp.camera.get_projection_type() == SceneCamera::ProjectionType::Orthographic)
+		  {
+			  float ortho_size = cam_cmp.camera.get_orthographic_size();
+			  float ortho_near_clip = cam_cmp.camera.get_orthographic_near_clip();
+			  float ortho_far_clip = cam_cmp.camera.get_orthographic_far_clip();
+
+			  ImGui::DragFloat("Size", &ortho_size);
+			  ImGui::DragFloat("Near clip", &ortho_near_clip);
+			  ImGui::DragFloat("Far clip", &ortho_far_clip);
+
+			  cam_cmp.camera.set_orthographic_size(ortho_size);
+			  cam_cmp.camera.set_orthographic_near_clip(ortho_near_clip);
+			  cam_cmp.camera.set_orthographic_far_clip(ortho_far_clip);
+
+			  ImGui::Checkbox("Fixed aspect ratio", &cam_cmp.fix_aspectratio);
+
+		  }
+		});
+
+		DrawComponent<SpriteRendererComponent>("SpriteRenderer", entity, [](SpriteRendererComponent& sprite_renderer)
 		{
-			if (ImGui::TreeNodeEx((void*)(typeid(CameraComponent)).hash_code(), ImGuiTreeNodeFlags_DefaultOpen,
-					"Camera"))
-			{
-				auto& cam_cmp = entity.GetComponent<CameraComponent>();
-
-				ImGui::Checkbox("Primary", &cam_cmp.primary);
-
-				const char* projection_type_string[] = { "Perspective", "Orthographic" };
-				const char* current_projection_type_string = projection_type_string[(int)cam_cmp.camera.get_projection_type()];
-				if (ImGui::BeginCombo("Projection", current_projection_type_string))
-				{
-					for (int i = 0; i < 2; ++i)
-					{
-						bool is_selected = current_projection_type_string == projection_type_string[i];
-						if (ImGui::Selectable(projection_type_string[i], is_selected))
-						{
-							current_projection_type_string = projection_type_string[i];
-							cam_cmp.camera.set_projection_type((SceneCamera::ProjectionType)i);
-						}
-
-						if (is_selected)
-							ImGui::SetItemDefaultFocus();
-					}
-
-					ImGui::EndCombo();
-				}
-
-				if (cam_cmp.camera.get_projection_type() == SceneCamera::ProjectionType::Perspective)
-				{
-					float persp_FOV = glm::degrees(cam_cmp.camera.get_perspective_FOV());
-					float persp_near_clip = cam_cmp.camera.get_perspective_near_clip();
-					float persp_far_clip = cam_cmp.camera.get_perspective_far_clip();
-
-					ImGui::DragFloat("FOV", &persp_FOV);
-					ImGui::DragFloat("Near clip", &persp_near_clip);
-					ImGui::DragFloat("Far clip", &persp_far_clip);
-
-					cam_cmp.camera.set_perspective_FOV(glm::radians(persp_FOV));
-					cam_cmp.camera.set_perspective_near_clip(persp_near_clip);
-					cam_cmp.camera.set_perspective_far_clip(persp_far_clip);
-				}
-
-				if (cam_cmp.camera.get_projection_type() == SceneCamera::ProjectionType::Orthographic)
-				{
-					float ortho_size = cam_cmp.camera.get_orthographic_size();
-					float ortho_near_clip = cam_cmp.camera.get_orthographic_near_clip();
-					float ortho_far_clip = cam_cmp.camera.get_orthographic_far_clip();
-
-					ImGui::DragFloat("Size", &ortho_size);
-					ImGui::DragFloat("Near clip", &ortho_near_clip);
-					ImGui::DragFloat("Far clip", &ortho_far_clip);
-
-					cam_cmp.camera.set_orthographic_size(ortho_size);
-					cam_cmp.camera.set_orthographic_near_clip(ortho_near_clip);
-					cam_cmp.camera.set_orthographic_far_clip(ortho_far_clip);
-
-					ImGui::Checkbox("Fixed aspect ratio", &cam_cmp.fix_aspectratio);
-
-				}
-
-				ImGui::TreePop();
-			}
-
-		}
-
+		  ImGui::ColorEdit4("Color", glm::value_ptr(sprite_renderer.color));
+		});
 	}
 }
