@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.23)
 
 project(EngineEditor)
 
-add_executable(EngineEditor src/EngineEditorApp.cpp src/EngineEditorLayer.cpp)
+add_executable(EngineEditor src/EngineEditorApp.cpp src/EngineEditorLayer.cpp src/Panel/SceneHierarchyPanel.cpp src/Panel/SceneHierarchyPanel.h)
 
 
 if (DEBUG)

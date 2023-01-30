@@ -49,6 +49,20 @@ namespace Engine
 		{
 			return m_entity_handler != entt::null;
 		}
+		operator uint32_t()
+		{
+			return (uint32_t)m_entity_handler;
+		}
+
+		bool operator==(const Entity& other) const
+		{
+			return other.m_entity_handler == m_entity_handler && m_scene == other.m_scene;
+		}
+
+		bool operator!=(const Entity& other) const
+		{
+			return !(*this == other);
+		}
 
 	private:
 

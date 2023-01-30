@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Engine.h"
+#include "Panel/SceneHierarchyPanel.h"
 
 namespace Engine
 {
@@ -35,8 +36,10 @@ namespace Engine
 
 		ParticlesSystem m_particles;
 
-		Scene m_scene;
+		Ref<Scene> m_scene;
 		Entity m_main_cam;
+
+		SceneHierarchyPanel m_scene_hierarchy;
 	};
 
 }

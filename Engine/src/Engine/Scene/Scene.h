@@ -18,5 +18,6 @@ namespace Engine
 		entt::registry m_registry;
 
 		friend class Entity;
+		friend class SceneHierarchyPanel;
 	};
 }

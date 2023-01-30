@@ -8,6 +8,7 @@ namespace Engine
 	EngineEditorLayer::EngineEditorLayer()
 			:Layer("Engine-EditorLayer"), m_camera_controller(1280.0f / 720.0f, true)
 	{
+		m_scene = CreateRef<Scene>();
 	}
 
 	void EngineEditorLayer::OnAttach()
@@ -30,10 +31,10 @@ namespace Engine
 		fb_spec.height = 720;
 		m_frame_buffer = FrameBuffer::Create(fb_spec);
 
-		Entity quad = m_scene.CreateEntity("Quad Entity");
+		Entity quad = m_scene->CreateEntity("Quad Entity");
 		quad.AddComponent<SpriteRendererComponent>(glm::vec4{ 0, 1, 0, 1 });
 
-		m_main_cam = m_scene.CreateEntity("main cam");
+		m_main_cam = m_scene->CreateEntity("main cam");
 		auto& cc = m_main_cam.AddComponent<CameraComponent>();
 		cc.primary = true;
 
@@ -67,6 +68,7 @@ namespace Engine
 
 		m_main_cam.AddComponent<NativeScriptComponent>().Bind<CameraController>();
 
+		m_scene_hierarchy.SetContext(m_scene);
 	}
 	void EngineEditorLayer::OnDetach()
 	{
@@ -108,7 +110,7 @@ namespace Engine
 
 			/*Engine::Renderer2D::BeginScene(m_camera_controller.get_camera());*/
 
-			m_scene.OnUpdate(ts);
+			m_scene->OnUpdate(ts);
 
 			/*{
 				static float color_anim{ 0.1f };
@@ -267,7 +269,7 @@ namespace Engine
 		{
 			m_viewport_size = { size.x, size.y };
 			m_frame_buffer->Resize(size.x, size.y);
-			m_scene.OnViewResize(size.x, size.y);
+			m_scene->OnViewResize(size.x, size.y);
 			//m_camera_controller.OnViewResize(size.x, size.y);
 		}
 		uint32_t tex_id = m_frame_buffer->get_color_attachment_renderer_id();
@@ -293,6 +295,8 @@ namespace Engine
 		m_main_cam.GetComponent<CameraComponent>().camera.set_orthographic_size(ortho_size);
 
 		ImGui::End();
+
+		m_scene_hierarchy.OnImGuiRender();
 
 		ImGui::End();
 	}

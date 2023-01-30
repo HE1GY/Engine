@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Engine/Core/TimeStep.h"
+#include "Engine/Scene/Entity.h"
 
 namespace Engine
 {
@@ -20,7 +21,7 @@ namespace Engine
 		template<typename T>
 		T& GetComponent()
 		{
-			m_entity.GetComponent<T>();
+			return m_entity.GetComponent<T>();
 		}
 
 	private:
