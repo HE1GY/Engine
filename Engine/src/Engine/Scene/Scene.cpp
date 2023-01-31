@@ -33,7 +33,7 @@ namespace Engine
 		}
 
 		Camera* main_camera{ nullptr };
-		glm::mat4* cam_transform{ nullptr };
+		glm::mat4 cam_transform;
 
 		auto view = m_registry.view<TransformComponent, CameraComponent>();
 		for (auto entity : view)
@@ -43,21 +43,21 @@ namespace Engine
 			if (cameraComponent.primary)
 			{
 				main_camera = &cameraComponent.camera;
-				cam_transform = &transform.transform;
+				cam_transform = transform.get_transformation();
 				break;
 			}
 		}
 
 		if (main_camera)
 		{
-			Renderer2D::BeginScene(*main_camera, *cam_transform);
+			Renderer2D::BeginScene(*main_camera, cam_transform);
 
 			auto group = m_registry.group<TransformComponent>(entt::get<SpriteRendererComponent>);
 
 			for (auto entity : group)
 			{
 				auto [transform, sprite_renderer] = m_registry.get<TransformComponent, SpriteRendererComponent>(entity);
-				Renderer2D::DrawQuad(transform, sprite_renderer.color);
+				Renderer2D::DrawQuad(transform.get_transformation(), sprite_renderer.color);
 			}
 
 			Renderer2D::EndScene();

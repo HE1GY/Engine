@@ -49,19 +49,19 @@ namespace Engine
 
 				if (Engine::Input::IsKeyPress(KEY_A))
 				{
-					transform.transform[3][0] -= speed * ts;
+					transform.translation.x -= speed * ts;
 				}
 				if (Engine::Input::IsKeyPress(KEY_D))
 				{
-					transform.transform[3][0] += speed * ts;
+					transform.translation.x += speed * ts;
 				}
 				if (Engine::Input::IsKeyPress(KEY_W))
 				{
-					transform.transform[3][1] += speed * ts;
+					transform.translation.y += speed * ts;
 				}
 				if (Engine::Input::IsKeyPress(KEY_S))
 				{
-					transform.transform[3][1] -= speed * ts;
+					transform.translation.y -= speed * ts;
 				}
 			}
 		};

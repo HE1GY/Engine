@@ -1,5 +1,7 @@
 #pragma once
+#include <glm/ext/matrix_transform.hpp>
 #include "glm/glm.hpp"
+
 #include "SceneCamera.h"
 #include "ScriptableEntity.h"
 
@@ -8,12 +10,23 @@ namespace Engine
 
 	struct TransformComponent
 	{
-		glm::mat4 transform{ 1.0f };
+		glm::vec3 translation{ 0.0f, 0.0f, 0.0f };
+		glm::vec3 rotation{ 0.0f, 0.0f, 0.0f };
+		glm::vec3 scale{ 1.0f, 1.0f, 1.0f };
 
-		operator glm::mat4() const
+		const glm::mat4 get_transformation() const
 		{
-			return transform;
+			glm::mat4 rot = glm::rotate(glm::mat4(1.0f), rotation.x, { 1, 0, 0 })
+					* glm::rotate(glm::mat4(1.0f), rotation.y, { 0, 1, 0 })
+					* glm::rotate(glm::mat4(1.0f), rotation.z, { 0, 0, 1 });
+
+			glm::mat4 transformation = glm::translate(glm::mat4(1.0f), translation)
+					* rot
+					* glm::scale(glm::mat4(1.0f), scale);
+
+			return transformation;
 		}
+
 	};
 
 	struct SpriteRendererComponent

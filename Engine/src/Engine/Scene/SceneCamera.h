@@ -98,7 +98,7 @@ namespace Engine
 	private:
 		void RecalculateProjection();
 
-		ProjectionType m_projection_type;
+		ProjectionType m_projection_type{ ProjectionType::Orthographic };
 
 		float m_orthographic_size{ 10 };
 		float m_orthographic_near{ -1 };
