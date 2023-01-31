@@ -48,7 +48,7 @@ namespace Engine
 		CameraComponent() = default;
 
 		bool primary{ false };
-		bool fix_aspectratio{ false };
+		bool fix_aspect_ratio{ false };
 		SceneCamera camera;
 	};
 

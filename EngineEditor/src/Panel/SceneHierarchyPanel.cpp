@@ -9,16 +9,46 @@
 namespace Engine
 {
 	template<typename T>
-	static void DrawComponent(const char* label, Entity& entity, std::function<void(T&)> drawFn)
+	void SceneHierarchyPanel::DrawComponent(const char* label, Entity& entity, std::function<void(T&)> drawFn)
 	{
 		if (entity.HasComponent<T>())
 		{
-			if (ImGui::TreeNodeEx((void*)(typeid(T)).hash_code(), ImGuiTreeNodeFlags_DefaultOpen,
-					label))
+			ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2{ 4, 4, });
+			bool open = ImGui::TreeNodeEx((void*)(typeid(T)).hash_code(), ImGuiTreeNodeFlags_DefaultOpen,
+					label);
+
+			bool destroy_component = false;
+			if (typeid(T) != typeid(TransformComponent) && typeid(T) != typeid(TagComponent))
+			{
+				ImGui::SameLine(ImGui::GetWindowWidth() - 25.0f);
+
+				if (ImGui::Button("+", ImVec2(20, 20)))
+				{
+					ImGui::OpenPopup("ComponentSettings");
+				}
+
+				if (ImGui::BeginPopup("ComponentSettings"))
+				{
+					if (ImGui::MenuItem("Remove component"))
+					{
+						destroy_component = true;
+					}
+
+					ImGui::EndPopup();
+				}
+			}
+			ImGui::PopStyleVar();
+
+			if (open)
 			{
 				auto& tag = entity.GetComponent<T>();
 				drawFn(tag);
 				ImGui::TreePop();
+			}
+
+			if (destroy_component)
+			{
+				entity.RemoveComponent<T>();
 			}
 		}
 	}
@@ -106,11 +136,51 @@ namespace Engine
 			m_selection_context = {};
 		}
 
+
+		//click on blank space
+		if (ImGui::BeginPopupContextWindow(0, 1 | ImGuiPopupFlags_NoOpenOverItems))
+		{
+			if (ImGui::MenuItem("Create empty entity"))
+			{
+				m_context->CreateEntity("Empty entity");
+			}
+			ImGui::EndPopup();
+		}
+
 		ImGui::End();
 
 		ImGui::Begin("Properties");
 		if (m_selection_context)
-		{ DrawEntityProperties(m_selection_context); }
+		{
+			DrawEntityProperties(m_selection_context);
+
+			if (ImGui::Button("Add Component"))
+			{
+				ImGui::OpenPopup("AddComponent");
+			}
+
+			if (ImGui::BeginPopup("AddComponent"))
+			{
+				if (ImGui::MenuItem("Camera"))
+				{
+					m_selection_context.AddComponent<CameraComponent>();
+					ImGui::CloseCurrentPopup();
+				}
+				if (ImGui::MenuItem("SpriteRenderer"))
+				{
+					m_selection_context.AddComponent<SpriteRendererComponent>();
+					ImGui::CloseCurrentPopup();
+				}
+				if (ImGui::MenuItem("NativeScript"))
+				{
+					m_selection_context.AddComponent<NativeScriptComponent>();
+					ImGui::CloseCurrentPopup();
+				}
+
+				ImGui::EndPopup();
+			}
+
+		}
 		ImGui::End();
 	}
 	void SceneHierarchyPanel::DrawEntityNode(Entity entity)
@@ -127,9 +197,28 @@ namespace Engine
 			//TODO event
 		}
 
+		bool destroy = false;
+		if (ImGui::BeginPopupContextItem())
+		{
+			if (ImGui::MenuItem("Destroy entity"))
+			{
+				destroy = true;
+			}
+			ImGui::EndPopup();
+		}
+
 		if (open)
 		{
 			ImGui::TreePop();
+		}
+
+		if (destroy)
+		{
+			if (m_selection_context == entity)
+			{
+				m_selection_context = {};
+			}
+			m_context->DestroyEntity(entity);
 		}
 
 	}
@@ -213,7 +302,7 @@ namespace Engine
 			  cam_cmp.camera.set_orthographic_near_clip(ortho_near_clip);
 			  cam_cmp.camera.set_orthographic_far_clip(ortho_far_clip);
 
-			  ImGui::Checkbox("Fixed aspect ratio", &cam_cmp.fix_aspectratio);
+			  ImGui::Checkbox("Fixed aspect ratio", &cam_cmp.fix_aspect_ratio);
 
 		  }
 		});

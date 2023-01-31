@@ -16,6 +16,12 @@ namespace Engine
 		entity.AddComponent<TagComponent>(tag);
 		return entity;
 	}
+
+	void Scene::DestroyEntity(Entity& entity)
+	{
+		m_registry.destroy(entity);
+	}
+
 	void Scene::OnUpdate(TimeStep ts)
 	{
 		//scripts
@@ -66,15 +72,19 @@ namespace Engine
 	}
 	void Scene::OnViewResize(uint32_t width, uint32_t height)
 	{
+		m_viewport_width = width;
+		m_viewport_height = height;
+
 		auto view = m_registry.view<CameraComponent>();
 
 		for (auto entity : view)
 		{
 			auto& camera = view.get<CameraComponent>(entity);
-			if (!camera.fix_aspectratio)
+			if (!camera.fix_aspect_ratio)
 			{
 				camera.camera.set_viewport(width, height);
 			}
 		}
 	}
+
 }

@@ -25,22 +25,12 @@ namespace Engine
 			return m_scene->m_registry.get<T>(m_entity_handler);
 		}
 
-		template<typename T>
-		bool TryGetComponent(T*& component)
-		{
-			bool has = HasComponent<T>();
-			if (has)
-			{
-				component = &GetComponent<T>();
-			}
-			return has;
-		}
-
 		template<typename T, typename... Args>
 		T& AddComponent(Args&& ... args)
 		{
 			CORE_ASSERT(!HasComponent<T>(), "Entity already has component");
-			return m_scene->m_registry.emplace<T>(m_entity_handler, std::forward<Args>(args)...);
+			T& component = m_scene->m_registry.emplace<T>(m_entity_handler, std::forward<Args>(args)...);
+			return component;
 		}
 
 		template<typename T>
@@ -63,6 +53,11 @@ namespace Engine
 		operator uint32_t()
 		{
 			return (uint32_t)m_entity_handler;
+		}
+
+		operator entt::entity()
+		{
+			return m_entity_handler;
 		}
 
 		bool operator==(const Entity& other) const
