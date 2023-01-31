@@ -205,6 +205,8 @@ namespace Engine
 			dockspace_flags &= ~ImGuiDockNodeFlags_PassthruCentralNode;
 		}
 
+
+
 		// When using ImGuiDockNodeFlags_PassthruCentralNode, DockSpace() will render our background
 		// and handle the pass-thru hole, so we ask Begin() to not render a background.
 		if (dockspace_flags & ImGuiDockNodeFlags_PassthruCentralNode)
@@ -226,11 +228,17 @@ namespace Engine
 
 		// Submit the DockSpace
 		ImGuiIO& io = ImGui::GetIO();
+		ImGuiStyle& style = ImGui::GetStyle();
+
+		float prev_window_min_size = style.WindowMinSize.x;
+		style.WindowMinSize.x = 370.0f;
+
 		if (io.ConfigFlags & ImGuiConfigFlags_DockingEnable)
 		{
 			ImGuiID dockspace_id = ImGui::GetID("MyDockSpace");
 			ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), dockspace_flags);
 		}
+		style.WindowMinSize.x = prev_window_min_size;
 
 		if (ImGui::BeginMenuBar())
 		{
@@ -266,6 +274,9 @@ namespace Engine
 
 		}
 
+
+
+		/////////////////////////viewport
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
 
 		ImGui::Begin("Viewport");
@@ -286,6 +297,8 @@ namespace Engine
 
 		ImGui::PopStyleVar();
 
+
+		/////////////////////////Stats
 		auto stats = Engine::Renderer2D::GetStats();
 		ImGui::Begin("Settings");
 

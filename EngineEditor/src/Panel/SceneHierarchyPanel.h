@@ -15,8 +15,6 @@ namespace Engine
 		void OnImGuiRender();
 
 	private:
-		template<typename T>
-		void DrawComponent(const char* label, Entity& entity, std::function<void(T&)> drawFn);
 		void DrawEntityNode(Entity entity);
 		void DrawEntityProperties(Entity entity);
 

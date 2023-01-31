@@ -28,6 +28,8 @@ namespace Engine
 		{
 			m_block_event = on;
 		};
+	
+		void SetDarkThemeColors();
 
 	private:
 		bool m_block_event{ false };

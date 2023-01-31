@@ -9,7 +9,7 @@ namespace Engine
 	public:
 		struct WindowsProps
 		{
-			WindowsProps(unsigned int width = 1280, unsigned int height = 720, std::string title = "Engine")
+			WindowsProps(unsigned int width = 1600, unsigned int height = 900, std::string title = "Engine")
 					:width{ width }, height{ height }, title{ title }
 			{
 			}
