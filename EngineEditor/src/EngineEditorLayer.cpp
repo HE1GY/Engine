@@ -34,9 +34,16 @@ namespace Engine
 		Entity quad = m_scene->CreateEntity("Quad Entity");
 		quad.AddComponent<SpriteRendererComponent>(glm::vec4{ 0, 1, 0, 1 });
 
+		Entity quad2 = m_scene->CreateEntity("Quad2 Entity");
+		quad2.AddComponent<SpriteRendererComponent>(glm::vec4{ 0, 0, 1, 1 });
+		quad2.GetComponent<TransformComponent>().translation = { 1, 0, 0 };
+
 		m_main_cam = m_scene->CreateEntity("main cam");
 		auto& cc = m_main_cam.AddComponent<CameraComponent>();
 		cc.primary = true;
+
+		auto cam = m_scene->CreateEntity("cam2");
+		cam.AddComponent<CameraComponent>();
 
 		class CameraController : public ScriptableEntity
 		{
@@ -96,7 +103,7 @@ namespace Engine
 		}
 
 		m_fps = (float)1 / ts;
-		m_camera_controller.OnUpdate(ts);
+		//m_camera_controller.OnUpdate(ts);
 
 		{
 			m_frame_buffer->Bind();
