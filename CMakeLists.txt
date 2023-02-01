@@ -16,10 +16,13 @@ add_subdirectory(external/glm)
 add_subdirectory(external/imgui)
 add_subdirectory(external/stb_image)
 add_subdirectory(external/entt)
+add_subdirectory(external/yaml-cpp)
 
 
 target_link_libraries(Sandbox PRIVATE Engine)
+
 target_link_libraries(EngineEditor PRIVATE Engine)
+
 
 target_link_libraries(Engine PUBLIC spdlog)
 target_link_libraries(Engine PUBLIC glfw)
@@ -28,6 +31,7 @@ target_link_libraries(Engine PUBLIC glm)
 target_link_libraries(Engine PUBLIC imgui)
 target_link_libraries(Engine PUBLIC stb_image)
 target_link_libraries(Engine PUBLIC EnTT)
+target_link_libraries(Engine PRIVATE yaml-cpp)
 
 target_link_libraries(imgui PUBLIC glfw)
 

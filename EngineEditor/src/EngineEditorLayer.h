@@ -2,6 +2,7 @@
 
 #include "Engine.h"
 #include "Panel/SceneHierarchyPanel.h"
+#include "Engine/Scene/SceneSerializer.h"
 
 namespace Engine
 {
@@ -39,7 +40,8 @@ namespace Engine
 		Ref<Scene> m_scene;
 		Entity m_main_cam;
 
-		SceneHierarchyPanel m_scene_hierarchy;
+		SceneHierarchyPanel m_scene_hierarchy_panel;
+		SceneSerializer m_serializer;
 	};
 
 }

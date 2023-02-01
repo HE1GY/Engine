@@ -2,13 +2,14 @@
 #include "EngineEditorLayer.h"
 
 #include "glm/glm.hpp"
+#include "Engine/Scene/SceneSerializer.h"
 
 namespace Engine
 {
 	EngineEditorLayer::EngineEditorLayer()
-			:Layer("Engine-EditorLayer"), m_camera_controller(1280.0f / 720.0f, true)
+			:Layer("Engine-EditorLayer"), m_camera_controller(1280.0f / 720.0f, true), m_scene{ CreateRef<Scene>() },
+			 m_serializer(m_scene)
 	{
-		m_scene = CreateRef<Scene>();
 	}
 
 	void EngineEditorLayer::OnAttach()
@@ -31,10 +32,10 @@ namespace Engine
 		fb_spec.height = 720;
 		m_frame_buffer = FrameBuffer::Create(fb_spec);
 
-		Entity quad = m_scene->CreateEntity("Quad Entity");
-		quad.AddComponent<SpriteRendererComponent>(glm::vec4{ 0, 1, 0, 1 });
+		/*Entity quad = m_scene->CreateEntity("Quad Entity");
+		quad.AddComponent<SpriteRendererComponent>(glm::vec4{ 0, 1, 0, 1 });*/
 
-		Entity quad2 = m_scene->CreateEntity("Quad2 Entity");
+		/*Entity quad2 = m_scene->CreateEntity("Quad2 Entity");
 		quad2.AddComponent<SpriteRendererComponent>(glm::vec4{ 0, 0, 1, 1 });
 		quad2.GetComponent<TransformComponent>().translation = { 1, 0, 0 };
 
@@ -73,9 +74,12 @@ namespace Engine
 			}
 		};
 
-		m_main_cam.AddComponent<NativeScriptComponent>().Bind<CameraController>();
+		m_main_cam.AddComponent<NativeScriptComponent>().Bind<CameraController>();*/
 
-		m_scene_hierarchy.SetContext(m_scene);
+		m_scene_hierarchy_panel.SetContext(m_scene);
+
+
+		/*serializer.Deserialize("../../../EngineEditor/assets/scenes/example.engine");*/
 	}
 	void EngineEditorLayer::OnDetach()
 	{
@@ -242,31 +246,19 @@ namespace Engine
 
 		if (ImGui::BeginMenuBar())
 		{
-			if (ImGui::BeginMenu("Options"))
+			if (ImGui::BeginMenu("File"))
 			{
-				// Disabling fullscreen would allow the window to be moved to the front of other windows,
-				// which we can't undo at the moment without finer window depth/z control.
-				ImGui::MenuItem("Fullscreen", NULL, &opt_fullscreen);
-				ImGui::MenuItem("Padding", NULL, &opt_padding);
-				ImGui::Separator();
 
-				if (ImGui::MenuItem("Flag: NoSplit", "", (dockspace_flags & ImGuiDockNodeFlags_NoSplit) != 0))
-				{ dockspace_flags ^= ImGuiDockNodeFlags_NoSplit; }
-				if (ImGui::MenuItem("Flag: NoResize", "", (dockspace_flags & ImGuiDockNodeFlags_NoResize) != 0))
-				{ dockspace_flags ^= ImGuiDockNodeFlags_NoResize; }
-				if (ImGui::MenuItem("Flag: NoDockingInCentralNode", "",
-						(dockspace_flags & ImGuiDockNodeFlags_NoDockingInCentralNode) != 0))
-				{ dockspace_flags ^= ImGuiDockNodeFlags_NoDockingInCentralNode; }
-				if (ImGui::MenuItem("Flag: AutoHideTabBar", "",
-						(dockspace_flags & ImGuiDockNodeFlags_AutoHideTabBar) != 0))
-				{ dockspace_flags ^= ImGuiDockNodeFlags_AutoHideTabBar; }
-				if (ImGui::MenuItem("Flag: PassthruCentralNode", "",
-						(dockspace_flags & ImGuiDockNodeFlags_PassthruCentralNode) != 0, opt_fullscreen))
-				{ dockspace_flags ^= ImGuiDockNodeFlags_PassthruCentralNode; }
-				ImGui::Separator();
+				if (ImGui::MenuItem("Save", "", (dockspace_flags & ImGuiDockNodeFlags_NoSplit) != 0))
+				{
+					m_serializer.Serialize("../../../EngineEditor/assets/scenes/example.engine");
+				}
 
-				if (ImGui::MenuItem("Close", NULL, false, p_open != NULL))
-					*p_open = false;
+				if (ImGui::MenuItem("Load", "", (dockspace_flags & ImGuiDockNodeFlags_NoSplit) != 0))
+				{
+					m_serializer.Deserialize("../../../EngineEditor/assets/scenes/example.engine");
+				}
+
 				ImGui::EndMenu();
 			}
 
@@ -312,7 +304,7 @@ namespace Engine
 
 		ImGui::End();
 
-		m_scene_hierarchy.OnImGuiRender();
+		m_scene_hierarchy_panel.OnImGuiRender();
 
 		ImGui::End();
 	}
