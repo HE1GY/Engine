@@ -2,25 +2,16 @@ Scene: Untitled
 Entities:
   - EntityID: 12234124124
     TagComponent:
-      Tag: cam2
+      Tag: Q2
     TransformComponent:
-      Translation: [0, 0, 0]
+      Translation: [0, 2.9000001, 0]
       Rotation: [0, 0, 0]
       Scale: [1, 1, 1]
-    CameraComponent:
-      Camera:
-        Projection type: 1
-        Orthographic near clip: -1
-        Orthographic far clip: 1
-        Orthographic size: 10
-        Perspective FOV: 0.785398185
-        Perspective near clip: 0.00999999978
-        Perspective far clip: 1000
-      Fix aspect ration: false
-      Primary: false
+    SpriteRendererComponent:
+      Color: [0.66795367, 0.0825271085, 0.0825271085, 1]
   - EntityID: 12234124124
     TagComponent:
-      Tag: main cam
+      Tag: Cam
     TransformComponent:
       Translation: [0, 0, 0]
       Rotation: [0, 0, 0]
@@ -38,19 +29,10 @@ Entities:
       Primary: true
   - EntityID: 12234124124
     TagComponent:
-      Tag: Quad2 Entity
-    TransformComponent:
-      Translation: [1, 0, 0]
-      Rotation: [0, 0, 0]
-      Scale: [1, 1, 1]
-    SpriteRendererComponent:
-      Color: [0, 0, 1, 1]
-  - EntityID: 12234124124
-    TagComponent:
-      Tag: Quad Entity
+      Tag: Quad
     TransformComponent:
       Translation: [0, 0, 0]
       Rotation: [0, 0, 0]
       Scale: [1, 1, 1]
     SpriteRendererComponent:
-      Color: [0, 1, 0, 1]
+      Color: [1, 1, 1, 1]

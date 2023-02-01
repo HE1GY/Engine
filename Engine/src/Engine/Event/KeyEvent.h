@@ -30,6 +30,11 @@ namespace Engine
 		{
 		}
 
+		inline int get_repeated_count() const
+		{
+			return m_repeated_count;
+		}
+
 		EVENT_TYPE(KeyPress)
 		virtual std::string ToString()
 		{

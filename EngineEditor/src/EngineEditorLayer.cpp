@@ -1,4 +1,8 @@
+#include "pch.h"
+
 #include <glm/ext/matrix_clip_space.hpp>
+
+#include "Engine/Utils/FileDialogs.h"
 #include "EngineEditorLayer.h"
 
 #include "glm/glm.hpp"
@@ -7,8 +11,7 @@
 namespace Engine
 {
 	EngineEditorLayer::EngineEditorLayer()
-			:Layer("Engine-EditorLayer"), m_camera_controller(1280.0f / 720.0f, true), m_scene{ CreateRef<Scene>() },
-			 m_serializer(m_scene)
+			:Layer("Engine-EditorLayer"), m_camera_controller(1280.0f / 720.0f, true), m_scene{ CreateRef<Scene>() }
 	{
 	}
 
@@ -76,7 +79,7 @@ namespace Engine
 
 		m_main_cam.AddComponent<NativeScriptComponent>().Bind<CameraController>();*/
 
-		m_scene_hierarchy_panel.SetContext(m_scene);
+		m_scene_hierarchy_panel.set_context(m_scene);
 
 
 		/*serializer.Deserialize("../../../EngineEditor/assets/scenes/example.engine");*/
@@ -87,7 +90,7 @@ namespace Engine
 	void EngineEditorLayer::OnUpdate(Engine::TimeStep ts)
 	{
 
-		if (Engine::Input::IsMouseButtonPress(MOUSE_BUTTON_LEFT))
+		/*if (Engine::Input::IsMouseButtonPress(MOUSE_BUTTON_LEFT))
 		{
 			auto [x, y] = Engine::Input::GetMousePos();
 
@@ -104,7 +107,7 @@ namespace Engine
 			{
 				m_particles.Emit({ world_space.x, world_space.y, 0 });
 			}
-		}
+		}*/
 
 		m_fps = (float)1 / ts;
 		//m_camera_controller.OnUpdate(ts);
@@ -167,6 +170,9 @@ namespace Engine
 	void EngineEditorLayer::OnEvent(Event& event)
 	{
 		/*m_camera_controller.OnEvent(event);*/
+
+		EventDispatcher ed(event);
+		ed.Dispatch<KeyPress>(BIND_EVENT_FUNC(EngineEditorLayer::OnKeyPress));
 	}
 	void EngineEditorLayer::OnImGuiRender()
 	{
@@ -249,14 +255,18 @@ namespace Engine
 			if (ImGui::BeginMenu("File"))
 			{
 
-				if (ImGui::MenuItem("Save", "", (dockspace_flags & ImGuiDockNodeFlags_NoSplit) != 0))
+				if (ImGui::MenuItem("New", "Ctrl+N"))
 				{
-					m_serializer.Serialize("../../../EngineEditor/assets/scenes/example.engine");
+					NewScene();
+				}
+				if (ImGui::MenuItem("Open...", "Ctrl+O"))
+				{
+					OpenScene();
 				}
 
-				if (ImGui::MenuItem("Load", "", (dockspace_flags & ImGuiDockNodeFlags_NoSplit) != 0))
+				if (ImGui::MenuItem("Save As...", "Ctrl+Shift+S"))
 				{
-					m_serializer.Deserialize("../../../EngineEditor/assets/scenes/example.engine");
+					SaveSceneAs();
 				}
 
 				ImGui::EndMenu();
@@ -307,5 +317,74 @@ namespace Engine
 		m_scene_hierarchy_panel.OnImGuiRender();
 
 		ImGui::End();
+	}
+
+	bool EngineEditorLayer::OnKeyPress(KeyPress& event)
+	{
+		if (event.get_repeated_count() > 0)
+		{ return false; }
+
+		bool control =
+				Input::IsKeyPress(KeyCode::E_KEY_LEFT_CONTROL) || Input::IsKeyPress(KeyCode::E_KEY_RIGHT_CONTROL);
+		bool shift = Input::IsKeyPress(KeyCode::E_KEY_LEFT_SHIFT) || Input::IsKeyPress(KeyCode::E_KEY_RIGHT_SHIFT);
+
+		switch (event.get_key())
+		{
+		case (int)KeyCode::E_KEY_N:
+		{
+			if (control)
+			{
+				NewScene();
+			}
+			break;
+		}
+		case (int)KeyCode::E_KEY_O:
+		{
+			if (control)
+			{
+				OpenScene();
+			}
+			break;
+		}
+		case (int)KeyCode::E_KEY_S:
+		{
+			if (control && shift)
+			{
+				SaveSceneAs();
+			}
+			break;
+		}
+		}
+
+		return false;
+	}
+	void EngineEditorLayer::NewScene()
+	{
+		m_scene = CreateRef<Scene>();
+		m_scene->OnViewResize((uint32_t)m_viewport_size.x, (uint32_t)m_viewport_size.y);
+		m_scene_hierarchy_panel.set_context(m_scene);
+	}
+	void EngineEditorLayer::OpenScene()
+	{
+		std::string file_path = FileDialogs::OpenFile("Engine Scene (*.engine)\0*.engine\0");
+		if (!file_path.empty())
+		{
+			m_scene = CreateRef<Scene>();
+
+			SceneSerializer serializer(m_scene);
+			serializer.Deserialize(file_path);
+
+			m_scene->OnViewResize((uint32_t)m_viewport_size.x, (uint32_t)m_viewport_size.y);
+			m_scene_hierarchy_panel.set_context(m_scene);
+		}
+	}
+	void EngineEditorLayer::SaveSceneAs()
+	{
+		std::string file_path = FileDialogs::SaveFile("Engine Scene (*.engine)\0*.engine\0");
+		if (!file_path.empty())
+		{
+			SceneSerializer serializer(m_scene);
+			serializer.Serialize(file_path);
+		}
 	}
 }

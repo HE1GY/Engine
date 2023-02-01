@@ -136,9 +136,10 @@ namespace Engine
 		ImGui::PopID();
 	}
 
-	void SceneHierarchyPanel::SetContext(const Ref<Scene>& context)
+	void SceneHierarchyPanel::set_context(const Ref<Scene>& context)
 	{
 		m_context = context;
+		m_selection_context = {};
 	}
 	void SceneHierarchyPanel::OnImGuiRender()
 	{

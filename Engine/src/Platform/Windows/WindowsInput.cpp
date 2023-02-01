@@ -30,4 +30,13 @@ namespace Engine
 		bool press = glfwGetKey(window, key_code);
 		return press;
 	}
+
+	bool Input::IsMouseButtonPress(MouseButtonCode button)
+	{
+		return IsMouseButtonPress((int)button);
+	}
+	bool Input::IsKeyPress(KeyCode key_code)
+	{
+		return IsKeyPress((int)key_code);
+	}
 } // namespace Engine
