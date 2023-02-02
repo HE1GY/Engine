@@ -22,7 +22,24 @@ namespace Engine
 		m_registry.destroy(entity);
 	}
 
-	void Scene::OnUpdate(TimeStep ts)
+	void Scene::OnUpdateEditor(TimeStep ts, EditorCamera& camera)
+	{
+
+		Renderer2D::BeginScene(camera);
+
+		auto group = m_registry.group<TransformComponent>(entt::get<SpriteRendererComponent>);
+
+		for (auto entity : group)
+		{
+			auto [transform, sprite_renderer] = m_registry.get<TransformComponent, SpriteRendererComponent>(entity);
+			Renderer2D::DrawQuad(transform.get_transformation(), sprite_renderer.color);
+		}
+
+		Renderer2D::EndScene();
+
+	}
+
+	void Scene::OnUpdateRuntime(TimeStep ts)
 	{
 		//scripts
 		{

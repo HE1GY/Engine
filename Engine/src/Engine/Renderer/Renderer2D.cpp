@@ -133,6 +133,21 @@ namespace Engine
 
 		s_data.texture_index = 1;
 	}
+
+	void Renderer2D::BeginScene(const EditorCamera& camera)
+	{
+		PROFILER_FUNCTION();
+
+		s_data.default_shader->Bind();
+		s_data.default_shader->SetMat4("u_view_projection", camera.GetViewProjection());
+
+		s_data.quad_vertex_buffer_ptr = s_data.quad_vertex_buffer_base;
+
+		s_data.quad_index_count = 0;
+
+		s_data.texture_index = 1;
+	}
+
 	void Renderer2D::EndScene()
 	{
 		PROFILER_FUNCTION();

@@ -16,13 +16,13 @@
 namespace Engine
 {
 	EngineEditorLayer::EngineEditorLayer()
-			:Layer("Engine-EditorLayer"), m_camera_controller(1280.0f / 720.0f, true), m_scene{ CreateRef<Scene>() }
+			:Layer("Engine-EditorLayer"), /*m_camera_controller(1280.0f / 720.0f, true),*/ m_scene{ CreateRef<Scene>() }
 	{
 	}
 
 	void EngineEditorLayer::OnAttach()
 	{
-		m_texture_chess = Engine::Texture2D::Create("../../../Sandbox/assets/textures/chess.png");
+		/*m_texture_chess = Engine::Texture2D::Create("../../../Sandbox/assets/textures/chess.png");
 		m_texture_sprites = Engine::Texture2D::Create("../../../Sandbox/assets/textures/RPGpack_sheet_2X.png");
 		m_wall = Engine::SubTexture2D::CreateFromCoord(m_texture_sprites, { 9, 9 }, { 128, 128 }, { 128, 128 });
 		m_tree = Engine::SubTexture2D::CreateFromCoord(m_texture_sprites, { 0, 1 }, { 128, 256 }, { 128, 128 });
@@ -33,12 +33,14 @@ namespace Engine
 		prop.end_size = { 0.005, 0.005, 1 };
 		prop.start_color = glm::vec4{ 0.9, 0.3, 0.1, 1 };
 		prop.end_color = glm::vec4{ 0.2, 0.3, 0.8, 0.1 };
-		m_particles.Init(prop);
+		m_particles.Init(prop);*/
 
 		FrameBufferSpecification fb_spec;
 		fb_spec.width = 1280;
 		fb_spec.height = 720;
 		m_frame_buffer = FrameBuffer::Create(fb_spec);
+
+		m_editor_camera = EditorCamera(30.0f, 1.778f, 0.1f, 1000.0f);
 
 		/*Entity quad = m_scene->CreateEntity("Quad Entity");
 		quad.AddComponent<SpriteRendererComponent>(glm::vec4{ 0, 1, 0, 1 });*/
@@ -129,7 +131,9 @@ namespace Engine
 
 			/*Engine::Renderer2D::BeginScene(m_camera_controller.get_camera());*/
 
-			m_scene->OnUpdate(ts);
+
+			m_editor_camera.OnUpdate(ts);
+			m_scene->OnUpdateEditor(ts, m_editor_camera);
 
 			/*{
 				static float color_anim{ 0.1f };
@@ -178,6 +182,9 @@ namespace Engine
 
 		EventDispatcher ed(event);
 		ed.Dispatch<KeyPress>(BIND_EVENT_FUNC(EngineEditorLayer::OnKeyPress));
+
+		m_editor_camera.OnEvent(event);
+
 	}
 	void EngineEditorLayer::OnImGuiRender()
 	{
@@ -297,6 +304,7 @@ namespace Engine
 			m_viewport_size = { size.x, size.y };
 			m_frame_buffer->Resize(size.x, size.y);
 			m_scene->OnViewResize(size.x, size.y);
+			m_editor_camera.SetViewportSize(size.x, size.y);
 			//m_camera_controller.OnViewResize(size.x, size.y);
 		}
 		uint32_t tex_id = m_frame_buffer->get_color_attachment_renderer_id();
@@ -311,7 +319,8 @@ namespace Engine
 		///////////////////////////Gizmo
 		Entity selected_entity = m_scene_hierarchy_panel.GetSelectedEntity();
 
-		if (selected_entity)
+		m_gizmo_type = 0;
+		if (selected_entity && m_gizmo_type != -1)
 		{
 			ImGuizmo::SetOrthographic(false);
 			ImGuizmo::SetDrawlist();
@@ -320,43 +329,44 @@ namespace Engine
 			float window_height = (float)ImGui::GetWindowHeight();
 			ImGuizmo::SetRect(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y, window_width, window_height);
 
-			//camera
-			Entity camera_entity = m_scene->GetPrimaryCameraEntity();
-			if (camera_entity && m_gizmo_type != -1)
+			//camera runtime
+			/*Entity camera_entity = m_scene->GetPrimaryCameraEntity();
+			const auto& camera = camera_entity.GetComponent<CameraComponent>().camera;
+			const glm::mat4& camera_projection = camera.get_projection();
+			glm::mat4 camera_view = glm::inverse(
+					camera_entity.GetComponent<TransformComponent>().get_transformation());*/
+
+			//editor camera
+			const glm::mat4& camera_projection = m_editor_camera.get_projection();
+			glm::mat4 camera_view = glm::inverse(m_editor_camera.GetViewMatrix());
+
+			//entity transform
+			auto& tc = selected_entity.GetComponent<TransformComponent>();
+			glm::mat4 transform = tc.get_transformation();
+
+			//Sanaping
+			bool snap = Input::IsKeyPress(KeyCode::E_KEY_LEFT_CONTROL);
+			float snap_value = 0.5;
+			if (m_gizmo_type == ImGuizmo::OPERATION::ROTATE)
+				snap_value = 45.0f;
+
+			float snap_values[3] = { snap_value, snap_value, snap_value };
+
+			ImGuizmo::Manipulate(glm::value_ptr(camera_view), glm::value_ptr(camera_projection),
+					(ImGuizmo::OPERATION)m_gizmo_type, ImGuizmo::LOCAL, glm::value_ptr(transform), nullptr,
+					snap ? snap_values : nullptr);
+
+			if (ImGuizmo::IsUsing())
 			{
-				const auto& camera = camera_entity.GetComponent<CameraComponent>().camera;
-				const glm::mat4& camera_projection = camera.get_projection();
-				glm::mat4 camera_view = glm::inverse(
-						camera_entity.GetComponent<TransformComponent>().get_transformation());
+				glm::vec3 translation, rotation, scale;
+				Math::DecomposeTransform(transform, translation, rotation, scale);
 
-				//entity transform
-				auto& tc = selected_entity.GetComponent<TransformComponent>();
-				glm::mat4 transform = tc.get_transformation();
-
-				//Sanaping
-
-				bool snap = Input::IsKeyPress(KeyCode::E_KEY_LEFT_CONTROL);
-				float snap_value = 0.5;
-				if (m_gizmo_type == ImGuizmo::OPERATION::ROTATE)
-					snap_value = 45.0f;
-
-				float snap_values[3] = { snap_value, snap_value, snap_value };
-
-				ImGuizmo::Manipulate(glm::value_ptr(camera_view), glm::value_ptr(camera_projection),
-						(ImGuizmo::OPERATION)m_gizmo_type, ImGuizmo::LOCAL, glm::value_ptr(transform), nullptr,
-						snap ? snap_values : nullptr);
-
-				if (ImGuizmo::IsUsing())
-				{
-					glm::vec3 translation, rotation, scale;
-					Math::DecomposeTransform(transform, translation, rotation, scale);
-
-					glm::vec3 delta_rotation = rotation - tc.rotation;
-					tc.translation = translation;
-					tc.rotation += delta_rotation;
-					tc.scale = scale;
-				}
+				glm::vec3 delta_rotation = rotation - tc.rotation;
+				tc.translation = translation;
+				tc.rotation += delta_rotation;
+				tc.scale = scale;
 			}
+
 		}
 
 

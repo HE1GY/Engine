@@ -9,6 +9,7 @@
 #include "OrthographicCamera.h"
 #include "VertexArray.h"
 #include "Camera.h"
+#include "EditorCamera.h"
 
 namespace Engine
 {
@@ -36,7 +37,8 @@ namespace Engine
 		static void Flush();
 
 		static void BeginScene(Camera& camera, const glm::mat4& transform);
-		static void BeginScene(OrthographicCamera& camera);
+		static void BeginScene(const EditorCamera& camera);
+		static void BeginScene(OrthographicCamera& camera);//TODO: Remove
 		static void EndScene();
 
 		static void DrawQuad(const glm::mat4& transformation, const glm::vec4& color);
