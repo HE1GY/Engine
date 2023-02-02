@@ -347,4 +347,8 @@ namespace Engine
 		  ImGui::ColorEdit4("Color", glm::value_ptr(sprite_renderer.color));
 		});
 	}
+	Entity SceneHierarchyPanel::GetSelectedEntity()
+	{
+		return m_selection_context;
+	}
 }

@@ -16,6 +16,8 @@ namespace Engine
 		void OnUpdate(TimeStep ts);
 		void OnViewResize(uint32_t width, uint32_t height);
 
+		Entity GetPrimaryCameraEntity();
+
 	private:
 		entt::registry m_registry;
 

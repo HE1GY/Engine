@@ -2,15 +2,6 @@ Scene: Untitled
 Entities:
   - EntityID: 12234124124
     TagComponent:
-      Tag: Q2
-    TransformComponent:
-      Translation: [0, 2.9000001, 0]
-      Rotation: [0, 0, 0]
-      Scale: [1, 1, 1]
-    SpriteRendererComponent:
-      Color: [0.66795367, 0.0825271085, 0.0825271085, 1]
-  - EntityID: 12234124124
-    TagComponent:
       Tag: Cam
     TransformComponent:
       Translation: [0, 0, 0]
@@ -18,7 +9,7 @@ Entities:
       Scale: [1, 1, 1]
     CameraComponent:
       Camera:
-        Projection type: 1
+        Projection type: 0
         Orthographic near clip: -1
         Orthographic far clip: 1
         Orthographic size: 10
@@ -31,7 +22,7 @@ Entities:
     TagComponent:
       Tag: Quad
     TransformComponent:
-      Translation: [0, 0, 0]
+      Translation: [0, 0, -10]
       Rotation: [0, 0, 0]
       Scale: [1, 1, 1]
     SpriteRendererComponent:

@@ -46,7 +46,7 @@ namespace Engine
 		Entity m_main_cam;
 
 		SceneHierarchyPanel m_scene_hierarchy_panel;
-
+		int m_gizmo_type{ -1 };
 	};
 
 }

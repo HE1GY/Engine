@@ -1,12 +1,17 @@
 #include "pch.h"
 
 #include <glm/ext/matrix_clip_space.hpp>
+#include <glm/glm.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 #include "Engine/Utils/FileDialogs.h"
 #include "EngineEditorLayer.h"
 
-#include "glm/glm.hpp"
 #include "Engine/Scene/SceneSerializer.h"
+
+#include <ImGuizmo.h>
+
+#include "Engine/Math/Math.h"
 
 namespace Engine
 {
@@ -250,6 +255,8 @@ namespace Engine
 		}
 		style.WindowMinSize.x = prev_window_min_size;
 
+
+		///////menu
 		if (ImGui::BeginMenuBar())
 		{
 			if (ImGui::BeginMenu("File"))
@@ -300,11 +307,66 @@ namespace Engine
 		ImGui::PopStyleVar();
 
 
+
+		///////////////////////////Gizmo
+		Entity selected_entity = m_scene_hierarchy_panel.GetSelectedEntity();
+
+		if (selected_entity)
+		{
+			ImGuizmo::SetOrthographic(false);
+			ImGuizmo::SetDrawlist();
+
+			float window_width = (float)ImGui::GetWindowWidth();
+			float window_height = (float)ImGui::GetWindowHeight();
+			ImGuizmo::SetRect(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y, window_width, window_height);
+
+			//camera
+			Entity camera_entity = m_scene->GetPrimaryCameraEntity();
+			if (camera_entity && m_gizmo_type != -1)
+			{
+				const auto& camera = camera_entity.GetComponent<CameraComponent>().camera;
+				const glm::mat4& camera_projection = camera.get_projection();
+				glm::mat4 camera_view = glm::inverse(
+						camera_entity.GetComponent<TransformComponent>().get_transformation());
+
+				//entity transform
+				auto& tc = selected_entity.GetComponent<TransformComponent>();
+				glm::mat4 transform = tc.get_transformation();
+
+				//Sanaping
+
+				bool snap = Input::IsKeyPress(KeyCode::E_KEY_LEFT_CONTROL);
+				float snap_value = 0.5;
+				if (m_gizmo_type == ImGuizmo::OPERATION::ROTATE)
+					snap_value = 45.0f;
+
+				float snap_values[3] = { snap_value, snap_value, snap_value };
+
+				ImGuizmo::Manipulate(glm::value_ptr(camera_view), glm::value_ptr(camera_projection),
+						(ImGuizmo::OPERATION)m_gizmo_type, ImGuizmo::LOCAL, glm::value_ptr(transform), nullptr,
+						snap ? snap_values : nullptr);
+
+				if (ImGuizmo::IsUsing())
+				{
+					glm::vec3 translation, rotation, scale;
+					Math::DecomposeTransform(transform, translation, rotation, scale);
+
+					glm::vec3 delta_rotation = rotation - tc.rotation;
+					tc.translation = translation;
+					tc.rotation += delta_rotation;
+					tc.scale = scale;
+				}
+			}
+		}
+
+
+
+
 		/////////////////////////Stats
 		auto stats = Engine::Renderer2D::GetStats();
 		ImGui::Begin("Settings");
 
-		Application::get()->get_imgui_layer()->set_block_event(ImGui::IsWindowFocused() || ImGui::IsWindowHovered());
+		Application::get()->get_imgui_layer()->set_block_event(!ImGui::IsWindowFocused() && !ImGui::IsWindowHovered());
 
 		ImGui::Text("FPS: %d", (int)m_fps);
 		ImGui::Text("draw calls: %d", stats.draw_calls);
@@ -354,6 +416,24 @@ namespace Engine
 			}
 			break;
 		}
+
+			//Gizmo
+		case (int)KeyCode::E_KEY_Q:
+			m_gizmo_type = -1;
+			break;
+
+		case (int)KeyCode::E_KEY_W:
+			m_gizmo_type = 0;
+			break;
+
+		case (int)KeyCode::E_KEY_E:
+			m_gizmo_type = 1;
+			break;
+
+		case (int)KeyCode::E_KEY_R:
+			m_gizmo_type = 2;
+			break;
+
 		}
 
 		return false;

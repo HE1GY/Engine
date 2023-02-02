@@ -86,5 +86,19 @@ namespace Engine
 			}
 		}
 	}
+	Entity Scene::GetPrimaryCameraEntity()
+	{
+		auto view = m_registry.view<CameraComponent>();
+		for (auto entity : view)
+		{
+			const auto& camera = view.get<CameraComponent>(entity);
+			if (camera.primary)
+			{
+				return { entity, this };
+			}
+		}
+
+		return { entt::null, nullptr };
+	}
 
 }
