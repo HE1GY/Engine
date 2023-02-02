@@ -39,7 +39,6 @@ namespace Engine
 		}
 
 		Renderer2D::EndScene();
-
 	}
 
 	void Scene::OnUpdateRuntime(TimeStep ts)

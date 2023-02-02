@@ -39,10 +39,6 @@ namespace Engine
 
 	void EngineEditorLayer::OnUpdate(Engine::TimeStep ts)
 	{
-
-		Engine::RendererCommand::SetClearColor({ 0.1f, 0.1f, 0.1f, 0.1f });
-		Engine::RendererCommand::Clear();
-
 		Engine::Renderer2D::ResetStats();
 		m_fps = (float)1 / ts;
 
@@ -309,15 +305,15 @@ namespace Engine
 
 	void EngineEditorLayer::NewScene()
 	{
-		m_scene.reset();
 		m_scene = CreateRef<Scene>();
+
 		m_scene->OnViewResize((uint32_t)m_viewport_size.x, (uint32_t)m_viewport_size.y);
 		m_scene_hierarchy_panel.SetContext(m_scene);
 	}
 
 	void EngineEditorLayer::OpenScene()
 	{
-		std::string file_path;
+		std::string file_path; //TODO: platform agnostic
 #ifdef WINDOWS
 		file_path = FileDialogs::OpenFile("Engine Scene (*.engine)\0*.engine\0");
 #endif

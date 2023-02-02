@@ -23,8 +23,8 @@ namespace Engine
 	void OpenGLRendererAPI::DrawIndex(Ref<VertexArray> vertex_array, uint32_t index_count)
 	{
 		PROFILER_FUNCTION();
-
-		uint32_t count = index_count ? index_count : vertex_array->get_indexBuffer()->get_count();
+		vertex_array->Bind();
+		uint32_t count = index_count;
 		glDrawElements(GL_TRIANGLES, count, GL_UNSIGNED_INT, nullptr);
 	}
 	void OpenGLRendererAPI::Clear()

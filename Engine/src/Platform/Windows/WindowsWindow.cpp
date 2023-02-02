@@ -127,9 +127,8 @@ namespace Engine
 	void WindowsWindow::OnUpdate()
 	{
 		PROFILER_FUNCTION();
-
-		m_graphic_context->SwapBuffer();
 		glfwPollEvents();
+		m_graphic_context->SwapBuffer();
 	}
 	void WindowsWindow::set_event_callback(const EventCallbackFn& fun)
 	{
