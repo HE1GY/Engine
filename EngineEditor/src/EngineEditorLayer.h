@@ -29,6 +29,13 @@ namespace Engine
 		void OpenScene();
 		void SaveSceneAs();
 
+		void DrawDockSpace(std::function<void()> func);
+		void DrawStatsWindow();
+		void DrawGizmo();
+		void DrawViewportWindow();
+		void DrawFileMenu();
+	private:
+
 		glm::vec2 m_viewport_size{ 0, 0 };
 		Ref<FrameBuffer> m_frame_buffer;
 

@@ -5,6 +5,7 @@
 #include "Components.h"
 #include "Engine/Renderer/Renderer2D.h"
 #include "Engine/Renderer/Camera.h"
+#include "Engine/Renderer/RendererCommand.h"
 
 namespace Engine
 {
@@ -24,6 +25,8 @@ namespace Engine
 
 	void Scene::OnUpdateEditor(TimeStep ts, EditorCamera& camera)
 	{
+		Engine::RendererCommand::SetClearColor({ 0.1f, 0.1f, 0.1f, 0.1f });
+		Engine::RendererCommand::Clear();
 
 		Renderer2D::BeginScene(camera);
 
@@ -41,6 +44,7 @@ namespace Engine
 
 	void Scene::OnUpdateRuntime(TimeStep ts)
 	{
+
 		//scripts
 		{
 			m_registry.view<NativeScriptComponent>().each([=](auto entity, auto& nsc)
@@ -71,6 +75,9 @@ namespace Engine
 			}
 		}
 
+		Engine::RendererCommand::SetClearColor({ 0.1f, 0.1f, 0.1f, 0.1f });
+		Engine::RendererCommand::Clear();
+
 		if (main_camera)
 		{
 			Renderer2D::BeginScene(*main_camera, cam_transform);
@@ -87,6 +94,7 @@ namespace Engine
 		}
 
 	}
+
 	void Scene::OnViewResize(uint32_t width, uint32_t height)
 	{
 		m_viewport_width = width;
@@ -103,6 +111,7 @@ namespace Engine
 			}
 		}
 	}
+
 	Entity Scene::GetPrimaryCameraEntity()
 	{
 		auto view = m_registry.view<CameraComponent>();

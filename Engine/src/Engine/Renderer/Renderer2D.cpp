@@ -179,7 +179,6 @@ namespace Engine
 		s_data.texture_index = 1;
 	}
 
-	//flat_color
 	void Engine::Renderer2D::DrawQuad(const glm::vec2& position, const glm::vec2& scale, const glm::vec4& color)
 	{
 		PROFILER_FUNCTION();
@@ -190,53 +189,23 @@ namespace Engine
 	{
 		PROFILER_FUNCTION();
 
-		if (s_data.quad_index_count >= s_data.k_max_indices)
-			FlushAndReset();
-
-		const float texture_slot{ 0.0f };
-
 		glm::mat4 transform = glm::translate(glm::mat4(1.0f), position)
 				* glm::scale(glm::mat4(1.0f), { scale.x, scale.y, 1 });
 
-		for (int i = 0; i < 4; ++i)
-		{
-			s_data.quad_vertex_buffer_ptr->position = transform * s_data.quad_vertices[i];
-			s_data.quad_vertex_buffer_ptr->color = color;
-			s_data.quad_vertex_buffer_ptr->tex_coord = { i > 0 && i < 3 ? 1 : 0, i < 1 ? 1 : 0 };
-			s_data.quad_vertex_buffer_ptr->texture_slot = texture_slot;
-			s_data.quad_vertex_buffer_ptr++;
-		}
+		DrawQuad(transform, color);
 
-		s_data.quad_index_count += 6;
-
-		s_data.stats.quads++;
 	}
 	void Renderer2D::DrawQuad(const glm::vec3& position, const glm::vec2& scale, const float rotation_rad,
 			const glm::vec4& color)
 	{
 		PROFILER_FUNCTION();
 
-		if (s_data.quad_index_count >= s_data.k_max_indices)
-			FlushAndReset();
-
-		const float texture_slot{ 0.0f };
-
 		glm::mat4 transform = glm::translate(glm::mat4(1.0f), position)
 				* glm::rotate(glm::mat4(1.0f), rotation_rad, { 0, 0, 1 })
 				* glm::scale(glm::mat4(1.0f), { scale.x, scale.y, 1 });
 
-		for (int i = 0; i < 4; ++i)
-		{
-			s_data.quad_vertex_buffer_ptr->position = transform * s_data.quad_vertices[i];
-			s_data.quad_vertex_buffer_ptr->color = color;
-			s_data.quad_vertex_buffer_ptr->tex_coord = { i > 0 && i < 3 ? 1 : 0, i < 1 ? 1 : 0 };
-			s_data.quad_vertex_buffer_ptr->texture_slot = texture_slot;
-			s_data.quad_vertex_buffer_ptr++;
-		}
+		DrawQuad(transform, color);
 
-		s_data.quad_index_count += 6;
-
-		s_data.stats.quads++;
 	}
 
 	//texture

@@ -16,6 +16,7 @@ namespace Engine
 
 		void OnUpdateEditor(TimeStep ts, EditorCamera& camera);
 		void OnUpdateRuntime(TimeStep ts);
+		
 		void OnViewResize(uint32_t width, uint32_t height);
 
 		Entity GetPrimaryCameraEntity();

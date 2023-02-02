@@ -11,7 +11,7 @@ namespace Engine
 	public:
 		SceneHierarchyPanel() = default;
 
-		void set_context(const Ref<Scene>& context);
+		void SetContext(const Ref<Scene>& context);
 		void OnImGuiRender();
 
 		Entity GetSelectedEntity();
