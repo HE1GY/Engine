@@ -133,6 +133,7 @@ namespace Engine
 
 	void EngineEditorLayer::DrawGizmo()
 	{
+
 		Entity selected_entity = m_scene_hierarchy_panel.GetSelectedEntity();
 
 		if (selected_entity && m_gizmo_type != -1)
@@ -153,7 +154,7 @@ namespace Engine
 
 			//editor camera
 			const glm::mat4& camera_projection = m_editor_camera.get_projection();
-			glm::mat4 camera_view = glm::inverse(m_editor_camera.GetViewMatrix());
+			glm::mat4 camera_view = m_editor_camera.GetViewMatrix();
 
 			//entity transform
 			auto& tc = selected_entity.GetComponent<TransformComponent>();
@@ -313,13 +314,9 @@ namespace Engine
 
 	void EngineEditorLayer::OpenScene()
 	{
-		std::string file_path; //TODO: platform agnostic
-#ifdef WINDOWS
-		file_path = FileDialogs::OpenFile("Engine Scene (*.engine)\0*.engine\0");
-#endif
-#ifdef LINUX
+		std::string file_path;
+
 		file_path = FileDialogs::OpenFile("*.engine");
-#endif
 
 		if (!file_path.empty())
 		{
@@ -336,12 +333,9 @@ namespace Engine
 	void EngineEditorLayer::SaveSceneAs()
 	{
 		std::string file_path;
-#ifdef WINDOWS
-		file_path = FileDialogs::OpenFile("Engine Scene (*.engine)\0*.engine\0");
-#endif
-#ifdef LINUX
-		file_path = FileDialogs::SaveFile("*.engine");
-#endif
+
+		file_path = FileDialogs::OpenFile("*.engine");
+
 		if (!file_path.empty())
 		{
 			SceneSerializer serializer(m_scene);
