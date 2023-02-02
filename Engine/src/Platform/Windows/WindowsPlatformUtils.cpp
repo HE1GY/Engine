@@ -1,3 +1,5 @@
+#ifdef WINDOWS
+
 #include "pch.h"
 #include "Engine/Utils/FileDialogs.h"
 
@@ -50,3 +52,5 @@ namespace Engine
 		return std::string();
 	}
 }
+
+#endif

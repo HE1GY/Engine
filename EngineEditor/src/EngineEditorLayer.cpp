@@ -317,7 +317,14 @@ namespace Engine
 
 	void EngineEditorLayer::OpenScene()
 	{
-		std::string file_path = FileDialogs::OpenFile("Engine Scene (*.engine)\0*.engine\0");
+		std::string file_path;
+#ifdef WINDOWS
+		file_path = FileDialogs::OpenFile("Engine Scene (*.engine)\0*.engine\0");
+#endif
+#ifdef LINUX
+		file_path = FileDialogs::OpenFile("*.engine");
+#endif
+
 		if (!file_path.empty())
 		{
 			m_scene = CreateRef<Scene>();
@@ -332,7 +339,13 @@ namespace Engine
 
 	void EngineEditorLayer::SaveSceneAs()
 	{
-		std::string file_path = FileDialogs::SaveFile("Engine Scene (*.engine)\0*.engine\0");
+		std::string file_path;
+#ifdef WINDOWS
+		file_path = FileDialogs::OpenFile("Engine Scene (*.engine)\0*.engine\0");
+#endif
+#ifdef LINUX
+		file_path = FileDialogs::SaveFile("*.engine");
+#endif
 		if (!file_path.empty())
 		{
 			SceneSerializer serializer(m_scene);

@@ -193,7 +193,7 @@ namespace Engine
 
 	bool SceneSerializer::Deserialize(const std::string& path)
 	{
-		std::ifstream fin(path);
+		std::ifstream fin(path, std::ios::in);
 		if (!fin.is_open())
 		{
 			CORE_ASSERT(false, "Can't open file {0}", path);
