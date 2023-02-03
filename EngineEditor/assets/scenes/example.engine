@@ -2,10 +2,28 @@ Scene: Untitled
 Entities:
   - EntityID: 12234124124
     TagComponent:
-      Tag: Empty entity
+      Tag: Top
     TransformComponent:
-      Translation: [0, 0, 0]
-      Rotation: [0, 0, 0]
-      Scale: [1, 1, 1]
+      Translation: [0.034911029, 0.582803369, -0.523205996]
+      Rotation: [1.57079613, 0.785398245, -4.21468513e-08]
+      Scale: [0.999999881, 0.999999285, 0.999872327]
     SpriteRendererComponent:
       Color: [1, 0, 0, 1]
+  - EntityID: 12234124124
+    TagComponent:
+      Tag: Left
+    TransformComponent:
+      Translation: [-0.309589922, 0.0886920542, -0.173970267]
+      Rotation: [0, -0.785398245, 0]
+      Scale: [1, 1, 1]
+    SpriteRendererComponent:
+      Color: [0.146718025, 0, 1, 1]
+  - EntityID: 12234124124
+    TagComponent:
+      Tag: Right
+    TransformComponent:
+      Translation: [0.377843112, 0.0786105692, -0.183367327]
+      Rotation: [0, 0.785398185, 0]
+      Scale: [0.999999881, 1, 0.999999881]
+    SpriteRendererComponent:
+      Color: [0.35521245, 1, 0, 1]
