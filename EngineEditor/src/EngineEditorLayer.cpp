@@ -23,6 +23,7 @@ namespace Engine
 	void EngineEditorLayer::OnAttach()
 	{
 		FrameBufferSpecification fb_spec;
+		fb_spec.attachment_specification = { FrameBufferTextureFormat::RGBA8 };
 		fb_spec.width = 1280;
 		fb_spec.height = 720;
 		m_frame_buffer = FrameBuffer::Create(fb_spec);
@@ -200,9 +201,9 @@ namespace Engine
 			m_editor_camera.SetViewportSize(size.x, size.y);
 		}
 
-		uint32_t tex_id = m_frame_buffer->get_color_attachment_renderer_id();
+		uint32_t tex_id = m_frame_buffer->GetColorAttachmentRendererId();
 		ImGui::Image((void*)tex_id, ImVec2{ size.x, size.y }, ImVec2{ 0, 1 }, ImVec2{ 1, 0 });
-		
+
 		DrawGizmo();
 
 		ImGui::End();

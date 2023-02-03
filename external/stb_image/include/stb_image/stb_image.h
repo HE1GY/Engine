@@ -2424,7 +2424,7 @@ static const stbi_uc stbi__jpeg_dezigzag[
 					 33, 40, 48, 41, 34, 27, 20, 13, 6, 7, 14, 21, 28, 35, 42, 49, 56,
 					 57, 50, 43, 36, 29, 22, 15, 23, 30, 37, 44, 51, 58, 59, 52, 45, 38,
 					 31, 39, 46, 53, 60, 61, 54, 47, 55, 62, 63,
-				// let corrupt input sample past end
+				// let corrupt input samples past end
 					 63, 63, 63, 63, 63, 63, 63, 63, 63, 63, 63, 63, 63, 63, 63 };
 
 // decode one 64-entry block--
@@ -3934,7 +3934,7 @@ static stbi_uc* stbi__resample_row_h_2(stbi_uc* out, stbi_uc* in_near, stbi_uc* 
 
 	if (w == 1)
 	{
-		// if only one sample, can't do any interpolation
+		// if only one samples, can't do any interpolation
 		out[0] = out[1] = input[0];
 		return out;
 	}
@@ -5364,7 +5364,7 @@ static int stbi__create_png_image_raw(stbi__png* a, stbi_uc* raw, stbi__uint32 r
 		}
 		prior = cur - stride; // bugfix: need to compute this after 'cur +=' computation above
 
-		// if first row, use special filter that doesn't sample previous row
+		// if first row, use special filter that doesn't samples previous row
 		if (j == 0)
 			filter = first_row_filter[filter];
 
