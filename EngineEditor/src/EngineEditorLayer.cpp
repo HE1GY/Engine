@@ -26,7 +26,6 @@ namespace Engine
 		fb_spec.width = 1280;
 		fb_spec.height = 720;
 		m_frame_buffer = FrameBuffer::Create(fb_spec);
-
 		m_editor_camera = EditorCamera(30.0f, 1.778f, 0.1f, 1000.0f);
 
 		m_scene_hierarchy_panel.SetContext(m_scene);
@@ -66,8 +65,6 @@ namespace Engine
 		  DrawFileMenu();
 
 		  DrawViewportWindow();
-
-		  DrawGizmo();
 
 		  DrawStatsWindow();
 
@@ -153,7 +150,7 @@ namespace Engine
 					camera_entity.GetComponent<TransformComponent>().get_transformation());*/
 
 			//editor camera
-			const glm::mat4& camera_projection = m_editor_camera.get_projection();
+			const glm::mat4& camera_projection = m_editor_camera.GetProjection();
 			glm::mat4 camera_view = m_editor_camera.GetViewMatrix();
 
 			//entity transform
@@ -205,6 +202,8 @@ namespace Engine
 
 		uint32_t tex_id = m_frame_buffer->get_color_attachment_renderer_id();
 		ImGui::Image((void*)tex_id, ImVec2{ size.x, size.y }, ImVec2{ 0, 1 }, ImVec2{ 1, 0 });
+		
+		DrawGizmo();
 
 		ImGui::End();
 

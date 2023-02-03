@@ -108,7 +108,7 @@ namespace Engine
 	{
 		PROFILER_FUNCTION();
 
-		glm::mat4 view_proj = camera.get_projection() * glm::inverse(transform);
+		glm::mat4 view_proj = camera.GetProjection() * glm::inverse(transform);
 
 		s_data.default_shader->Bind();
 		s_data.default_shader->SetMat4("u_view_projection", view_proj);
