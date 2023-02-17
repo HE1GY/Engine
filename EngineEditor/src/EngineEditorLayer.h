@@ -25,6 +25,7 @@ namespace Engine
 
 	private:
 		bool OnKeyPress(KeyPress& event);
+		bool OnMouseButtonPress(MouseButtonPressed& event);
 		void NewScene();
 		void OpenScene();
 		void SaveSceneAs();
@@ -37,7 +38,7 @@ namespace Engine
 	private:
 
 		glm::vec2 m_viewport_size{ 0, 0 };
-		
+
 		glm::vec2 m_viewport_bound[2]{};
 
 		Ref<FrameBuffer> m_frame_buffer;
@@ -50,6 +51,9 @@ namespace Engine
 		int m_gizmo_type{ -1 };
 
 		EditorCamera m_editor_camera;
+
+		Entity m_hovered_entity;
+		bool m_viewport_hovered{ false };
 	};
 
 }

@@ -351,4 +351,8 @@ namespace Engine
 	{
 		return m_selection_context;
 	}
+	void SceneHierarchyPanel::SetSelectedEntity(Entity& entity)
+	{
+		m_selection_context = entity;
+	}
 }

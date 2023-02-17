@@ -63,7 +63,14 @@ namespace Engine
 		if (mouse_x >= 0 && mouse_y >= 0 && mouse_x < (int)m_viewport_size.x && mouse_y < (int)m_viewport_size.y)
 		{
 			int data = m_frame_buffer->ReadPixel(1, mouse_x, mouse_y);
-			CORE_TRACE("Data {0}", data);
+			if (data != -1)
+			{
+				m_hovered_entity = Entity((entt::entity)data, m_scene.get());
+			}
+			else
+			{
+				m_hovered_entity = Entity();
+			}
 		}
 
 		m_frame_buffer->UnBind();
@@ -73,6 +80,7 @@ namespace Engine
 	{
 		EventDispatcher ed(event);
 		ed.Dispatch<KeyPress>(BIND_EVENT_FUNC(EngineEditorLayer::OnKeyPress));
+		ed.Dispatch<MouseButtonPressed>(BIND_EVENT_FUNC(EngineEditorLayer::OnMouseButtonPress));
 
 		m_editor_camera.OnEvent(event);
 
@@ -210,6 +218,7 @@ namespace Engine
 		ImGui::Begin("Viewport");
 		Application::get()->get_imgui_layer()->set_block_event(!ImGui::IsWindowFocused() && !ImGui::IsWindowHovered());
 
+		m_viewport_hovered = ImGui::IsWindowHovered();
 		ImVec2 size = ImGui::GetContentRegionAvail();
 
 		auto viewportMinRegion = ImGui::GetWindowContentRegionMin();
@@ -366,6 +375,18 @@ namespace Engine
 			SceneSerializer serializer(m_scene);
 			serializer.Serialize(file_path);
 		}
+	}
+	bool EngineEditorLayer::OnMouseButtonPress(MouseButtonPressed& event)
+	{
+		if (event.get_key() == (int)MouseButtonCode::E_MOUSE_BUTTON_LEFT)
+		{
+			if (m_viewport_hovered && !ImGuizmo::IsOver() && Input::IsKeyPress(KeyCode::E_KEY_LEFT_ALT))
+			{
+				m_scene_hierarchy_panel.SetSelectedEntity(m_hovered_entity);
+			}
+		}
+
+		return false;
 	}
 
 }
