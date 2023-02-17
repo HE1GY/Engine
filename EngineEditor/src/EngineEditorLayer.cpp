@@ -23,7 +23,8 @@ namespace Engine
 	void EngineEditorLayer::OnAttach()
 	{
 		FrameBufferSpecification fb_spec;
-		fb_spec.attachment_specification = { FrameBufferTextureFormat::RGBA8 };
+		fb_spec.attachment_specification = { FrameBufferTextureFormat::RGBA8, FrameBufferTextureFormat::RED_INTEGER,
+											 FrameBufferTextureFormat::Depth };
 		fb_spec.width = 1280;
 		fb_spec.height = 720;
 		m_frame_buffer = FrameBuffer::Create(fb_spec);
@@ -43,9 +44,27 @@ namespace Engine
 		m_fps = (float)1 / ts;
 
 		m_frame_buffer->Bind();
+		Engine::RendererCommand::SetClearColor({ 0.1f, 0.1f, 0.1f, 0.1f });
+		Engine::RendererCommand::Clear();
+		m_frame_buffer->ClearAttachment(1, -1);
 
 		m_editor_camera.OnUpdate(ts);
 		m_scene->OnUpdateEditor(ts, m_editor_camera);
+
+		auto [mx, my] = ImGui::GetMousePos();
+		mx -= m_viewport_bound[0].x;
+		my -= m_viewport_bound[0].y;
+
+		my = m_viewport_size.y - my;//flip y
+
+		int mouse_x = (int)mx;
+		int mouse_y = (int)my;
+
+		if (mouse_x >= 0 && mouse_y >= 0 && mouse_x < (int)m_viewport_size.x && mouse_y < (int)m_viewport_size.y)
+		{
+			int data = m_frame_buffer->ReadPixel(1, mouse_x, mouse_y);
+			CORE_TRACE("Data {0}", data);
+		}
 
 		m_frame_buffer->UnBind();
 	}
@@ -193,6 +212,12 @@ namespace Engine
 
 		ImVec2 size = ImGui::GetContentRegionAvail();
 
+		auto viewportMinRegion = ImGui::GetWindowContentRegionMin();
+		auto viewportMaxRegion = ImGui::GetWindowContentRegionMax();
+		auto viewportOffset = ImGui::GetWindowPos();
+		m_viewport_bound[0] = { viewportMinRegion.x + viewportOffset.x, viewportMinRegion.y + viewportOffset.y };
+		m_viewport_bound[1] = { viewportMaxRegion.x + viewportOffset.x, viewportMaxRegion.y + viewportOffset.y };
+
 		if (size.x != m_viewport_size.x || size.y != m_viewport_size.y)
 		{
 			m_viewport_size = { size.x, size.y };
@@ -201,7 +226,7 @@ namespace Engine
 			m_editor_camera.SetViewportSize(size.x, size.y);
 		}
 
-		uint32_t tex_id = m_frame_buffer->GetColorAttachmentRendererId();
+		uint32_t tex_id = m_frame_buffer->GetColorAttachmentRendererId(0);
 		ImGui::Image((void*)tex_id, ImVec2{ size.x, size.y }, ImVec2{ 0, 1 }, ImVec2{ 1, 0 });
 
 		DrawGizmo();

@@ -19,7 +19,7 @@ namespace Engine
 		uint32_t offset;
 		uint32_t size;
 
-		BufferElement(const std::string& name, ShaderDataType type, bool normalized);
+		BufferElement(const std::string& name, ShaderDataType type, bool normalized = false);
 
 		uint32_t GetComponentCount() const;
 

@@ -25,8 +25,6 @@ namespace Engine
 
 	void Scene::OnUpdateEditor(TimeStep ts, EditorCamera& camera)
 	{
-		Engine::RendererCommand::SetClearColor({ 0.1f, 0.1f, 0.1f, 0.1f });
-		Engine::RendererCommand::Clear();
 
 		Renderer2D::BeginScene(camera);
 
@@ -35,7 +33,7 @@ namespace Engine
 		for (auto entity : group)
 		{
 			auto [transform, sprite_renderer] = m_registry.get<TransformComponent, SpriteRendererComponent>(entity);
-			Renderer2D::DrawQuad(transform.get_transformation(), sprite_renderer.color);
+			Renderer2D::DrawSprite(transform.get_transformation(), sprite_renderer, (int32_t)entity);
 		}
 
 		Renderer2D::EndScene();

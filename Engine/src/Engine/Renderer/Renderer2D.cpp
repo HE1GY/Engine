@@ -10,6 +10,9 @@ namespace Engine
 		glm::vec4 color;
 		glm::vec2 tex_coord;
 		float texture_slot;
+
+		//for editor
+		int32_t entity_id{ 0 };
 	};
 
 	struct Renderer2DData
@@ -59,7 +62,8 @@ namespace Engine
 				{ "a_position", Engine::ShaderDataType::Float3, false },
 				{ "a_color", Engine::ShaderDataType::Float4, false },
 				{ "a_tex_coord", Engine::ShaderDataType::Float2, false },
-				{ "a_tex_slot", Engine::ShaderDataType::Float, false }
+				{ "a_tex_slot", Engine::ShaderDataType::Float, false },
+				{ "a_entity_id", Engine::ShaderDataType::Int }
 		});
 		s_data.default_vao->AddVertexBuffer(s_data.default_vb);
 
@@ -251,6 +255,7 @@ namespace Engine
 			s_data.quad_vertex_buffer_ptr->color = color;
 			s_data.quad_vertex_buffer_ptr->tex_coord = { i > 0 && i < 3 ? 1 : 0, i < 1 ? 1 : 0 };
 			s_data.quad_vertex_buffer_ptr->texture_slot = texture_slot;
+			s_data.quad_vertex_buffer_ptr->entity_id = 0;
 			s_data.quad_vertex_buffer_ptr++;
 		}
 
@@ -300,6 +305,7 @@ namespace Engine
 			s_data.quad_vertex_buffer_ptr->color = color;
 			s_data.quad_vertex_buffer_ptr->tex_coord = sub_texture->get_coords()[i];
 			s_data.quad_vertex_buffer_ptr->texture_slot = texture_slot;
+			s_data.quad_vertex_buffer_ptr->entity_id = 0;
 			s_data.quad_vertex_buffer_ptr++;
 		}
 
@@ -326,12 +332,44 @@ namespace Engine
 			s_data.quad_vertex_buffer_ptr->color = color;
 			s_data.quad_vertex_buffer_ptr->tex_coord = { i > 0 && i < 3 ? 1 : 0, i < 1 ? 1 : 0 };
 			s_data.quad_vertex_buffer_ptr->texture_slot = texture_slot;
+			s_data.quad_vertex_buffer_ptr->entity_id = 0;
 			s_data.quad_vertex_buffer_ptr++;
 		}
 
 		s_data.quad_index_count += 6;
 
 		s_data.stats.quads++;
+	}
+
+	void Renderer2D::DrawQuad(const glm::mat4& transformation, const glm::vec4& color, int32_t entity_id)
+	{
+		PROFILER_FUNCTION();
+
+		if (s_data.quad_index_count >= s_data.k_max_indices)
+			FlushAndReset();
+
+		const float texture_slot{ 0.0f };
+
+		glm::mat4 transform = transformation;
+
+		for (int i = 0; i < 4; ++i)
+		{
+			s_data.quad_vertex_buffer_ptr->position = transform * s_data.quad_vertices[i];
+			s_data.quad_vertex_buffer_ptr->color = color;
+			s_data.quad_vertex_buffer_ptr->tex_coord = { i > 0 && i < 3 ? 1 : 0, i < 1 ? 1 : 0 };
+			s_data.quad_vertex_buffer_ptr->texture_slot = texture_slot;
+			s_data.quad_vertex_buffer_ptr->entity_id = entity_id;
+			s_data.quad_vertex_buffer_ptr++;
+		}
+
+		s_data.quad_index_count += 6;
+
+		s_data.stats.quads++;
+	}
+
+	void Renderer2D::DrawSprite(const glm::mat4& transformation, SpriteRendererComponent& component, int32_t entity_id)
+	{
+		DrawQuad(transformation, component.color, entity_id);
 	}
 
 	Renderer2D::Statistics Renderer2D::GetStats()

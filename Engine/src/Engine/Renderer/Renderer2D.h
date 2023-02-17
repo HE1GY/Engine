@@ -3,6 +3,7 @@
 #include <glm/vec2.hpp>
 #include <glm/vec3.hpp>
 #include <glm/vec4.hpp>
+#include <Engine/Scene/Components.h>
 #include "Texture.h"
 #include "SubTexture2D.h"
 #include "Shader.h"
@@ -42,6 +43,9 @@ namespace Engine
 		static void EndScene();
 
 		static void DrawQuad(const glm::mat4& transformation, const glm::vec4& color);
+		static void DrawQuad(const glm::mat4& transformation, const glm::vec4& color, int32_t entity_id);
+
+		static void DrawSprite(const glm::mat4& transformation, SpriteRendererComponent& component, int32_t entity_id);
 
 		static void DrawQuad(const glm::vec2& position, const glm::vec2& scale, const glm::vec4& color);
 		static void DrawQuad(const glm::vec3& position, const glm::vec2& scale, const glm::vec4& color);

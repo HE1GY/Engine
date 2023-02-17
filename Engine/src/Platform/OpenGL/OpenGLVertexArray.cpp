@@ -100,12 +100,38 @@ namespace Engine
 		BufferLayout& layout = vertexBuffer->get_layout();
 		for (const auto& element : layout)
 		{
-			glEnableVertexAttribArray(m_vertexBuffer_index);
-			glVertexAttribPointer(m_vertexBuffer_index, element.GetComponentCount(),
-					ShaderDataTypeToOpenGL(element.type),
-					element.normalized ? GL_TRUE : GL_FALSE, layout.get_stride(),
-					(GLenum*)element.offset);
-			m_vertexBuffer_index++;
+			switch (element.type)
+			{
+			case ShaderDataType::None:
+				break;
+			case ShaderDataType::Float:
+			case ShaderDataType::Float2:
+			case ShaderDataType::Float3:
+			case ShaderDataType::Float4:
+			case ShaderDataType::Mat3:
+			case ShaderDataType::Mat4:
+				glEnableVertexAttribArray(m_vertexBuffer_index);
+				glVertexAttribPointer(m_vertexBuffer_index, element.GetComponentCount(),
+						ShaderDataTypeToOpenGL(element.type),
+						element.normalized ? GL_TRUE : GL_FALSE, layout.get_stride(),
+						(GLenum*)element.offset);
+				m_vertexBuffer_index++;
+				break;
+
+			case ShaderDataType::Bool:
+			case ShaderDataType::Int:
+			case ShaderDataType::Int2:
+			case ShaderDataType::Int3:
+			case ShaderDataType::Int4:
+				glEnableVertexAttribArray(m_vertexBuffer_index);
+				glVertexAttribIPointer(m_vertexBuffer_index, element.GetComponentCount(),
+						ShaderDataTypeToOpenGL(element.type),
+						layout.get_stride(),
+						(GLenum*)element.offset);
+				m_vertexBuffer_index++;
+				break;
+			}
+
 		}
 
 		m_vertexBuffers.push_back(vertexBuffer);

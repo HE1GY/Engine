@@ -37,6 +37,9 @@ namespace Engine
 	private:
 
 		glm::vec2 m_viewport_size{ 0, 0 };
+		
+		glm::vec2 m_viewport_bound[2]{};
+
 		Ref<FrameBuffer> m_frame_buffer;
 
 		float m_fps{ 0 };
