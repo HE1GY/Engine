@@ -11,14 +11,14 @@ namespace Engine
 
 	Application* Application::s_instance = nullptr;
 
-	Application::Application()
+	Application::Application(uint32_t width, uint32_t height, const std::string& title)
 	{
 		PROFILER_FUNCTION();
 
-		CORE_ASSERT((s_instance == nullptr), "App already exists");
+		CORE_ASSERT((s_instance == nullptr), "Applicaion already exists");
 		s_instance = this;
 
-		m_window = Ref<Window>(Window::Create());
+		m_window = Ref<Window>(Window::Create({ width, height, title }));
 		m_window->set_VSync(true);
 		m_window->set_event_callback(BIND_EVENT_FUNC(Application::OnEvent));
 

@@ -11,7 +11,7 @@ namespace Engine
 	class Application
 	{
 	public:
-		Application();
+		Application(uint32_t width = 1280, uint32_t height = 720, const std::string& title = "Engine");
 		virtual ~Application() = default;
 		void Run();
 		void OnEvent(Event& event);

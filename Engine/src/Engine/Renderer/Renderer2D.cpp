@@ -253,7 +253,7 @@ namespace Engine
 		{
 			s_data.quad_vertex_buffer_ptr->position = transform * s_data.quad_vertices[i];
 			s_data.quad_vertex_buffer_ptr->color = color;
-			s_data.quad_vertex_buffer_ptr->tex_coord = { i > 0 && i < 3 ? 1 : 0, i < 1 ? 1 : 0 };
+			s_data.quad_vertex_buffer_ptr->tex_coord = { (i > 0 && i < 3) ? 1 : 0, i > 1 ? 1 : 0 };
 			s_data.quad_vertex_buffer_ptr->texture_slot = texture_slot;
 			s_data.quad_vertex_buffer_ptr->entity_id = 0;
 			s_data.quad_vertex_buffer_ptr++;
