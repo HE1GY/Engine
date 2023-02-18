@@ -41,6 +41,10 @@ target_link_libraries(imgui PUBLIC glfw)
 target_link_libraries(imguizmo PUBLIC imgui)
 
 
+#game
+add_subdirectory(Arkanoid)
+target_link_libraries(Arkanoid PRIVATE Engine)
+
 
 
 

@@ -14,7 +14,7 @@ namespace Engine
 		{
 			return m_time;
 		}
-		inline float get_In_seconds()
+		inline float GetInSeconds()
 		{
 			return m_time;
 		}

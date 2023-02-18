@@ -48,7 +48,7 @@ namespace Engine
 			if (particle.is_active)
 			{
 				particle.life_time_remained -= ts;
-				particle.position += particle.velocity * ts.get_In_seconds();
+				particle.position += particle.velocity * ts.GetInSeconds();
 
 				float life = (particle.life_time_remained / m_prop.life_time - (m_prop.life_time / 2)) * -1;
 				particle.color = Lerp(m_prop.start_color, m_prop.end_color, life);
