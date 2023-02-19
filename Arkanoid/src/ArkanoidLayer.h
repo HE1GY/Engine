@@ -17,7 +17,8 @@ namespace Arkanoid
 		virtual void OnEvent(Event& event) override;
 
 		virtual void OnImGuiRender() override;
-
+	private:
+		bool OnResize(WindowResized& event);
 	private:
 		static constexpr float s_aspect_ration = 1280.0f / 720.f;
 
@@ -34,5 +35,7 @@ namespace Arkanoid
 		glm::vec2 m_platform_size{ 0.4, 0.1 };
 
 		OrthographicCamera m_camera;
+
+		Ref<Scene> m_scene;
 	};
 }
