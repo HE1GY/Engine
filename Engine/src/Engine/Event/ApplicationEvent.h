@@ -20,11 +20,11 @@ namespace Engine
 			return ss.str();
 		}
 
-		inline int get_width() const
+		inline int GetWidth() const
 		{
 			return m_width;
 		}
-		inline int get_height() const
+		inline int GetHeight() const
 		{
 			return m_height;
 		}

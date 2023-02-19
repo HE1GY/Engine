@@ -246,9 +246,9 @@ namespace Engine
 
 					auto& camera_comp = deserialized_entity.AddComponent<CameraComponent>();
 
-					camera_comp.camera.set_projection_type(
+					camera_comp.camera.SetProjectionType(
 							((SceneCamera::ProjectionType)camera_node["Projection type"].as<int>()));
-					camera_comp.camera.set_orthographic(camera_node["Orthographic size"].as<float>(),
+					camera_comp.camera.SetOrthographic(camera_node["Orthographic size"].as<float>(),
 							camera_node["Orthographic near clip"].as<float>(),
 							camera_node["Orthographic far clip"].as<float>());
 					camera_comp.camera.set_perspective(camera_node["Perspective FOV"].as<float>(),

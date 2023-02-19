@@ -298,7 +298,7 @@ namespace Engine
 				  if (ImGui::Selectable(projection_type_string[i], is_selected))
 				  {
 					  current_projection_type_string = projection_type_string[i];
-					  cam_cmp.camera.set_projection_type((SceneCamera::ProjectionType)i);
+					  cam_cmp.camera.SetProjectionType((SceneCamera::ProjectionType)i);
 				  }
 
 				  if (is_selected)

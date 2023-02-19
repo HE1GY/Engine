@@ -5,21 +5,16 @@
 
 namespace Engine
 {
-
-	SceneCamera::SceneCamera()
-	{
-
-	}
-	void SceneCamera::set_viewport(uint32_t width, uint32_t height)
+	void SceneCamera::SetViewport(uint32_t width, uint32_t height)
 	{
 		m_aspect_ration = (float)width / (float)height;
 		RecalculateProjection();
 	}
-	void SceneCamera::set_orthographic(float size, float near_clip, float far_clip)
+	void SceneCamera::SetOrthographic(float size, float near_clip, float far_clip)
 	{
-		float m_orthographic_size = size;
-		float m_orthographic_near = near_clip;
-		float m_orthographic_far = far_clip;
+		m_orthographic_size = size;
+		m_orthographic_near = near_clip;
+		m_orthographic_far = far_clip;
 	}
 	void SceneCamera::RecalculateProjection()
 	{
