@@ -67,7 +67,7 @@ namespace Engine
 	}
 	bool OrthographicCameraController::OnWindowResized(WindowResized& event)
 	{
-		OnResize(event.get_width(), event.get_height());
+		OnResize(event.GetWidth(), event.GetHeight());
 		return false;
 	}
 	void OrthographicCameraController::OnResize(float width, float height)

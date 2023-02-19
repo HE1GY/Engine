@@ -12,16 +12,16 @@ namespace Engine
 			Perspective, Orthographic
 		};
 
-		SceneCamera();
+		SceneCamera() = default;
 		virtual ~SceneCamera() override = default;
 
-		void set_projection_type(ProjectionType type)
+		void SetProjectionType(ProjectionType type)
 		{
 			m_projection_type = type;
 		}
 
-		void set_viewport(uint32_t width, uint32_t height);
-		void set_orthographic(float size, float near_clip, float far_clip);
+		void SetViewport(uint32_t width, uint32_t height);
+		void SetOrthographic(float size, float near_clip, float far_clip);
 
 		void set_orthographic_size(float orthographic_size)
 		{

@@ -25,7 +25,6 @@ namespace Engine
 
 	void Scene::OnUpdateEditor(TimeStep ts, EditorCamera& camera)
 	{
-
 		Renderer2D::BeginScene(camera);
 
 		auto group = m_registry.group<TransformComponent>(entt::get<SpriteRendererComponent>);
@@ -41,7 +40,6 @@ namespace Engine
 
 	void Scene::OnUpdateRuntime(TimeStep ts)
 	{
-
 		//scripts
 		{
 			m_registry.view<NativeScriptComponent>().each([=](auto entity, auto& nsc)
@@ -89,6 +87,10 @@ namespace Engine
 
 			Renderer2D::EndScene();
 		}
+		else
+		{
+			CORE_ASSERT(false, "Scene without camera");
+		}
 
 	}
 
@@ -104,7 +106,7 @@ namespace Engine
 			auto& camera = view.get<CameraComponent>(entity);
 			if (!camera.fix_aspect_ratio)
 			{
-				camera.camera.set_viewport(width, height);
+				camera.camera.SetViewport(width, height);
 			}
 		}
 	}

@@ -99,14 +99,14 @@ namespace Engine
 	bool Application::OnWindowsResized(WindowResized& event)
 	{
 		PROFILER_FUNCTION();
-		if (event.get_height() == 0 || event.get_width() == 0)
+		if (event.GetHeight() == 0 || event.GetWidth() == 0)
 		{
 			m_is_minimized = true;
 			return false;
 		}
 		m_is_minimized = false;
 
-		Renderer::OnWindowResized(event.get_width(), event.get_height());
+		Renderer::OnWindowResized(event.GetWidth(), event.GetHeight());
 		return false;
 	}
 	void Application::PushLayer(Layer* layer)

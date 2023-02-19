@@ -376,6 +376,7 @@ namespace Engine
 			serializer.Serialize(file_path);
 		}
 	}
+
 	bool EngineEditorLayer::OnMouseButtonPress(MouseButtonPressed& event)
 	{
 		if (event.get_key() == (int)MouseButtonCode::E_MOUSE_BUTTON_LEFT)
