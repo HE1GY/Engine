@@ -11,6 +11,7 @@
 
 namespace Engine
 {
+
 	struct TransformComponent
 	{
 		glm::vec3 translation{ 0.0f, 0.0f, 0.0f };
@@ -57,26 +58,22 @@ namespace Engine
 
 	struct NativeScriptComponent
 	{
-		ScriptableEntity* instance{ nullptr };
+		Ref<ScriptableEntity> instance;
+		Ref<ScriptableEntity> (* InstantiateScript)();
 
-		ScriptableEntity* (* InstantiateScript)();
-		std::function<void(ScriptableEntity*)> AfterInstantiateScript;
+		std::function<void(Ref<ScriptableEntity>&)> AfterInstantiateScript;
 
 		template<typename T>
-		void Bind()
+		void Bind(std::function<void(Ref<ScriptableEntity>&)> after_instantiation_script = [](Ref<ScriptableEntity>&)
+		{})
 		{
 			InstantiateScript = []()
 			{
-			  return (ScriptableEntity*)new T();
+			  return static_pointer_cast<ScriptableEntity>(CreateRef<T>());
 			};
-		}
 
-		void DestroyScript()
-		{
-			delete instance;
-			instance = nullptr;
+			AfterInstantiateScript = after_instantiation_script;
 		}
-
 	};
 
 	//Physic

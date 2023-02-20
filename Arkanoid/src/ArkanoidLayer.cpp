@@ -12,36 +12,7 @@ namespace Arkanoid
 
 	void ArkanoidLayer::OnAttach()
 	{
-		CreateLevel();
-	}
 
-	void ArkanoidLayer::OnUpdate(TimeStep ts)
-	{
-		RendererCommand::SetClearColor({ 0.1f, 0.1f, 0.1f, 1.0f });
-		RendererCommand::Clear();
-
-		m_scene->OnUpdateRuntime(ts);
-	}
-
-	void ArkanoidLayer::OnEvent(Event& event)
-	{
-		EventDispatcher ed(event);
-		ed.Dispatch<WindowResized>(BIND_EVENT_FUNC(ArkanoidLayer::OnResize));
-	}
-
-	void ArkanoidLayer::OnImGuiRender()
-	{
-
-	}
-
-	bool ArkanoidLayer::OnResize(WindowResized& event)
-	{
-		m_scene->OnViewResize(event.GetWidth(), event.GetHeight());
-		return false;
-	}
-
-	void ArkanoidLayer::CreateLevel()
-	{
 		m_platform_texture = Texture2D::Create("../../../Arkanoid/assets/textures/09-Breakout-Tiles.png");
 
 		m_scene = CreateRef<Scene>();
@@ -74,15 +45,15 @@ namespace Arkanoid
 		const std::array<glm::vec2, 2>& camera_bound = camera.GetOrthographicBound();
 
 		auto& nsc = ball.AddComponent<NativeScriptComponent>();
-		nsc.Bind<Scripts::BallController>();
-		nsc.AfterInstantiateScript = [&](ScriptableEntity* instance)
+		nsc.Bind<Scripts::BallController>([&](auto& instance)
 		{
-		  auto ball_controller = dynamic_cast<Scripts::BallController*>(instance);
+		  auto ball_controller = static_cast<Scripts::BallController*>(instance.get());
 		  ball_controller->out_of_field += [&]()
 		  {
-			TRACE("Out");
+			CreateLevel();
 		  };
-		};
+
+		});
 
 		ball.AddComponent<Circle2DComponent>();
 
@@ -91,7 +62,7 @@ namespace Arkanoid
 		{
 			for (int j = 0; j < 8; ++j)
 			{
-				Entity platform = m_scene->CreateEntity("platform " + i);
+				Entity platform = m_scene->CreateEntity("platform");
 				auto& plat_trans_cmp = platform.GetComponent<TransformComponent>();
 				plat_trans_cmp.scale = { 0.17, 0.04, 1 };
 				plat_trans_cmp.translation = { (camera_bound[0].x + (plat_trans_cmp.scale.x / 2) + 0.1f)
@@ -105,7 +76,39 @@ namespace Arkanoid
 
 				platform.AddComponent<NativeScriptComponent>().Bind<Scripts::PlatformController>();
 			}
+
 		}
+
+	}
+
+	void ArkanoidLayer::OnUpdate(TimeStep ts)
+	{
+		RendererCommand::SetClearColor({ 0.1f, 0.1f, 0.1f, 1.0f });
+		RendererCommand::Clear();
+
+		m_scene->OnUpdateRuntime(ts);
+	}
+
+	void ArkanoidLayer::OnEvent(Event& event)
+	{
+		EventDispatcher ed(event);
+		ed.Dispatch<WindowResized>(BIND_EVENT_FUNC(ArkanoidLayer::OnResize));
+	}
+
+	void ArkanoidLayer::OnImGuiRender()
+	{
+
+	}
+
+	bool ArkanoidLayer::OnResize(WindowResized& event)
+	{
+		m_scene->OnViewResize(event.GetWidth(), event.GetHeight());
+		return false;
+	}
+
+	void ArkanoidLayer::CreateLevel()
+	{
+		m_scene = CreateRef<Scene>();
 	}
 
 }

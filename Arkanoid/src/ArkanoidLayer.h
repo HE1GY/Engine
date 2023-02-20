@@ -24,5 +24,6 @@ namespace Arkanoid
 		Ref<Texture2D> m_platform_texture;
 
 		Ref<Scene> m_scene;
+		bool m_run{ true };
 	};
 }

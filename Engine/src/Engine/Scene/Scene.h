@@ -11,6 +11,9 @@ namespace Engine
 	class Scene
 	{
 	public:
+		Scene();
+		~Scene();
+
 		Entity CreateEntity(const std::string& tag);
 		void DestroyEntity(Entity& entity);
 

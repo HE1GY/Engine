@@ -9,6 +9,17 @@
 
 namespace Engine
 {
+	Scene::Scene()
+	{
+	}
+	Scene::~Scene()
+	{
+		m_registry.each([=](auto entity)
+		{
+		  Entity e = { entity, this };
+		  DestroyEntity(e);
+		});
+	}
 
 	Entity Scene::CreateEntity(const std::string& tag)
 	{
@@ -20,12 +31,11 @@ namespace Engine
 
 	void Scene::DestroyEntity(Entity& entity)
 	{
-		if (entity.HasComponent<NativeScriptComponent>()) //TODO fix Destroy script'
+		if (entity.HasComponent<NativeScriptComponent>())
 		{
 			auto& nsc = entity.GetComponent<NativeScriptComponent>();
 			nsc.instance->OnDestroy();
 		}
-
 		m_registry.destroy(entity);
 	}
 
@@ -53,14 +63,16 @@ namespace Engine
 			  if (!nsc.instance)
 			  {
 				  nsc.instance = nsc.InstantiateScript();
-				  if (nsc.AfterInstantiateScript) nsc.AfterInstantiateScript(nsc.instance);
+				  nsc.AfterInstantiateScript(nsc.instance);
 				  nsc.instance->m_entity = Entity(entity, this);
 				  nsc.instance->m_scene = this;
 				  nsc.instance->OnCreate();
 			  }
 			  nsc.instance->OnUpdate(ts);
 			});
+
 		}
+
 
 		//physics
 		m_registry.view<Box2DComponent, TransformComponent>().each([=](auto& box, auto& transform_cmp)
@@ -92,10 +104,6 @@ namespace Engine
 			}
 		  });
 		});
-
-
-
-
 
 
 		//search camera
@@ -170,4 +178,5 @@ namespace Engine
 
 		return { entt::null, nullptr };
 	}
+
 }

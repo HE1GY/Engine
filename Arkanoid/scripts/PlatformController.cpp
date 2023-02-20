@@ -5,12 +5,9 @@ namespace Scripts
 	{
 		Destroy();
 	}
-	PlatformController::~PlatformController()// not works
-	{
-		INFO("Platform died");
-	}
+
 	void PlatformController::OnDestroy()
 	{
-		INFO("Platform destroyed");
+		TRACE("Platform destroyed");
 	}
 }

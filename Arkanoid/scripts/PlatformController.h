@@ -8,7 +8,6 @@ namespace Scripts
 	class PlatformController : public ScriptableEntity
 	{
 	public:
-		~PlatformController();
 		virtual void OnDestroy() override;
 		virtual void OnCollision2D(glm::vec2& normal) override;
 
