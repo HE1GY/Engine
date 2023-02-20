@@ -20,6 +20,12 @@ namespace Engine
 
 	void Scene::DestroyEntity(Entity& entity)
 	{
+		if (entity.HasComponent<NativeScriptComponent>()) //TODO fix Destroy script'
+		{
+			auto& nsc = entity.GetComponent<NativeScriptComponent>();
+			nsc.instance->OnDestroy();
+		}
+
 		m_registry.destroy(entity);
 	}
 
@@ -47,13 +53,52 @@ namespace Engine
 			  if (!nsc.instance)
 			  {
 				  nsc.instance = nsc.InstantiateScript();
+				  if (nsc.AfterInstantiateScript) nsc.AfterInstantiateScript(nsc.instance);
 				  nsc.instance->m_entity = Entity(entity, this);
+				  nsc.instance->m_scene = this;
 				  nsc.instance->OnCreate();
 			  }
 			  nsc.instance->OnUpdate(ts);
 			});
 		}
 
+		//physics
+		m_registry.view<Box2DComponent, TransformComponent>().each([=](auto& box, auto& transform_cmp)
+		{
+		  box.position = glm::vec2(transform_cmp.translation);
+		  box.size = glm::vec2(transform_cmp.scale);
+		});
+		m_registry.view<Circle2DComponent, TransformComponent>().each([=](auto& circle, auto& transform_cmp)
+		{
+		  circle.position = glm::vec2(transform_cmp.translation);
+		  circle.radius = transform_cmp.scale.x / 2;
+		});
+
+		m_registry.view<Circle2DComponent, NativeScriptComponent>().each([=](auto& circle, auto& nsc_circle)
+		{
+		  m_registry.view<Box2DComponent, NativeScriptComponent>().each([=](auto& box, auto& nsc_box)
+		  {
+			float closest_x = glm::max(box.position.x - (box.size.x / 2),
+					glm::min(box.position.x + (box.size.x / 2), circle.position.x));
+			float closest_y = glm::max(box.position.y - (box.size.y / 2),
+					glm::min(box.position.y + (box.size.y / 2), circle.position.y));
+
+			float length = glm::length(circle.position - glm::vec2{ closest_x, closest_y });
+			if (length < (circle.radius))
+			{
+				glm::vec2 normal = glm::normalize(circle.position - glm::vec2{ closest_x, closest_y });
+				nsc_circle.instance->OnCollision2D(normal);
+				nsc_box.instance->OnCollision2D(normal);
+			}
+		  });
+		});
+
+
+
+
+
+
+		//search camera
 		Camera* main_camera{ nullptr };
 		glm::mat4 cam_transform;
 
@@ -70,26 +115,26 @@ namespace Engine
 			}
 		}
 
-		Engine::RendererCommand::SetClearColor({ 0.1f, 0.1f, 0.1f, 0.1f });
-		Engine::RendererCommand::Clear();
-
+		//Render
 		if (main_camera)
 		{
 			Renderer2D::BeginScene(*main_camera, cam_transform);
 
-			auto group = m_registry.group<TransformComponent>(entt::get<SpriteRendererComponent>);
+			auto group = m_registry.group<TransformComponent, SpriteRendererComponent>();
 
 			for (auto entity : group)
 			{
 				auto [transform, sprite_renderer] = m_registry.get<TransformComponent, SpriteRendererComponent>(entity);
-				Renderer2D::DrawQuad(transform.get_transformation(), sprite_renderer.color);
+				if (!sprite_renderer.active)continue;
+
+				Renderer2D::DrawSprite(transform.get_transformation(), sprite_renderer);
 			}
 
 			Renderer2D::EndScene();
 		}
 		else
 		{
-			CORE_ASSERT(false, "Scene without camera");
+			WARN("Scene without camera");
 		}
 
 	}
@@ -125,5 +170,4 @@ namespace Engine
 
 		return { entt::null, nullptr };
 	}
-
 }

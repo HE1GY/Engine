@@ -4,13 +4,13 @@
 
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtx/quaternion.hpp>
+#include <Engine/Renderer/Texture.h>
 
 #include "SceneCamera.h"
 #include "ScriptableEntity.h"
 
 namespace Engine
 {
-
 	struct TransformComponent
 	{
 		glm::vec3 translation{ 0.0f, 0.0f, 0.0f };
@@ -32,7 +32,9 @@ namespace Engine
 
 	struct SpriteRendererComponent
 	{
+		bool active = true;
 		glm::vec4 color{ 1, 1, 1, 1 };
+		Ref<Texture2D> texture;
 	};
 
 	struct TagComponent
@@ -58,20 +60,36 @@ namespace Engine
 		ScriptableEntity* instance{ nullptr };
 
 		ScriptableEntity* (* InstantiateScript)();
-		void (* DestroyScript)(NativeScriptComponent* nsc);
+		std::function<void(ScriptableEntity*)> AfterInstantiateScript;
 
 		template<typename T>
 		void Bind()
 		{
 			InstantiateScript = []()
-			{ return (ScriptableEntity*)new T(); };
-			DestroyScript = [](NativeScriptComponent* nsc)
 			{
-			  delete nsc->instance;
-			  nsc->instance = nullptr;
+			  return (ScriptableEntity*)new T();
 			};
+		}
 
+		void DestroyScript()
+		{
+			delete instance;
+			instance = nullptr;
 		}
 
 	};
+
+	//Physic
+	struct Box2DComponent
+	{
+		glm::vec2 position;
+		glm::vec2 size;
+	};
+
+	struct Circle2DComponent
+	{
+		glm::vec2 position;
+		float radius;
+	};
+
 }

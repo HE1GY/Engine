@@ -60,6 +60,11 @@ namespace Engine
 			return m_orthographic_near;
 		}
 
+		const std::array<glm::vec2, 2>& GetOrthographicBound() const
+		{
+			return m_orthographic_bound;
+		}
+
 		//perspective
 		void set_perspective(float FOV, float near_clip, float far_clip);
 
@@ -103,6 +108,7 @@ namespace Engine
 		float m_orthographic_size{ 10 };
 		float m_orthographic_near{ -1 };
 		float m_orthographic_far{ 1 };
+		std::array<glm::vec2, 2> m_orthographic_bound;
 
 		float m_perspective_FOV{ glm::radians(45.0f) };
 		float m_perspective_near{ 0.01f };

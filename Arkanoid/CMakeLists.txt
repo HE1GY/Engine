@@ -3,7 +3,16 @@ cmake_minimum_required(VERSION 3.23)
 project(Arkanoid)
 
 
-add_executable(Arkanoid src/ArkanoidApp.cpp src/ArkanoidLayer.h src/ArkanoidLayer.cpp)
+add_executable(Arkanoid
+        src/ArkanoidApp.cpp
+        src/ArkanoidLayer.h
+        src/ArkanoidLayer.cpp
+        scripts/PlayerController.cpp
+        scripts/BallController.cpp
+        scripts/PlayerController.h
+        scripts/BallController.h scripts/PlatformController.h scripts/PlatformController.cpp)
+
+target_include_directories(Arkanoid PRIVATE scripts)
 
 
 if (DEBUG)

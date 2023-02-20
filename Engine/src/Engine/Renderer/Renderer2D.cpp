@@ -315,6 +315,50 @@ namespace Engine
 
 	}
 
+	void Renderer2D::DrawQuad(const glm::mat4& transformation,
+			const Engine::Ref<Engine::Texture>& texture, const glm::vec4& color)
+	{
+		PROFILER_FUNCTION();
+
+		if (s_data.quad_index_count >= s_data.k_max_indices)
+			FlushAndReset();
+
+
+		//texture batch
+		float texture_slot{ 0.0f };
+		for (int i = 1; i < s_data.texture_index; ++i)
+		{
+			if (texture->get_renderer_id() == s_data.textures[i]->get_renderer_id())
+			{
+				texture_slot = i;
+			}
+		}
+		if (texture_slot == 0.0f)
+		{
+			texture_slot = (float)s_data.texture_index;
+			s_data.textures[texture_slot] = texture;
+			s_data.texture_index++;
+		}
+
+		glm::mat4 transform = transformation;
+
+		for (int i = 0; i < 4; ++i)
+		{
+			s_data.quad_vertex_buffer_ptr->position = transform * s_data.quad_vertices[i];
+			s_data.quad_vertex_buffer_ptr->color = color;
+			s_data.quad_vertex_buffer_ptr->tex_coord = { (i > 0 && i < 3) ? 1 : 0, i > 1 ? 1 : 0 };
+			s_data.quad_vertex_buffer_ptr->texture_slot = texture_slot;
+			s_data.quad_vertex_buffer_ptr->entity_id = 0;
+			s_data.quad_vertex_buffer_ptr++;
+		}
+
+		s_data.quad_index_count += 6;
+
+		s_data.stats.quads++;
+
+	}
+
+	//color
 	void Renderer2D::DrawQuad(const glm::mat4& transformation, const glm::vec4& color)
 	{
 		PROFILER_FUNCTION();
@@ -370,6 +414,11 @@ namespace Engine
 	void Renderer2D::DrawSprite(const glm::mat4& transformation, SpriteRendererComponent& component, int32_t entity_id)
 	{
 		DrawQuad(transformation, component.color, entity_id);
+	}
+
+	void Renderer2D::DrawSprite(const glm::mat4& transformation, SpriteRendererComponent& component)
+	{
+		DrawQuad(transformation, component.texture, component.color);
 	}
 
 	Renderer2D::Statistics Renderer2D::GetStats()

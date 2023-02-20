@@ -20,12 +20,13 @@ namespace Engine
 	{
 		if (m_projection_type == ProjectionType::Orthographic)
 		{
-			float ortho_left = -0.5f * m_aspect_ration * m_orthographic_size;
-			float ortho_right = 0.5f * m_aspect_ration * m_orthographic_size;
-			float ortho_bottom = -0.5f * m_orthographic_size;
-			float ortho_top = 0.5f * m_orthographic_size;
+			m_orthographic_bound[0].x = -0.5f * m_aspect_ration * m_orthographic_size;
+			m_orthographic_bound[0].y = 0.5f * m_orthographic_size;
+			m_orthographic_bound[1].x = 0.5f * m_aspect_ration * m_orthographic_size;
+			m_orthographic_bound[1].y = -0.5f * m_orthographic_size;
 
-			m_projection = glm::ortho(ortho_left, ortho_right, ortho_bottom, ortho_top, m_orthographic_near,
+			m_projection = glm::ortho(m_orthographic_bound[0].x, m_orthographic_bound[1].x, m_orthographic_bound[1].y,
+					m_orthographic_bound[0].y, m_orthographic_near,
 					m_orthographic_far);
 		}
 		else

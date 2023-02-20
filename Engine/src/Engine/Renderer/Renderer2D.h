@@ -62,6 +62,11 @@ namespace Engine
 		static void DrawQuad(const glm::vec3& position, const glm::vec2& scale, const Ref<SubTexture2D>& texture,
 				const glm::vec4& color = { 1, 1, 1, 1 });
 
+		static void DrawQuad(const glm::mat4& transformation,
+				const Engine::Ref<Engine::Texture>& texture, const glm::vec4& color);
+
+		static void DrawSprite(const glm::mat4& transformation, SpriteRendererComponent& component);
+
 		static Statistics GetStats();
 		static void ResetStats();
 	private:
