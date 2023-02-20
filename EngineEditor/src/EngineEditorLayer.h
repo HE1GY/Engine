@@ -24,17 +24,25 @@ namespace Engine
 		virtual void OnImGuiRender() override;
 
 	private:
+		enum class SceneState
+		{
+			Play, Edit,
+		};
+	private:
 		bool OnKeyPress(KeyPress& event);
 		bool OnMouseButtonPress(MouseButtonPressed& event);
 		void NewScene();
 		void OpenScene();
 		void SaveSceneAs();
+		void OnScenePlay();
+		void OnSceneStop();
 
 		void DrawDockSpace(std::function<void()> func);
 		void DrawStatsWindow();
 		void DrawGizmo();
 		void DrawViewportWindow();
 		void DrawFileMenu();
+		void DrawToolbar();
 	private:
 
 		glm::vec2 m_viewport_size{ 0, 0 };
@@ -54,6 +62,10 @@ namespace Engine
 
 		Entity m_hovered_entity;
 		bool m_viewport_hovered{ false };
+
+		SceneState m_scene_state{ SceneState::Edit };
+		Ref<Texture2D> m_play_icon;
+		Ref<Texture2D> m_stop_icon;
 	};
 
 }

@@ -11,7 +11,7 @@ namespace Engine
 		virtual uint32_t get_height() const = 0;
 
 		//
-		virtual uint32_t get_renderer_id() = 0;
+		virtual uint32_t GetRendererId() = 0;
 		//
 		virtual void Bind(uint32_t slot = 0) = 0;
 		virtual void SetData(void* data, uint32_t size) = 0;

@@ -234,7 +234,7 @@ namespace Engine
 		float texture_slot{ 0.0f };
 		for (int i = 1; i < s_data.texture_index; ++i)
 		{
-			if (texture->get_renderer_id() == s_data.textures[i]->get_renderer_id())
+			if (texture->GetRendererId() == s_data.textures[i]->GetRendererId())
 			{
 				texture_slot = i;
 			}
@@ -284,7 +284,7 @@ namespace Engine
 		float texture_slot{ 0.0f };
 		for (int i = 1; i < s_data.texture_index; ++i)
 		{
-			if (sub_texture->get_texture()->get_renderer_id() == s_data.textures[i]->get_renderer_id())
+			if (sub_texture->get_texture()->GetRendererId() == s_data.textures[i]->GetRendererId())
 			{
 				texture_slot = i;
 			}

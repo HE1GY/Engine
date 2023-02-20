@@ -89,7 +89,7 @@ namespace Engine
 		}
 		else
 		{
-			CORE_ASSERT(false, "Scene without camera");
+			WARN("Scene without camera");
 		}
 
 	}
