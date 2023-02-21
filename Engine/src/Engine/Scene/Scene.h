@@ -5,6 +5,7 @@
 #include <entt/entt.hpp>
 
 #include "Engine/Core/TimeStep.h"
+#include "Engine/Core/UUID.h"
 
 class b2World;
 
@@ -19,6 +20,8 @@ namespace Engine
 		~Scene();
 
 		Entity CreateEntity(const std::string& tag);
+		Entity CreateEntityWithUUID(UUID uuid, const std::string& tag);
+
 		void DestroyEntity(Entity& entity);
 
 		void OnUpdateEditor(TimeStep ts, EditorCamera& camera);

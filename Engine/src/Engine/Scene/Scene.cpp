@@ -11,6 +11,7 @@
 #include "Engine/Renderer/Renderer2D.h"
 #include "Engine/Renderer/Camera.h"
 #include "Engine/Renderer/RendererCommand.h"
+#include "ScriptableEntity.h"
 
 namespace Engine
 {
@@ -41,6 +42,16 @@ namespace Engine
 	Entity Scene::CreateEntity(const std::string& tag)
 	{
 		auto entity = Entity(m_registry.create(), this);
+		entity.AddComponent<IDComponent>();
+		entity.AddComponent<TransformComponent>();
+		entity.AddComponent<TagComponent>(tag);
+		return entity;
+	}
+
+	Entity Scene::CreateEntityWithUUID(UUID uuid, const std::string& tag)
+	{
+		auto entity = Entity(m_registry.create(), this);
+		entity.AddComponent<IDComponent>(uuid);
 		entity.AddComponent<TransformComponent>();
 		entity.AddComponent<TagComponent>(tag);
 		return entity;

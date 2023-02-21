@@ -4,6 +4,7 @@
 #include "Engine/Core/Log.h"
 #include "Engine/Core/Core.h"
 #include "Scene.h"
+#include "Components.h"
 
 namespace Engine
 {
@@ -19,7 +20,7 @@ namespace Engine
 		};
 
 		template<typename T>
-		T& GetComponent()
+		T& GetComponent() const
 		{
 			CORE_ASSERT(HasComponent<T>(), "Entity doesn't have component");
 			return m_scene->m_registry.get<T>(m_entity_handler);
@@ -41,15 +42,21 @@ namespace Engine
 		}
 
 		template<typename T>
-		bool HasComponent()
+		bool HasComponent() const
 		{
 			return m_scene->m_registry.any_of<T>(m_entity_handler);
+		}
+
+		UUID GetUUID() const
+		{
+			return GetComponent<IDComponent>().uuid;
 		}
 
 		operator bool()
 		{
 			return m_entity_handler != entt::null;
 		}
+
 		operator uint32_t()
 		{
 			return (uint32_t)m_entity_handler;

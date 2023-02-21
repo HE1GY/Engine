@@ -146,9 +146,11 @@ namespace Engine
 
 	static void SerializeEntity(YAML::Emitter& emitter, Entity& entity)
 	{
-		emitter << YAML::BeginMap;
 
-		emitter << YAML::Key << "EntityID" << YAML::Value << 12234124124;//TODO GUID
+		ASSERT(entity.HasComponent<IDComponent>());
+
+		emitter << YAML::BeginMap;
+		emitter << YAML::Key << "EntityID" << YAML::Value << entity.GetUUID();
 
 		if (entity.HasComponent<TagComponent>())
 		{
@@ -249,7 +251,11 @@ namespace Engine
 	{
 		YAML::Emitter out;
 		out << YAML::BeginMap;
-		out << YAML::Key << "Scene" << YAML::Value << "Untitled";
+
+		uint32_t last_slash = path.find_last_of("/\\") + 1;
+		std::string scene_name = path.substr(last_slash, path.size() - last_slash);
+
+		out << YAML::Key << "Scene" << YAML::Value << scene_name;
 		out << YAML::Key << "Entities" << YAML::Value;
 
 		out << YAML::BeginSeq;
@@ -312,7 +318,7 @@ namespace Engine
 		{
 			for (auto entity : entities)
 			{
-				uint64_t uuid = entity["EntityID"].as<uint64_t>(); //TODO
+				uint64_t uuid = entity["EntityID"].as<uint64_t>();
 
 				std::string name;
 				auto tag_comp_node = entity["TagComponent"];
@@ -322,7 +328,7 @@ namespace Engine
 				}
 				CORE_TRACE("Deserialize entity with id={0} name={1}", uuid, name);
 
-				Entity deserialized_entity = m_scene->CreateEntity(name);//TODO with id
+				Entity deserialized_entity = m_scene->CreateEntityWithUUID(uuid, name);
 
 				auto transform_comp_node = entity["TransformComponent"];
 				if (transform_comp_node)

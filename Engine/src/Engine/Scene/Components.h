@@ -4,12 +4,16 @@
 
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtx/quaternion.hpp>
+#include <Engine/Core/UUID.h>
 
 #include "SceneCamera.h"
-#include "ScriptableEntity.h"
 
 namespace Engine
 {
+	struct IDComponent
+	{
+		UUID uuid;
+	};
 
 	struct TransformComponent
 	{
@@ -53,6 +57,8 @@ namespace Engine
 		SceneCamera camera;
 	};
 
+	//forward declaration
+	class ScriptableEntity;
 	struct NativeScriptComponent
 	{
 		ScriptableEntity* instance{ nullptr };
