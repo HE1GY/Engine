@@ -5,6 +5,7 @@
 #include <entt/entt.hpp>
 
 #include "Engine/Core/TimeStep.h"
+#include "Engine/Core/Core.h"
 #include "Engine/Core/UUID.h"
 
 class b2World;
@@ -19,8 +20,12 @@ namespace Engine
 		Scene();
 		~Scene();
 
+		static Ref<Scene> Copy(Ref<Scene> scene);
+
 		Entity CreateEntity(const std::string& tag);
 		Entity CreateEntityWithUUID(UUID uuid, const std::string& tag);
+
+		Entity CopyEntity(const Entity& entity);
 
 		void DestroyEntity(Entity& entity);
 

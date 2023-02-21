@@ -1,5 +1,7 @@
 #pragma once
 
+#include <filesystem>
+
 #include "Engine.h"
 #include "Panel/SceneHierarchyPanel.h"
 #include "Engine/Scene/SceneSerializer.h"
@@ -34,6 +36,7 @@ namespace Engine
 		void NewScene();
 		void OpenScene();
 		void SaveSceneAs();
+		void SaveScene();
 		void OnScenePlay();
 		void OnSceneStop();
 
@@ -53,7 +56,8 @@ namespace Engine
 
 		float m_fps{ 0 };
 
-		Ref<Scene> m_scene;
+		Ref<Scene> m_editor_scene;
+		Ref<Scene> m_active_scene;
 
 		SceneHierarchyPanel m_scene_hierarchy_panel;
 		int m_gizmo_type{ -1 };
@@ -66,6 +70,8 @@ namespace Engine
 		SceneState m_scene_state{ SceneState::Edit };
 		Ref<Texture2D> m_play_icon;
 		Ref<Texture2D> m_stop_icon;
+
+		std::filesystem::path m_editor_scene_path;
 	};
 
 }

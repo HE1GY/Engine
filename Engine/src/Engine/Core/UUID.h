@@ -13,6 +13,11 @@ namespace Engine
 		{
 			return m_uuid;
 		}
+
+		bool operator==(const UUID& other) const
+		{
+			return m_uuid == other.m_uuid;
+		}
 	private:
 		uint64_t m_uuid;
 	};

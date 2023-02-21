@@ -20,7 +20,7 @@ namespace Engine
 		void DrawEntityNode(Entity entity);
 		void DrawEntityProperties(Entity entity);
 
-		Ref<Scene> m_context;
-		Entity m_selection_context;
+		Ref<Scene> m_current_scene;
+		Entity m_selection_entity;
 	};
 }

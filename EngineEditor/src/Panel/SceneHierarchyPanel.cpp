@@ -138,22 +138,22 @@ namespace Engine
 
 	void SceneHierarchyPanel::SetContext(const Ref<Scene>& context)
 	{
-		m_context = context;
-		m_selection_context = {};
+		m_current_scene = context;
+		m_selection_entity = {};
 	}
 
 	void SceneHierarchyPanel::OnImGuiRender()
 	{
 		ImGui::Begin("Scene Hierarchy");
-		m_context->m_registry.each([&](auto entityID)
+		m_current_scene->m_registry.each([&](auto entityID)
 		{
-		  Entity entity{ entityID, m_context.get() };
+		  Entity entity{ entityID, m_current_scene.get() };
 		  DrawEntityNode(entity);
 		});
 
 		if (ImGui::IsMouseDown(0) && ImGui::IsWindowHovered())
 		{
-			m_selection_context = {};
+			m_selection_entity = {};
 		}
 
 
@@ -162,7 +162,7 @@ namespace Engine
 		{
 			if (ImGui::MenuItem("Create empty entity"))
 			{
-				m_context->CreateEntity("Empty entity");
+				m_current_scene->CreateEntity("Empty entity");
 			}
 			ImGui::EndPopup();
 		}
@@ -170,9 +170,9 @@ namespace Engine
 		ImGui::End();
 
 		ImGui::Begin("Properties");
-		if (m_selection_context)
+		if (m_selection_entity)
 		{
-			DrawEntityProperties(m_selection_context);
+			DrawEntityProperties(m_selection_entity);
 
 		}
 		ImGui::End();
@@ -182,13 +182,13 @@ namespace Engine
 	{
 		auto& tc = entity.GetComponent<TagComponent>();
 		ImGuiTreeNodeFlags flag =
-				((m_selection_context == entity) ? ImGuiTreeNodeFlags_Selected : 0) | ImGuiTreeNodeFlags_OpenOnArrow
+				((m_selection_entity == entity) ? ImGuiTreeNodeFlags_Selected : 0) | ImGuiTreeNodeFlags_OpenOnArrow
 						| ImGuiTreeNodeFlags_SpanAvailWidth;
 		bool open = ImGui::TreeNodeEx((void*)(uint64_t)(uint32_t)entity, flag, tc.tag.c_str());
 
 		if (ImGui::IsItemClicked())
 		{
-			m_selection_context = entity;
+			m_selection_entity = entity;
 
 			//TODO event
 		}
@@ -200,6 +200,11 @@ namespace Engine
 			{
 				destroy = true;
 			}
+
+			if (ImGui::MenuItem("Copy entity") && m_selection_entity)
+			{
+				m_current_scene->CopyEntity(m_selection_entity);
+			}
 			ImGui::EndPopup();
 		}
 
@@ -210,11 +215,11 @@ namespace Engine
 
 		if (destroy)
 		{
-			if (m_selection_context == entity)
+			if (m_selection_entity == entity)
 			{
-				m_selection_context = {};
+				m_selection_entity = {};
 			}
-			m_context->DestroyEntity(entity);
+			m_current_scene->DestroyEntity(entity);
 		}
 
 	}
@@ -245,28 +250,28 @@ namespace Engine
 		{
 			if (ImGui::MenuItem("Camera"))
 			{
-				m_selection_context.AddComponent<CameraComponent>();
+				m_selection_entity.AddComponent<CameraComponent>();
 				ImGui::CloseCurrentPopup();
 			}
 			if (ImGui::MenuItem("SpriteRenderer"))
 			{
-				m_selection_context.AddComponent<SpriteRendererComponent>();
+				m_selection_entity.AddComponent<SpriteRendererComponent>();
 				ImGui::CloseCurrentPopup();
 			}
 			if (ImGui::MenuItem("NativeScript"))
 			{
-				m_selection_context.AddComponent<NativeScriptComponent>();
+				m_selection_entity.AddComponent<NativeScriptComponent>();
 				ImGui::CloseCurrentPopup();
 
 			}
 			if (ImGui::MenuItem("Rigidbody2D"))
 			{
-				m_selection_context.AddComponent<Rigidbody2DComponent>();
+				m_selection_entity.AddComponent<Rigidbody2DComponent>();
 				ImGui::CloseCurrentPopup();
 			}
 			if (ImGui::MenuItem("BoxCollider2D"))
 			{
-				m_selection_context.AddComponent<BoxCollider2DComponent>();
+				m_selection_entity.AddComponent<BoxCollider2DComponent>();
 				ImGui::CloseCurrentPopup();
 			}
 
@@ -391,20 +396,20 @@ namespace Engine
 		  ImGui::DragFloat2("Offset", glm::value_ptr(box2d.offset));
 		  ImGui::DragFloat2("Size", glm::value_ptr(box2d.size));
 
-		  ImGui::DragFloat("Density", &box2d.density, 0.01f, 0.0f, 0.0f);
-		  ImGui::DragFloat("Friction", &box2d.friction, 0.01f, 0.0f, 0.0f);
-		  ImGui::DragFloat("Restitution", &box2d.restitution, 0.01f, 0.0f, 0.0f);
-		  ImGui::DragFloat("Restitution Threshold", &box2d.restitution_threshold, 0.01f, 0.0f, 0.0f);
+		  ImGui::DragFloat("Density", &box2d.density, 0.01f, 0.0f, 1.0f);
+		  ImGui::DragFloat("Friction", &box2d.friction, 0.01f, 0.0f, 1.0f);
+		  ImGui::DragFloat("Restitution", &box2d.restitution, 0.01f, 0.0f, 1.0f);
+		  ImGui::DragFloat("Restitution Threshold", &box2d.restitution_threshold, 0.01f, 0.0f);
 		});
 	}
 
 	Entity SceneHierarchyPanel::GetSelectedEntity()
 	{
-		return m_selection_context;
+		return m_selection_entity;
 	}
 
 	void SceneHierarchyPanel::SetSelectedEntity(Entity& entity)
 	{
-		m_selection_context = entity;
+		m_selection_entity = entity;
 	}
 }

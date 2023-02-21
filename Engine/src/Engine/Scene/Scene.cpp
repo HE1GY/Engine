@@ -31,12 +31,67 @@ namespace Engine
 		}
 	}
 
+	template<typename Component>
+	static void CopyComponent(Entity& dst, const Entity& src)
+	{
+		if (src.HasComponent<Component>())
+		{
+			auto& component = src.GetComponent<Component>();
+			dst.AddOrReplaceComponent<Component>(component);
+		}
+	}
+
+	template<typename Component>
+	static void CopyComponent(entt::registry& dst, entt::registry& src,
+			const std::unordered_map<UUID, entt::entity>& dst_entity_ids)
+	{
+		auto view_component = src.view<Component>();
+		for (auto e : view_component)
+		{
+			auto& id_cmp = src.get<IDComponent>(e);
+			auto& cmp = src.get<Component>(e);
+			entt::entity dst_entity = dst_entity_ids.at(id_cmp.uuid);
+			dst.emplace_or_replace<Component>(dst_entity, cmp);
+		}
+	}
+
 	Scene::Scene()
 	{
 	}
 	Scene::~Scene()
 	{
 		if (m_physics_world)delete m_physics_world;
+	}
+
+	Ref<Scene> Scene::Copy(Ref<Scene> scene)
+	{
+		Ref<Scene> new_scene = CreateRef<Scene>();
+		new_scene->m_viewport_height = scene->m_viewport_height;
+		new_scene->m_viewport_width = scene->m_viewport_width;
+
+		auto& src_registry = scene->m_registry;
+		auto& dst_registry = new_scene->m_registry;
+
+		auto view_ids = src_registry.view<IDComponent>();
+
+		std::unordered_map<UUID, entt::entity> dst_entity_ids;
+
+		for (auto e : view_ids)
+		{
+			UUID id = view_ids.get<IDComponent>(e).uuid;
+			std::string tag = src_registry.get<TagComponent>(e).tag;
+			dst_entity_ids[id] = new_scene->CreateEntityWithUUID(id, tag);
+		}
+
+		//CopyComponent
+		CopyComponent<TransformComponent>(dst_registry, src_registry, dst_entity_ids);
+		CopyComponent<CameraComponent>(dst_registry, src_registry, dst_entity_ids);
+		CopyComponent<SpriteRendererComponent>(dst_registry, src_registry, dst_entity_ids);
+		CopyComponent<Rigidbody2DComponent>(dst_registry, src_registry, dst_entity_ids);
+		CopyComponent<BoxCollider2DComponent>(dst_registry, src_registry, dst_entity_ids);
+		CopyComponent<NativeScriptComponent>(dst_registry, src_registry, dst_entity_ids);
+
+		return new_scene;
 	}
 
 	Entity Scene::CreateEntity(const std::string& tag)
@@ -55,6 +110,21 @@ namespace Engine
 		entity.AddComponent<TransformComponent>();
 		entity.AddComponent<TagComponent>(tag);
 		return entity;
+	}
+
+	Entity Scene::CopyEntity(const Entity& entity)
+	{
+		std::string entity_name = entity.GetName();
+		Entity new_entity = CreateEntity(entity_name);
+
+		CopyComponent<TransformComponent>(new_entity, entity);
+		CopyComponent<CameraComponent>(new_entity, entity);
+		CopyComponent<SpriteRendererComponent>(new_entity, entity);
+		CopyComponent<Rigidbody2DComponent>(new_entity, entity);
+		CopyComponent<BoxCollider2DComponent>(new_entity, entity);
+		CopyComponent<NativeScriptComponent>(new_entity, entity);
+
+		return new_entity;
 	}
 
 	void Scene::DestroyEntity(Entity& entity)

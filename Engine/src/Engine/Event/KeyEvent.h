@@ -30,7 +30,7 @@ namespace Engine
 		{
 		}
 
-		inline int get_repeated_count() const
+		inline int GetRepeatedCount() const
 		{
 			return m_repeated_count;
 		}

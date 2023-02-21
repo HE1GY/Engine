@@ -12,10 +12,13 @@ namespace Engine
 	{
 
 	public:
-		Entity() = default;
+		Entity()
+				:m_entity_handler{ entt::null }, m_scene{ nullptr }
+		{
+		};
+
 		Entity(entt::entity entity_handler, Scene* scene)
-				:
-				m_entity_handler{ entity_handler }, m_scene{ scene }
+				:m_entity_handler{ entity_handler }, m_scene{ scene }
 		{
 		};
 
@@ -31,6 +34,13 @@ namespace Engine
 		{
 			CORE_ASSERT(!HasComponent<T>(), "Entity already has component");
 			T& component = m_scene->m_registry.emplace<T>(m_entity_handler, std::forward<Args>(args)...);
+			return component;
+		}
+
+		template<typename T, typename... Args>
+		T& AddOrReplaceComponent(Args&& ... args)
+		{
+			T& component = m_scene->m_registry.emplace_or_replace<T>(m_entity_handler, std::forward<Args>(args)...);
 			return component;
 		}
 
@@ -50,6 +60,11 @@ namespace Engine
 		UUID GetUUID() const
 		{
 			return GetComponent<IDComponent>().uuid;
+		}
+
+		const std::string& GetName() const
+		{
+			return GetComponent<TagComponent>().tag;
 		}
 
 		operator bool()
