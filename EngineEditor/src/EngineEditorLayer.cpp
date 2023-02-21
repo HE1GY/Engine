@@ -253,7 +253,10 @@ namespace Engine
 		uint32_t tex_id = m_frame_buffer->GetColorAttachmentRendererId(0);
 		ImGui::Image((void*)tex_id, ImVec2{ size.x, size.y }, ImVec2{ 0, 1 }, ImVec2{ 1, 0 });
 
-		DrawGizmo();
+		if (m_scene_state == SceneState::Edit)
+		{
+			DrawGizmo();
+		}
 
 		ImGui::End();
 
@@ -383,7 +386,7 @@ namespace Engine
 	{
 		std::string file_path;
 
-		file_path = FileDialogs::OpenFile("*.engine");
+		file_path = FileDialogs::SaveFile("*.engine");
 
 		if (!file_path.empty())
 		{
@@ -494,13 +497,17 @@ namespace Engine
 		ImGui::PopStyleColor(3);
 		ImGui::End();
 	}
+
 	void EngineEditorLayer::OnScenePlay()
 	{
 		m_scene_state = SceneState::Play;
+		m_scene->OnRuntimeBegin();
 	}
+
 	void EngineEditorLayer::OnSceneStop()
 	{
 		m_scene_state = SceneState::Edit;
+		m_scene->OnRuntimeStop();
 	}
 
 }

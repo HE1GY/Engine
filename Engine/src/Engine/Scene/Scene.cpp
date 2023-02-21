@@ -1,5 +1,10 @@
 #include "pch.h"
 
+#include <box2d/b2_world.h>
+#include <box2d/b2_body.h>
+#include <box2d/b2_fixture.h>
+#include <box2d/b2_polygon_shape.h>
+
 #include "Scene.h"
 #include "Entity.h"
 #include "Components.h"
@@ -9,6 +14,29 @@
 
 namespace Engine
 {
+	static b2BodyType Rigidbody2DTypeToBox2DType(Rigidbody2DComponent::BodyType type)
+	{
+		switch (type)
+		{
+		case Rigidbody2DComponent::BodyType::Static:
+			return b2_staticBody;
+			break;
+		case Rigidbody2DComponent::BodyType::Dynamic:
+			return b2_dynamicBody;
+			break;
+		case Rigidbody2DComponent::BodyType::Kinematic:
+			return b2_kinematicBody;
+			break;
+		}
+	}
+
+	Scene::Scene()
+	{
+	}
+	Scene::~Scene()
+	{
+		if (m_physics_world)delete m_physics_world;
+	}
 
 	Entity Scene::CreateEntity(const std::string& tag)
 	{
@@ -52,6 +80,30 @@ namespace Engine
 			  }
 			  nsc.instance->OnUpdate(ts);
 			});
+		}
+
+		//physics
+		{
+			const int32_t velocity_iterations = 6;
+			const int32_t position_iterations = 2;
+			m_physics_world->Step(ts, velocity_iterations, position_iterations);
+
+			auto view = m_registry.view<Rigidbody2DComponent>();
+
+			for (auto e : view)
+			{
+				Entity entity = { e, this };
+
+				auto& transform = entity.GetComponent<TransformComponent>();
+				auto& rb2d = entity.GetComponent<Rigidbody2DComponent>();
+
+				b2Body* body = (b2Body*)rb2d.runtime_body;
+
+				const auto& position = body->GetPosition();
+				transform.translation.x = position.x;
+				transform.translation.y = position.y;
+				transform.rotation.z = body->GetAngle();
+			}
 		}
 
 		Camera* main_camera{ nullptr };
@@ -109,6 +161,53 @@ namespace Engine
 				camera.camera.SetViewport(width, height);
 			}
 		}
+	}
+
+	void Scene::OnRuntimeBegin()
+	{
+		m_physics_world = new b2World({ 0.0f, -9.8f });
+
+		auto view = m_registry.view<Rigidbody2DComponent>();
+		for (auto e : view)
+		{
+			Entity entity = { e, this };
+			auto& transform = entity.GetComponent<TransformComponent>();
+			auto& rb2d = entity.GetComponent<Rigidbody2DComponent>();
+
+			b2BodyDef body_def;
+
+			body_def.type = Rigidbody2DTypeToBox2DType(rb2d.type);
+			body_def.position = { transform.translation.x, transform.translation.y };
+			body_def.angle = transform.rotation.z;
+			body_def.fixedRotation = rb2d.fixed_rotation;
+
+			b2Body* body = m_physics_world->CreateBody(&body_def);
+			rb2d.runtime_body = body;
+
+			if (entity.HasComponent<BoxCollider2DComponent>())
+			{
+				auto& bc2d = entity.GetComponent<BoxCollider2DComponent>();
+
+				b2PolygonShape box_shape;
+
+				box_shape.SetAsBox(transform.scale.x * bc2d.size.x, transform.scale.y * bc2d.size.y);
+
+				b2FixtureDef fixture_def;
+				fixture_def.shape = &box_shape;
+
+				fixture_def.density = bc2d.density;
+				fixture_def.friction = bc2d.friction;
+				fixture_def.restitution = bc2d.restitution;
+				fixture_def.restitutionThreshold = bc2d.restitution_threshold;
+				body->CreateFixture(&fixture_def);
+			}
+		}
+	}
+
+	void Scene::OnRuntimeStop()
+	{
+		delete m_physics_world;
+		m_physics_world = nullptr;
 	}
 
 	Entity Scene::GetPrimaryCameraEntity()

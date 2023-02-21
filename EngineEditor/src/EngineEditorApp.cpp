@@ -9,6 +9,7 @@ namespace Engine
 	{
 	public:
 		Engine_Editor()
+				:Engine::Application(1600, 900, "Engine Editor")
 		{
 			PushLayer(new EngineEditorLayer());
 		}

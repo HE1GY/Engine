@@ -141,6 +141,7 @@ namespace Engine
 		m_context = context;
 		m_selection_context = {};
 	}
+
 	void SceneHierarchyPanel::OnImGuiRender()
 	{
 		ImGui::Begin("Scene Hierarchy");
@@ -176,6 +177,7 @@ namespace Engine
 		}
 		ImGui::End();
 	}
+
 	void SceneHierarchyPanel::DrawEntityNode(Entity entity)
 	{
 		auto& tc = entity.GetComponent<TagComponent>();
@@ -254,6 +256,17 @@ namespace Engine
 			if (ImGui::MenuItem("NativeScript"))
 			{
 				m_selection_context.AddComponent<NativeScriptComponent>();
+				ImGui::CloseCurrentPopup();
+
+			}
+			if (ImGui::MenuItem("Rigidbody2D"))
+			{
+				m_selection_context.AddComponent<Rigidbody2DComponent>();
+				ImGui::CloseCurrentPopup();
+			}
+			if (ImGui::MenuItem("BoxCollider2D"))
+			{
+				m_selection_context.AddComponent<BoxCollider2DComponent>();
 				ImGui::CloseCurrentPopup();
 			}
 
@@ -342,15 +355,54 @@ namespace Engine
 		  }
 		});
 
-		DrawComponent<SpriteRendererComponent>("SpriteRenderer", entity, [](SpriteRendererComponent& sprite_renderer)
+		DrawComponent<SpriteRendererComponent>("SpriteRendererComponent", entity,
+				[](SpriteRendererComponent& sprite_renderer)
+				{
+				  ImGui::ColorEdit4("Color", glm::value_ptr(sprite_renderer.color));
+				});
+
+		DrawComponent<Rigidbody2DComponent>("Rigidbody2DComponent", entity, [](Rigidbody2DComponent& rb2d)
 		{
-		  ImGui::ColorEdit4("Color", glm::value_ptr(sprite_renderer.color));
+		  const char* body_type_string[] = { "Static", "Dynamic", "Kinematic" };
+		  const char* current_body_type_string = body_type_string[(int)rb2d.type];
+		  if (ImGui::BeginCombo("Body Type", current_body_type_string))
+		  {
+			  for (int i = 0; i < 3; ++i)
+			  {
+				  bool is_selected = current_body_type_string == body_type_string[i];
+				  if (ImGui::Selectable(body_type_string[i], is_selected))
+				  {
+					  current_body_type_string = body_type_string[i];
+					  rb2d.type = (Rigidbody2DComponent::BodyType)i;
+				  }
+
+				  if (is_selected)
+					  ImGui::SetItemDefaultFocus();
+			  }
+
+			  ImGui::EndCombo();
+		  }
+
+		  ImGui::Checkbox("Fixed Rotation", &rb2d.fixed_rotation);
+		});
+
+		DrawComponent<BoxCollider2DComponent>("BoxCollider2DComponent", entity, [](BoxCollider2DComponent& box2d)
+		{
+		  ImGui::DragFloat2("Offset", glm::value_ptr(box2d.offset));
+		  ImGui::DragFloat2("Size", glm::value_ptr(box2d.size));
+
+		  ImGui::DragFloat("Density", &box2d.density, 0.01f, 0.0f, 0.0f);
+		  ImGui::DragFloat("Friction", &box2d.friction, 0.01f, 0.0f, 0.0f);
+		  ImGui::DragFloat("Restitution", &box2d.restitution, 0.01f, 0.0f, 0.0f);
+		  ImGui::DragFloat("Restitution Threshold", &box2d.restitution_threshold, 0.01f, 0.0f, 0.0f);
 		});
 	}
+
 	Entity SceneHierarchyPanel::GetSelectedEntity()
 	{
 		return m_selection_context;
 	}
+
 	void SceneHierarchyPanel::SetSelectedEntity(Entity& entity)
 	{
 		m_selection_context = entity;
