@@ -19,3 +19,6 @@
 [submodule "external/imguizmo"]
 	path = external/imguizmo
 	url = git@github.com:HE1GY/ImGuizmo.git
+[submodule "external/box2D"]
+	path = external/box2D
+	url = git@github.com:erincatto/box2d.git
