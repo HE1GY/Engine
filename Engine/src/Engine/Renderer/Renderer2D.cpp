@@ -25,12 +25,21 @@ namespace Engine
 		int32_t entity_id{ 0 };
 	};
 
+	struct LineVertex
+	{
+		glm::vec3 position;
+		glm::vec4 color;
+		int32_t entity_id{ 0 };
+	};
+
 	struct Renderer2DData
 	{
 		const uint32_t k_max_quads = 10000;
 		const uint32_t k_max_vertices = k_max_quads * 4;
 		const uint32_t k_max_indices = k_max_quads * 6;
 		static const uint32_t k_max_texture_slot = 32;    //TODO renderer prop
+
+		Renderer2D::Statistics stats;
 
 		Ref<Shader> quad_shader;
 		Ref<Texture> white_texture;
@@ -46,7 +55,7 @@ namespace Engine
 
 		std::array<glm::vec4, 4> quad_vertices;
 
-//Circle
+		//Circle
 		Ref<Shader> circle_shader;
 		Ref<VertexArray> circle_vao;
 		Ref<VertexBuffer> circle_vb;
@@ -55,7 +64,15 @@ namespace Engine
 		CircleVertex* circle_vertex_buffer_base{ nullptr };
 		CircleVertex* circle_vertex_buffer_ptr{ nullptr };
 
-		Renderer2D::Statistics stats;
+		//Line
+		Ref<Shader> line_shader;
+		Ref<VertexArray> line_vao;
+		Ref<VertexBuffer> line_vb;
+
+		uint32_t line_index_count{ 0 };
+		LineVertex* line_vertex_buffer_base{ nullptr };
+		LineVertex* line_vertex_buffer_ptr{ nullptr };
+
 	};
 
 	Renderer2DData Renderer2D::s_data;
@@ -166,6 +183,46 @@ namespace Engine
 			delete[] circle_indices;
 		}
 
+		//Line
+		s_data.line_shader = Shader::Create("../../../Sandbox/assets/shaders/default_2D_line_shader.glsl");
+
+		s_data.line_vao = VertexArray::Create();
+		{
+			s_data.line_vao->Bind();
+
+			s_data.line_vb = VertexBuffer::Create(s_data.k_max_vertices * sizeof(LineVertex));
+			s_data.line_vb->Bind();
+			s_data.line_vb->set_layout({
+					{ "a_position", Engine::ShaderDataType::Float3 },
+					{ "a_color", Engine::ShaderDataType::Float4 },
+					{ "a_entity_id", Engine::ShaderDataType::Int }
+			});
+			s_data.line_vao->AddVertexBuffer(s_data.line_vb);
+
+			s_data.line_vertex_buffer_base = new LineVertex[s_data.k_max_vertices];
+
+			uint32_t* line_indices = new uint32_t[s_data.k_max_indices];
+
+			uint32_t offset = 0;
+			for (uint32_t i = 0; i < s_data.k_max_indices; i += 6)
+			{
+				line_indices[i + 0] = offset + 0;
+				line_indices[i + 1] = offset + 1;
+				line_indices[i + 2] = offset + 2;
+
+				line_indices[i + 3] = offset + 2;
+				line_indices[i + 4] = offset + 3;
+				line_indices[i + 5] = offset + 0;
+
+				offset += 4;
+			}
+
+			Ref<IndexBuffer> ib_line = IndexBuffer::Create(line_indices, s_data.k_max_indices);
+			ib_line->Bind();
+			s_data.line_vao->SetIndexBuffer(ib_line);
+			delete[] line_indices;
+		}
+
 	}
 
 	void Renderer2D::ShutDown()
@@ -184,11 +241,16 @@ namespace Engine
 		s_data.circle_shader->Bind();
 		s_data.circle_shader->SetMat4("u_view_projection", view_proj);
 
+		s_data.line_shader->Bind();
+		s_data.line_shader->SetMat4("u_view_projection", view_proj);
+
 		s_data.quad_vertex_buffer_ptr = s_data.quad_vertex_buffer_base;
 		s_data.circle_vertex_buffer_ptr = s_data.circle_vertex_buffer_base;
+		s_data.line_vertex_buffer_ptr = s_data.line_vertex_buffer_base;
 
 		s_data.quad_index_count = 0;
 		s_data.circle_index_count = 0;
+		s_data.line_index_count = 0;
 
 		s_data.texture_index = 1;
 	}
@@ -198,16 +260,21 @@ namespace Engine
 		PROFILER_FUNCTION();
 
 		s_data.quad_shader->Bind();
-		s_data.quad_shader->SetMat4("u_view_projection", camera.get_view_projection_matrix());
+		s_data.quad_shader->SetMat4("u_view_projection", camera.GetViewProjectionMatrix());
 
 		s_data.circle_shader->Bind();
-		s_data.circle_shader->SetMat4("u_view_projection", camera.get_view_projection_matrix());
+		s_data.circle_shader->SetMat4("u_view_projection", camera.GetViewProjectionMatrix());
+
+		s_data.line_shader->Bind();
+		s_data.line_shader->SetMat4("u_view_projection", camera.GetViewProjectionMatrix());
 
 		s_data.quad_vertex_buffer_ptr = s_data.quad_vertex_buffer_base;
 		s_data.circle_vertex_buffer_ptr = s_data.circle_vertex_buffer_base;
+		s_data.line_vertex_buffer_ptr = s_data.line_vertex_buffer_base;
 
 		s_data.quad_index_count = 0;
 		s_data.circle_index_count = 0;
+		s_data.line_index_count = 0;
 
 		s_data.texture_index = 1;
 	}
@@ -222,11 +289,16 @@ namespace Engine
 		s_data.circle_shader->Bind();
 		s_data.circle_shader->SetMat4("u_view_projection", camera.GetViewProjection());
 
+		s_data.line_shader->Bind();
+		s_data.line_shader->SetMat4("u_view_projection", camera.GetViewProjection());
+
 		s_data.quad_vertex_buffer_ptr = s_data.quad_vertex_buffer_base;
 		s_data.circle_vertex_buffer_ptr = s_data.circle_vertex_buffer_base;
+		s_data.line_vertex_buffer_ptr = s_data.line_vertex_buffer_base;
 
 		s_data.quad_index_count = 0;
 		s_data.circle_index_count = 0;
+		s_data.line_index_count = 0;
 
 		s_data.texture_index = 1;
 	}
@@ -241,6 +313,10 @@ namespace Engine
 		uint32_t size_circle =
 				(s_data.circle_vertex_buffer_ptr - s_data.circle_vertex_buffer_base) * sizeof(CircleVertex);
 		s_data.circle_vb->SetData(s_data.circle_vertex_buffer_base, size_circle);
+
+		uint32_t size_line =
+				(s_data.line_vertex_buffer_ptr - s_data.line_vertex_buffer_base) * sizeof(LineVertex);
+		s_data.line_vb->SetData(s_data.line_vertex_buffer_base, size_line);
 
 		Flush();
 	}
@@ -262,6 +338,13 @@ namespace Engine
 			s_data.circle_shader->Bind();
 			RendererCommand::DrawIndex(s_data.circle_vao, s_data.circle_index_count);
 		}
+
+		if (s_data.line_index_count)
+		{
+			s_data.line_shader->Bind();
+			RendererCommand::DrawLine(s_data.line_vao, s_data.line_index_count);
+		}
+
 		s_data.stats.draw_calls++;
 	}
 
@@ -273,9 +356,11 @@ namespace Engine
 
 		s_data.quad_vertex_buffer_ptr = s_data.quad_vertex_buffer_base;
 		s_data.circle_vertex_buffer_ptr = s_data.circle_vertex_buffer_base;
+		s_data.line_vertex_buffer_ptr = s_data.line_vertex_buffer_base;
 
 		s_data.quad_index_count = 0;
 		s_data.circle_index_count = 0;
+		s_data.line_index_count = 0;
 
 		s_data.texture_index = 1;
 	}
@@ -433,6 +518,7 @@ namespace Engine
 
 		s_data.stats.quads++;
 	}
+
 	void Renderer2D::DrawQuad(const glm::mat4& transformation, const glm::vec4& color, int32_t entity_id)
 	{
 		PROFILER_FUNCTION();
@@ -459,18 +545,17 @@ namespace Engine
 		s_data.stats.quads++;
 	}
 
-	//Sprite
 	void
 	Renderer2D::DrawSprite(const glm::mat4& transformation, const SpriteRendererComponent& component, int32_t entity_id)
 	{
 		DrawQuad(transformation, component.color, entity_id);
 	}
 
-//Circle
 	void
 	Renderer2D::DrawCircle(const glm::mat4& transformation, const CircleRendererComponent& component, int32_t entity_id)
 	{
 		PROFILER_FUNCTION();
+
 		for (int i = 0; i < 4; ++i)
 		{
 			s_data.circle_vertex_buffer_ptr->world_position = transformation * s_data.quad_vertices[i];
@@ -486,6 +571,54 @@ namespace Engine
 		s_data.circle_index_count += 6;
 
 		s_data.stats.quads++;
+	}
+
+	void Renderer2D::DrawLine(const glm::vec3& p0, const glm::vec3& p1, const glm::vec4& color, int32_t entity_id)
+	{
+		PROFILER_FUNCTION();
+
+		s_data.line_vertex_buffer_ptr->position = p0;
+		s_data.line_vertex_buffer_ptr->color = color;
+		s_data.line_vertex_buffer_ptr->entity_id = entity_id;
+		s_data.line_vertex_buffer_ptr++;
+
+		s_data.line_vertex_buffer_ptr->position = p1;
+		s_data.line_vertex_buffer_ptr->color = color;
+		s_data.line_vertex_buffer_ptr->entity_id = entity_id;
+		s_data.line_vertex_buffer_ptr++;
+
+		s_data.line_index_count += 2;
+	}
+	void Renderer2D::SetLineWidth(float width)
+	{
+		RendererCommand::SetLineWidth(width);
+	}
+
+	void
+	Renderer2D::DrawRect(const glm::vec3& position, const glm::vec2& scale, const glm::vec4& color, int32_t entity_id)
+	{
+		glm::vec3 p0 = glm::vec3(position.x - scale.x * 0.5f, position.y - scale.y * 0.5f, position.z);
+		glm::vec3 p1 = glm::vec3(position.x + scale.x * 0.5f, position.y - scale.y * 0.5f, position.z);
+		glm::vec3 p2 = glm::vec3(position.x + scale.x * 0.5f, position.y + scale.y * 0.5f, position.z);
+		glm::vec3 p3 = glm::vec3(position.x - scale.x * 0.5f, position.y + scale.y * 0.5f, position.z);
+
+		DrawLine(p0, p1, color, entity_id);
+		DrawLine(p1, p2, color, entity_id);
+		DrawLine(p2, p3, color, entity_id);
+		DrawLine(p3, p0, color, entity_id);
+
+	}
+	void Renderer2D::DrawRect(const glm::mat4& transformation, const glm::vec4& color, int32_t entity_id)
+	{
+		glm::vec3 p0 = transformation * s_data.quad_vertices[0];
+		glm::vec3 p1 = transformation * s_data.quad_vertices[1];
+		glm::vec3 p2 = transformation * s_data.quad_vertices[2];
+		glm::vec3 p3 = transformation * s_data.quad_vertices[3];
+
+		DrawLine(p0, p1, color, entity_id);
+		DrawLine(p1, p2, color, entity_id);
+		DrawLine(p2, p3, color, entity_id);
+		DrawLine(p3, p0, color, entity_id);
 	}
 
 	Renderer2D::Statistics Renderer2D::GetStats()

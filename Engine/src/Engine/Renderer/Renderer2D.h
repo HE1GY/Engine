@@ -67,6 +67,16 @@ namespace Engine
 		static void
 		DrawCircle(const glm::mat4& transformation, const CircleRendererComponent& component, int32_t entity_id);
 
+		//Line
+		static void
+		DrawLine(const glm::vec3& p0, const glm::vec3& p1, const glm::vec4& color, int32_t entity_id);
+
+		static void
+		DrawRect(const glm::vec3& position, const glm::vec2& scale, const glm::vec4& color, int32_t entity_id);
+		static void DrawRect(const glm::mat4& transformation, const glm::vec4& color, int32_t entity_id);
+
+		static void SetLineWidth(float width);
+
 		static Statistics GetStats();
 		static void ResetStats();
 	private:

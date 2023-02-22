@@ -38,7 +38,7 @@ namespace Engine
 		{
 			return m_projection_matrix;
 		}
-		inline const glm::mat4& get_view_projection_matrix() const
+		inline const glm::mat4& GetViewProjectionMatrix() const
 		{
 			return m_view_projection_matrix;
 		}

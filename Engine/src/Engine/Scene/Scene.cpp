@@ -143,6 +143,7 @@ namespace Engine
 		{
 			auto [transform, sprite_renderer] = m_registry.get<TransformComponent, SpriteRendererComponent>(entity);
 			Renderer2D::DrawSprite(transform.get_transformation(), sprite_renderer, (int32_t)entity);
+			//Renderer2D::DrawRect(transform.get_transformation(), { 1, 1, 0, 1 }, 0);
 		}
 
 		auto view = m_registry.view<TransformComponent, CircleRendererComponent>();
@@ -151,6 +152,14 @@ namespace Engine
 			auto [transform, circle_renderer] = m_registry.get<TransformComponent, CircleRendererComponent>(entity);
 			Renderer2D::DrawCircle(transform.get_transformation(), circle_renderer, (int32_t)entity);
 		}
+
+		/*Renderer2D::SetLineWidth(2.0f);
+		Renderer2D::DrawLine({ 0, 0, 0 }, glm::vec3(5.0f), { 1, 0, 1, 1 }, 0);
+
+		Renderer2D::DrawRect({ 0, 0, 0 }, { 1, 1 }, { 1, 1, 1, 1 }, 0);
+
+		glm::mat4 rect = glm::rotate(glm::mat4(1.0f), glm::radians(45.0f), { 0, 0, 1 });
+		Renderer2D::DrawRect(rect, { 1, 1, 0, 1 }, 0);*/
 
 		Renderer2D::EndScene();
 	}

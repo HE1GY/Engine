@@ -19,7 +19,7 @@ namespace Engine
 
 	void Renderer::BeginScene(OrthographicCamera& camera)
 	{
-		s_scene_data->view_projection_matrix = camera.get_view_projection_matrix();
+		s_scene_data->view_projection_matrix = camera.GetViewProjectionMatrix();
 	}
 
 	void Renderer::EndScene()
