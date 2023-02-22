@@ -39,6 +39,13 @@ namespace Engine
 		glm::vec4 color{ 1, 1, 1, 1 };
 	};
 
+	struct CircleRendererComponent
+	{
+		glm::vec4 color{ 1, 1, 1, 1 };
+		float thickness = 1.0f;
+		float fade = 0.005f;
+	};
+
 	struct TagComponent
 	{
 		TagComponent(const std::string& tag)

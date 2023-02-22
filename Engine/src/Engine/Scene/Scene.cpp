@@ -87,6 +87,7 @@ namespace Engine
 		CopyComponent<TransformComponent>(dst_registry, src_registry, dst_entity_ids);
 		CopyComponent<CameraComponent>(dst_registry, src_registry, dst_entity_ids);
 		CopyComponent<SpriteRendererComponent>(dst_registry, src_registry, dst_entity_ids);
+		CopyComponent<CircleRendererComponent>(dst_registry, src_registry, dst_entity_ids);
 		CopyComponent<Rigidbody2DComponent>(dst_registry, src_registry, dst_entity_ids);
 		CopyComponent<BoxCollider2DComponent>(dst_registry, src_registry, dst_entity_ids);
 		CopyComponent<NativeScriptComponent>(dst_registry, src_registry, dst_entity_ids);
@@ -120,6 +121,7 @@ namespace Engine
 		CopyComponent<TransformComponent>(new_entity, entity);
 		CopyComponent<CameraComponent>(new_entity, entity);
 		CopyComponent<SpriteRendererComponent>(new_entity, entity);
+		CopyComponent<CircleRendererComponent>(new_entity, entity);
 		CopyComponent<Rigidbody2DComponent>(new_entity, entity);
 		CopyComponent<BoxCollider2DComponent>(new_entity, entity);
 		CopyComponent<NativeScriptComponent>(new_entity, entity);
@@ -137,11 +139,17 @@ namespace Engine
 		Renderer2D::BeginScene(camera);
 
 		auto group = m_registry.group<TransformComponent>(entt::get<SpriteRendererComponent>);
-
 		for (auto entity : group)
 		{
 			auto [transform, sprite_renderer] = m_registry.get<TransformComponent, SpriteRendererComponent>(entity);
 			Renderer2D::DrawSprite(transform.get_transformation(), sprite_renderer, (int32_t)entity);
+		}
+
+		auto view = m_registry.view<TransformComponent, CircleRendererComponent>();
+		for (auto entity : view)
+		{
+			auto [transform, circle_renderer] = m_registry.get<TransformComponent, CircleRendererComponent>(entity);
+			Renderer2D::DrawCircle(transform.get_transformation(), circle_renderer, (int32_t)entity);
 		}
 
 		Renderer2D::EndScene();
@@ -211,11 +219,17 @@ namespace Engine
 			Renderer2D::BeginScene(*main_camera, cam_transform);
 
 			auto group = m_registry.group<TransformComponent>(entt::get<SpriteRendererComponent>);
-
 			for (auto entity : group)
 			{
 				auto [transform, sprite_renderer] = m_registry.get<TransformComponent, SpriteRendererComponent>(entity);
-				Renderer2D::DrawQuad(transform.get_transformation(), sprite_renderer.color);
+				Renderer2D::DrawSprite(transform.get_transformation(), sprite_renderer, (int32_t)entity);
+			}
+
+			auto view = m_registry.view<TransformComponent, CircleRendererComponent>();
+			for (auto entity : view)
+			{
+				auto [transform, circle_renderer] = m_registry.get<TransformComponent, CircleRendererComponent>(entity);
+				Renderer2D::DrawCircle(transform.get_transformation(), circle_renderer, (int32_t)entity);
 			}
 
 			Renderer2D::EndScene();

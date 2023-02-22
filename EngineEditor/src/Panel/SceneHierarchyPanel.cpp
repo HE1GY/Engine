@@ -258,6 +258,11 @@ namespace Engine
 				m_selection_entity.AddComponent<SpriteRendererComponent>();
 				ImGui::CloseCurrentPopup();
 			}
+			if (ImGui::MenuItem("CircleRenderer"))
+			{
+				m_selection_entity.AddComponent<CircleRendererComponent>();
+				ImGui::CloseCurrentPopup();
+			}
 			if (ImGui::MenuItem("NativeScript"))
 			{
 				m_selection_entity.AddComponent<NativeScriptComponent>();
@@ -364,6 +369,14 @@ namespace Engine
 				[](SpriteRendererComponent& sprite_renderer)
 				{
 				  ImGui::ColorEdit4("Color", glm::value_ptr(sprite_renderer.color));
+				});
+
+		DrawComponent<CircleRendererComponent>("CircleRendererComponent", entity,
+				[](auto& component)
+				{
+				  ImGui::ColorEdit4("Color", glm::value_ptr(component.color));
+				  ImGui::DragFloat("Thickness", &component.thickness, 0.1f, 0.0f, 1.0f);
+				  ImGui::DragFloat("Fade", &component.fade, 0.001f, 0.0f, 1.0f);
 				});
 
 		DrawComponent<Rigidbody2DComponent>("Rigidbody2DComponent", entity, [](Rigidbody2DComponent& rb2d)
