@@ -4,6 +4,7 @@
 #include <box2d/b2_body.h>
 #include <box2d/b2_fixture.h>
 #include <box2d/b2_polygon_shape.h>
+#include <box2d/b2_circle_shape.h>
 
 #include "Scene.h"
 #include "Entity.h"
@@ -90,6 +91,7 @@ namespace Engine
 		CopyComponent<CircleRendererComponent>(dst_registry, src_registry, dst_entity_ids);
 		CopyComponent<Rigidbody2DComponent>(dst_registry, src_registry, dst_entity_ids);
 		CopyComponent<BoxCollider2DComponent>(dst_registry, src_registry, dst_entity_ids);
+		CopyComponent<CircleCollider2DComponent>(dst_registry, src_registry, dst_entity_ids);
 		CopyComponent<NativeScriptComponent>(dst_registry, src_registry, dst_entity_ids);
 
 		return new_scene;
@@ -124,6 +126,7 @@ namespace Engine
 		CopyComponent<CircleRendererComponent>(new_entity, entity);
 		CopyComponent<Rigidbody2DComponent>(new_entity, entity);
 		CopyComponent<BoxCollider2DComponent>(new_entity, entity);
+		CopyComponent<CircleCollider2DComponent>(new_entity, entity);
 		CopyComponent<NativeScriptComponent>(new_entity, entity);
 
 		return new_entity;
@@ -303,6 +306,25 @@ namespace Engine
 				fixture_def.friction = bc2d.friction;
 				fixture_def.restitution = bc2d.restitution;
 				fixture_def.restitutionThreshold = bc2d.restitution_threshold;
+				body->CreateFixture(&fixture_def);
+			}
+
+			if (entity.HasComponent<CircleCollider2DComponent>())
+			{
+				auto& cc2d = entity.GetComponent<CircleCollider2DComponent>();
+
+				b2CircleShape circle_shape;
+
+				circle_shape.m_radius = cc2d.radius;
+				circle_shape.m_p = { cc2d.offset.x, cc2d.offset.y };
+
+				b2FixtureDef fixture_def;
+				fixture_def.shape = &circle_shape;
+
+				fixture_def.density = cc2d.density;
+				fixture_def.friction = cc2d.friction;
+				fixture_def.restitution = cc2d.restitution;
+				fixture_def.restitutionThreshold = cc2d.restitution_threshold;
 				body->CreateFixture(&fixture_def);
 			}
 		}

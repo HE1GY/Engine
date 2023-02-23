@@ -279,6 +279,11 @@ namespace Engine
 				m_selection_entity.AddComponent<BoxCollider2DComponent>();
 				ImGui::CloseCurrentPopup();
 			}
+			if (ImGui::MenuItem("CircleCollider2D"))
+			{
+				m_selection_entity.AddComponent<CircleCollider2DComponent>();
+				ImGui::CloseCurrentPopup();
+			}
 
 			ImGui::EndPopup();
 		}
@@ -413,6 +418,17 @@ namespace Engine
 		  ImGui::DragFloat("Friction", &box2d.friction, 0.01f, 0.0f, 1.0f);
 		  ImGui::DragFloat("Restitution", &box2d.restitution, 0.01f, 0.0f, 1.0f);
 		  ImGui::DragFloat("Restitution Threshold", &box2d.restitution_threshold, 0.01f, 0.0f);
+		});
+
+		DrawComponent<CircleCollider2DComponent>("CircleCollider2DComponent", entity, [](auto& component)
+		{
+		  ImGui::DragFloat2("Offset", glm::value_ptr(component.offset));
+		  ImGui::DragFloat("Radius", &component.radius);
+
+		  ImGui::DragFloat("Density", &component.density, 0.01f, 0.0f, 1.0f);
+		  ImGui::DragFloat("Friction", &component.friction, 0.01f, 0.0f, 1.0f);
+		  ImGui::DragFloat("Restitution", &component.restitution, 0.01f, 0.0f, 1.0f);
+		  ImGui::DragFloat("Restitution Threshold", &component.restitution_threshold, 0.01f, 0.0f);
 		});
 	}
 

@@ -251,6 +251,22 @@ namespace Engine
 			emitter << YAML::EndMap;
 		}
 
+		if (entity.HasComponent<CircleCollider2DComponent>())
+		{
+			emitter << YAML::Key << "CircleCollider2DComponent";
+			auto& component = entity.GetComponent<CircleCollider2DComponent>();
+
+			emitter << YAML::BeginMap;
+			emitter << YAML::Key << "Offset" << YAML::Value << component.offset;
+			emitter << YAML::Key << "Radius" << YAML::Value << component.radius;
+
+			emitter << YAML::Key << "Density" << YAML::Value << component.density;
+			emitter << YAML::Key << "Friction" << YAML::Value << component.friction;
+			emitter << YAML::Key << "Restitution" << YAML::Value << component.restitution;
+			emitter << YAML::Key << "Restitution Threshold" << YAML::Value << component.restitution_threshold;
+			emitter << YAML::EndMap;
+		}
+
 		emitter << YAML::EndMap;
 	}
 
@@ -408,6 +424,19 @@ namespace Engine
 					boxcollider2d_comp.friction = boxcollider2d_comp_node["Friction"].as<float>();
 					boxcollider2d_comp.restitution = boxcollider2d_comp_node["Restitution"].as<float>();
 					boxcollider2d_comp.restitution_threshold = boxcollider2d_comp_node["Restitution Threshold"].as<float>();
+				}
+
+				auto circlecollider2d_comp_node = entity["CircleCollider2DComponent"];
+				if (circlecollider2d_comp_node)
+				{
+					auto& component = deserialized_entity.AddComponent<CircleCollider2DComponent>();
+					component.offset = circlecollider2d_comp_node["Offset"].as<glm::vec2>();
+					component.radius = circlecollider2d_comp_node["Radius"].as<float>();
+
+					component.density = circlecollider2d_comp_node["Density"].as<float>();
+					component.friction = circlecollider2d_comp_node["Friction"].as<float>();
+					component.restitution = circlecollider2d_comp_node["Restitution"].as<float>();
+					component.restitution_threshold = circlecollider2d_comp_node["Restitution Threshold"].as<float>();
 				}
 			}
 
