@@ -18,7 +18,7 @@ namespace Engine
 
 		virtual void SetData(void* data, int32_t size) override;
 
-		virtual void set_layout(BufferLayout layout) override;
+		virtual void SetLayout(BufferLayout layout) override;
 		virtual BufferLayout& get_layout() override;
 
 	private:

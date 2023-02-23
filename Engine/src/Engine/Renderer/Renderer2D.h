@@ -1,16 +1,8 @@
 #pragma once
 
-#include <glm/vec2.hpp>
-#include <glm/vec3.hpp>
-#include <glm/vec4.hpp>
-#include <Engine/Scene/Components.h>
+#include <glm/glm.hpp>
 #include "Texture.h"
 #include "SubTexture2D.h"
-#include "Shader.h"
-#include "OrthographicCamera.h"
-#include "VertexArray.h"
-#include "Camera.h"
-#include "EditorCamera.h"
 
 namespace Engine
 {
@@ -23,54 +15,54 @@ namespace Engine
 		{
 			uint32_t draw_calls{ 0 };
 			uint32_t quads{ 0 };
-			uint32_t get_indices()
+			uint32_t circles{ 0 };
+			uint32_t lines{ 0 };
+			uint32_t GetIndices()
 			{
-				return quads * 6;
+				return quads * 6 + circles * 6 + lines * 2;
 			}
-			uint32_t get_vertices()
+			uint32_t GetVertices()
 			{
-				return quads * 4;
+				return quads * 4 + circles * 4 + lines * 2;
 			}
 		};
 
+		static const uint32_t k_max_quads = 10000;
+		static const uint32_t k_max_vertices = k_max_quads * 4;
+		static const uint32_t k_max_indices = k_max_quads * 6;
+		static const uint32_t k_max_texture_slot = 32;
+
 		static void Init();
 		static void ShutDown();
-		static void Flush();
 
-		static void BeginScene(Camera& camera, const glm::mat4& transform);
-		static void BeginScene(const EditorCamera& camera);
-		static void BeginScene(OrthographicCamera& camera);//TODO: Remove
+		static void BeginScene(const glm::mat4& projection, const glm::mat4& view);
+
 		static void EndScene();
+		static void FlushQuad();
+		static void FlushCircle();
+		static void FlushLine();
 
-		static void DrawQuad(const glm::mat4& transformation, const glm::vec4& color);
 		static void DrawQuad(const glm::mat4& transformation, const glm::vec4& color, int32_t entity_id);
 
-		static void DrawSprite(const glm::mat4& transformation, SpriteRendererComponent& component, int32_t entity_id);
-
-		static void DrawQuad(const glm::vec2& position, const glm::vec2& scale, const glm::vec4& color);
-		static void DrawQuad(const glm::vec3& position, const glm::vec2& scale, const glm::vec4& color);
-		static void
-		DrawQuad(const glm::vec3& position, const glm::vec2& scale, const float rotation_rad, const glm::vec4& color);
-
-		static void DrawQuad(const glm::vec2& position, const glm::vec2& scale, const Ref<Texture>& texture,
-				const glm::vec4& color = { 1, 1, 1, 1 });
-		static void DrawQuad(const glm::vec3& position, const glm::vec2& scale, const Ref<Texture>& texture,
-				const glm::vec4& color = { 1, 1, 1, 1 });
-
-		static void DrawQuad(const glm::vec2& position, const glm::vec2& scale, const Ref<SubTexture2D>& texture,
-				const glm::vec4& color = { 1, 1, 1, 1 });
-		static void DrawQuad(const glm::vec3& position, const glm::vec2& scale, const Ref<SubTexture2D>& texture,
-				const glm::vec4& color = { 1, 1, 1, 1 });
+		static void DrawQuad(const glm::mat4& transformation, const Ref<SubTexture2D>& texture,
+				const glm::vec4& color, int32_t entity_id);
 
 		static void DrawQuad(const glm::mat4& transformation,
-				const Engine::Ref<Engine::Texture>& texture, const glm::vec4& color);
+				const Ref<Texture>& texture, const glm::vec4& color, int32_t entity_id);
 
-		static void DrawSprite(const glm::mat4& transformation, SpriteRendererComponent& component);
+		static void DrawCircle(const glm::mat4& transformation, const glm::vec4& color, float thickness, float fade,
+				int32_t entity_id);
+
+		static void
+		DrawLine(const glm::vec3& p0, const glm::vec3& p1, const glm::vec4& color, float thickness, int32_t entity_id);
+
+		static void DrawRect(const glm::mat4& transformation, const glm::vec4& color, int32_t entity_id);
+
+		static void SetLineWidth(float width);
 
 		static Statistics GetStats();
 		static void ResetStats();
 	private:
-		static void FlushAndReset();
-		static Renderer2DData s_data;
+		static Renderer2DData* s_data;
 	};
 }

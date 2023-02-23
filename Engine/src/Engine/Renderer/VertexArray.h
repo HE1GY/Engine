@@ -14,8 +14,8 @@ namespace Engine
 		virtual void Bind() = 0;
 		virtual void UnBind() = 0;
 
-		virtual void AddVertexBuffer(std::shared_ptr<VertexBuffer> vertex_buffers) = 0;
-		virtual void SetIndexBuffer(std::shared_ptr<IndexBuffer> index_buffer) = 0;
-		virtual std::shared_ptr<IndexBuffer> get_indexBuffer() = 0;
+		virtual void SetVertexBuffer(Ref<VertexBuffer> vertex_buffers) = 0;
+		virtual void SetIndexBuffer(Ref<IndexBuffer> index_buffer) = 0;
+		virtual Ref<IndexBuffer> GetIndexBuffer() = 0;
 	};
 } // namespace Engine

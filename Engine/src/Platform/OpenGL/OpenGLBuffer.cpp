@@ -51,7 +51,7 @@ namespace Engine
 		glBufferSubData(GL_ARRAY_BUFFER, 0, size, data);
 	}
 
-	void OpenGLVertexBuffer::set_layout(BufferLayout layout)
+	void OpenGLVertexBuffer::SetLayout(BufferLayout layout)
 	{
 		m_layout = layout;
 	}

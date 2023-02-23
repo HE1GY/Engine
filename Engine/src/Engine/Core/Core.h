@@ -3,11 +3,11 @@
 #ifdef DEBUG
 #ifdef WINDOWS
 #define ASSERT(a)                                                                                                      \
-	if (!a)                                                                                                            \
-	{                                                                                                                  \
-		CORE_ERROR("ASSERT FAILED FILE:{0}, LINE:{1}", __FILE__, __LINE__);                                            \
-		__debugbreak();                                                                                                \
-	}
+    if (!a)                                                                                                            \
+    {                                                                                                                  \
+        CORE_ERROR("ASSERT FAILED FILE:{0}, LINE:{1}", __FILE__, __LINE__);                                            \
+        __debugbreak();                                                                                                \
+    }
 #endif
 
 #ifdef LINUX
@@ -19,7 +19,6 @@
 	}
 
 #endif
-
 
 #endif
 
@@ -40,7 +39,7 @@ namespace Engine
 	}
 
 	template<typename T, typename ... Args>
-	Scope<T>& CreateScope(Args ... args)
+	Scope<T> CreateScope(Args ... args)
 	{
 		return std::make_unique<T>(std::forward<Args>(args)...);
 	}

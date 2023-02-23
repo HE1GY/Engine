@@ -9,6 +9,7 @@ namespace Engine
 {
 
 	Renderer::SceneData* Renderer::s_scene_data = new Renderer::SceneData;
+
 	void Renderer::Init()
 	{
 		PROFILER_FUNCTION();
@@ -19,7 +20,7 @@ namespace Engine
 
 	void Renderer::BeginScene(OrthographicCamera& camera)
 	{
-		s_scene_data->view_projection_matrix = camera.get_view_projection_matrix();
+		s_scene_data->view_projection_matrix = camera.GetViewProjectionMatrix();
 	}
 
 	void Renderer::EndScene()
@@ -42,6 +43,7 @@ namespace Engine
 
 		RendererCommand::SetViewport(0, 0, width, height);
 	}
+
 	void Renderer::ShutDown()
 	{
 		PROFILER_FUNCTION();

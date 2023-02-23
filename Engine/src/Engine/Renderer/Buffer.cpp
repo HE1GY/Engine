@@ -39,7 +39,7 @@ namespace Engine
 		}
 	}
 
-	BufferElement::BufferElement(const std::string& name, ShaderDataType type, bool normalized)
+	BufferElement::BufferElement(ShaderDataType type, const std::string& name, bool normalized)
 			:name{ name }, type{ type }, normalized{ normalized }, offset{ 0 }, size{ 0 }
 	{
 		size = ShaderDataTypeSize(type);

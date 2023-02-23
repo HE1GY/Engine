@@ -13,6 +13,8 @@ namespace Engine
 		glEnable(GL_DEPTH_TEST);
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+		glEnable(GL_LINE_SMOOTH);
 	}
 	void OpenGLRendererAPI::SetClearColor(const glm::vec4& color)
 	{
@@ -24,10 +26,24 @@ namespace Engine
 	void OpenGLRendererAPI::DrawIndex(Ref<VertexArray> vertex_array, uint32_t index_count)
 	{
 		PROFILER_FUNCTION();
+
 		vertex_array->Bind();
-		uint32_t count = index_count;
-		glDrawElements(GL_TRIANGLES, count, GL_UNSIGNED_INT, nullptr);
+		glDrawElements(GL_TRIANGLES, index_count, GL_UNSIGNED_INT, nullptr);
 	}
+
+	void OpenGLRendererAPI::DrawLine(std::shared_ptr<VertexArray> vertex_array, uint32_t index_count)
+	{
+		PROFILER_FUNCTION();
+
+		vertex_array->Bind();
+		glDrawArrays(GL_LINES, 0, index_count);
+	}
+
+	void OpenGLRendererAPI::SetLineWidth(float width)
+	{
+		glLineWidth(width);
+	}
+
 	void OpenGLRendererAPI::Clear()
 	{
 		PROFILER_FUNCTION();
@@ -39,4 +55,5 @@ namespace Engine
 
 		glViewport(x, y, width, height);
 	}
+
 } // namespace Engine

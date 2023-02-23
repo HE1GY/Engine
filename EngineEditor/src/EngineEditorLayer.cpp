@@ -16,7 +16,7 @@
 namespace Engine
 {
 	EngineEditorLayer::EngineEditorLayer()
-			:Layer("Engine-EditorLayer"), m_scene{ CreateRef<Scene>() }
+			:Layer("Engine-EditorLayer"), m_active_scene{ CreateRef<Scene>() }
 	{
 	}
 
@@ -30,8 +30,10 @@ namespace Engine
 		m_frame_buffer = FrameBuffer::Create(fb_spec);
 		m_editor_camera = EditorCamera(30.0f, 1.778f, 0.1f, 1000.0f);
 
-		m_scene_hierarchy_panel.SetContext(m_scene);
+		m_scene_hierarchy_panel.SetContext(m_active_scene);
 
+		m_play_icon = Texture2D::Create("../../../EngineEditor/resources/icon/PlayButton.png");
+		m_stop_icon = Texture2D::Create("../../../EngineEditor/resources/icon/PauseButton.png");
 	}
 
 	void EngineEditorLayer::OnDetach()
@@ -48,8 +50,20 @@ namespace Engine
 		Engine::RendererCommand::Clear();
 		m_frame_buffer->ClearAttachment(1, -1);
 
-		m_editor_camera.OnUpdate(ts);
-		m_scene->OnUpdateEditor(ts, m_editor_camera);
+		switch (m_scene_state)
+		{
+		case SceneState::Play:
+		{
+			m_active_scene->OnUpdateRuntime(ts);
+			break;
+		}
+		case SceneState::Edit:
+		{
+			m_editor_camera.OnUpdate(ts);
+			m_active_scene->OnUpdateEditor(ts, m_editor_camera);
+			break;
+		}
+		}
 
 		auto [mx, my] = ImGui::GetMousePos();
 		mx -= m_viewport_bound[0].x;
@@ -65,13 +79,15 @@ namespace Engine
 			int data = m_frame_buffer->ReadPixel(1, mouse_x, mouse_y);
 			if (data != -1)
 			{
-				m_hovered_entity = Entity((entt::entity)data, m_scene.get());
+				m_hovered_entity = Entity((entt::entity)data, m_active_scene.get());
 			}
 			else
 			{
 				m_hovered_entity = Entity();
 			}
 		}
+
+		OnOverlayRender();
 
 		m_frame_buffer->UnBind();
 	}
@@ -94,11 +110,70 @@ namespace Engine
 
 		  DrawViewportWindow();
 
-		  DrawStatsWindow();
+		  DrawSettingsWindow();
 
+		  DrawToolbar();
 		  m_scene_hierarchy_panel.OnImGuiRender();
 		});
 
+	}
+
+	void EngineEditorLayer::OnOverlayRender()
+	{
+
+		switch (m_scene_state)
+		{
+		case SceneState::Play:
+		{
+			const auto& camera_entity = m_active_scene->GetPrimaryCameraEntity();
+			Renderer2D::BeginScene(camera_entity.GetComponent<CameraComponent>().camera,
+					camera_entity.GetComponent<TransformComponent>().get_transformation());
+			break;
+		}
+		case SceneState::Edit:
+		{
+			Renderer2D::BeginScene(m_editor_camera);
+			break;
+		}
+		}
+		if (m_show_colliders)
+		{
+			{
+				auto view = m_active_scene->GetAllEntitiesWith<TransformComponent, CircleCollider2DComponent>();
+
+				for (auto entity : view)
+				{
+					const auto [tr_cmp, cc2d_cmp] = view.get<TransformComponent, CircleCollider2DComponent>(entity);
+
+					glm::mat4 transformation = glm::translate(glm::mat4(1.0f),
+							{ tr_cmp.translation.x + cc2d_cmp.offset.x, tr_cmp.translation.y + cc2d_cmp.offset.y,
+							  tr_cmp.translation.z + 0.005f })
+							* glm::scale(glm::mat4(1.0f), cc2d_cmp.radius * tr_cmp.scale * 2.0f);
+
+					Renderer2D::DrawCircle(transformation, { 0, 1, 0, 1 }, 0.05f, 0);
+				}
+			}
+
+			{
+				auto view = m_active_scene->GetAllEntitiesWith<TransformComponent, BoxCollider2DComponent>();
+
+				for (auto entity : view)
+				{
+					const auto [tr_cmp, bc2d_cmp] = view.get<TransformComponent, BoxCollider2DComponent>(entity);
+
+					glm::mat4 transformation = glm::translate(glm::mat4(1.0f),
+							{ tr_cmp.translation.x + bc2d_cmp.offset.x, tr_cmp.translation.y + bc2d_cmp.offset.y,
+							  tr_cmp.translation.z + 0.005f })
+							* glm::rotate(glm::mat4(1.0f), tr_cmp.rotation.z, { 0, 0, 1 })
+							* glm::scale(glm::mat4(1.0f),
+									glm::vec3{ bc2d_cmp.size.x, bc2d_cmp.size.y, 1 } * tr_cmp.scale * 2.0f);
+
+					Renderer2D::SetLineWidth(1.0f);
+					Renderer2D::DrawRect(transformation, { 0, 1, 0, 1 }, 0);
+				}
+			}
+		}
+		Renderer2D::EndScene();
 	}
 
 	void EngineEditorLayer::DrawDockSpace(std::function<void()> func)
@@ -142,7 +217,7 @@ namespace Engine
 		ImGui::End();
 	}
 
-	void EngineEditorLayer::DrawStatsWindow()
+	void EngineEditorLayer::DrawSettingsWindow()
 	{
 		auto stats = Engine::Renderer2D::GetStats();
 		ImGui::Begin("Stats");
@@ -150,8 +225,14 @@ namespace Engine
 		ImGui::Text("FPS: %d", (int)m_fps);
 		ImGui::Text("draw calls: %d", stats.draw_calls);
 		ImGui::Text("quads: %d", stats.quads);
-		ImGui::Text("indices: %d", stats.get_indices());
-		ImGui::Text("vertices: %d", stats.get_vertices());
+		ImGui::Text("indices: %d", stats.GetIndices());
+		ImGui::Text("vertices: %d", stats.GetVertices());
+
+		ImGui::End();
+
+		ImGui::Begin("Settings");
+
+		ImGui::Checkbox("Show Colliders", &m_show_colliders);
 
 		ImGui::End();
 	}
@@ -171,7 +252,7 @@ namespace Engine
 			ImGuizmo::SetRect(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y, window_width, window_height);
 
 			//camera runtime
-			/*Entity camera_entity = m_scene->GetPrimaryCameraEntity();
+			/*Entity camera_entity = m_active_scene->GetPrimaryCameraEntity();
 			const auto& camera = camera_entity.GetComponent<CameraComponent>().camera;
 			const glm::mat4& camera_projection = camera.get_projection();
 			glm::mat4 camera_view = glm::inverse(
@@ -231,14 +312,17 @@ namespace Engine
 		{
 			m_viewport_size = { size.x, size.y };
 			m_frame_buffer->Resize(size.x, size.y);
-			m_scene->OnViewResize(size.x, size.y);
+			m_active_scene->OnViewResize(size.x, size.y);
 			m_editor_camera.SetViewportSize(size.x, size.y);
 		}
 
 		uint32_t tex_id = m_frame_buffer->GetColorAttachmentRendererId(0);
 		ImGui::Image((void*)tex_id, ImVec2{ size.x, size.y }, ImVec2{ 0, 1 }, ImVec2{ 1, 0 });
 
-		DrawGizmo();
+		if (m_scene_state == SceneState::Edit)
+		{
+			DrawGizmo();
+		}
 
 		ImGui::End();
 
@@ -278,8 +362,7 @@ namespace Engine
 	{
 		//Shortcuts
 
-
-		if (event.get_repeated_count() > 0)
+		if (event.GetRepeatedCount() > 0)
 		{
 			return false;
 		}
@@ -309,9 +392,16 @@ namespace Engine
 		}
 		case (int)KeyCode::E_KEY_S:
 		{
-			if (control && shift)
+			if (control)
 			{
-				SaveSceneAs();
+				if (shift)
+				{
+					SaveSceneAs();
+				}
+				else
+				{
+					SaveScene();
+				}
 			}
 			break;
 		}
@@ -333,6 +423,21 @@ namespace Engine
 			m_gizmo_type = 2;
 			break;
 
+
+			//Enitity
+		case (int)KeyCode::E_KEY_D:
+		{
+			if (control)
+			{
+				Entity entity = m_scene_hierarchy_panel.GetSelectedEntity();
+				if (entity)
+				{
+					m_active_scene->CopyEntity(entity);
+				}
+			}
+			break;
+		}
+
 		}
 
 		return false;
@@ -340,27 +445,34 @@ namespace Engine
 
 	void EngineEditorLayer::NewScene()
 	{
-		m_scene = CreateRef<Scene>();
+		m_active_scene = CreateRef<Scene>();
 
-		m_scene->OnViewResize((uint32_t)m_viewport_size.x, (uint32_t)m_viewport_size.y);
-		m_scene_hierarchy_panel.SetContext(m_scene);
+		m_active_scene->OnViewResize((uint32_t)m_viewport_size.x, (uint32_t)m_viewport_size.y);
+		m_scene_hierarchy_panel.SetContext(m_active_scene);
+
+		m_editor_scene_path = std::filesystem::path();
 	}
 
 	void EngineEditorLayer::OpenScene()
 	{
-		std::string file_path;
+		if (m_scene_state != SceneState::Edit)
+		{
+			OnSceneStop();
+		}
 
+		std::string file_path;
 		file_path = FileDialogs::OpenFile("*.engine");
 
 		if (!file_path.empty())
 		{
-			m_scene = CreateRef<Scene>();
+			m_active_scene = CreateRef<Scene>();
 
-			SceneSerializer serializer(m_scene);
+			SceneSerializer serializer(m_active_scene);
 			serializer.Deserialize(file_path);
 
-			m_scene->OnViewResize((uint32_t)m_viewport_size.x, (uint32_t)m_viewport_size.y);
-			m_scene_hierarchy_panel.SetContext(m_scene);
+			m_active_scene->OnViewResize((uint32_t)m_viewport_size.x, (uint32_t)m_viewport_size.y);
+			m_scene_hierarchy_panel.SetContext(m_active_scene);
+			m_editor_scene_path = file_path;
 		}
 	}
 
@@ -368,15 +480,33 @@ namespace Engine
 	{
 		std::string file_path;
 
-		file_path = FileDialogs::OpenFile("*.engine");
+		file_path = FileDialogs::SaveFile("*.engine");
 
 		if (!file_path.empty())
 		{
-			SceneSerializer serializer(m_scene);
+			SceneSerializer serializer(m_active_scene);
 			serializer.Serialize(file_path);
+
+			m_editor_scene_path = file_path;
 		}
 	}
 
+<<<<<<< HEAD
+=======
+	void EngineEditorLayer::SaveScene()
+	{
+		if (!m_editor_scene_path.empty())
+		{
+			SceneSerializer serializer(m_active_scene);
+			serializer.Serialize(m_editor_scene_path.string());
+		}
+		else
+		{
+			SaveSceneAs();
+		}
+	}
+
+>>>>>>> master
 	bool EngineEditorLayer::OnMouseButtonPress(MouseButtonPressed& event)
 	{
 		if (event.get_key() == (int)MouseButtonCode::E_MOUSE_BUTTON_LEFT)
@@ -388,6 +518,115 @@ namespace Engine
 		}
 
 		return false;
+	}
+
+	void EngineEditorLayer::DrawToolbar()
+	{
+		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 2));
+		ImGui::PushStyleVar(ImGuiStyleVar_ItemInnerSpacing, ImVec2(0, 0));
+		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
+		auto& colors = ImGui::GetStyle().Colors;
+		const auto& buttonHovered = colors[ImGuiCol_ButtonHovered];
+		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(buttonHovered.x, buttonHovered.y, buttonHovered.z, 0.5f));
+		const auto& buttonActive = colors[ImGuiCol_ButtonActive];
+		ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(buttonActive.x, buttonActive.y, buttonActive.z, 0.5f));
+
+		ImGui::Begin("##toolbar", nullptr,
+				ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse);
+
+		bool toolbarEnabled = (bool)m_active_scene;
+
+		ImVec4 tintColor = ImVec4(1, 1, 1, 1);
+		if (!toolbarEnabled)
+			tintColor.w = 0.5f;
+
+		float size = ImGui::GetWindowHeight() - 4.0f;
+		ImGui::SetCursorPosX((ImGui::GetWindowContentRegionMax().x * 0.5f) - (size * 0.5f));
+
+		bool hasPlayButton = m_scene_state == SceneState::Edit || m_scene_state == SceneState::Play;
+		//bool hasSimulateButton = m_scene_state == SceneState::Edit || m_scene_state == SceneState::Simulate;
+		//bool hasPauseButton = m_scene_state != SceneState::Edit;
+
+		if (hasPlayButton)
+		{
+			Ref<Texture2D> icon = (m_scene_state == SceneState::Edit /*|| m_scene_state == SceneState::Simulate*/)
+								  ? m_play_icon : m_stop_icon;
+			if (ImGui::ImageButton((ImTextureID)(uint64_t)icon->GetRendererId(), ImVec2(size, size), ImVec2(0, 0),
+					ImVec2(1, 1), 0, ImVec4(0.0f, 0.0f, 0.0f, 0.0f), tintColor) && toolbarEnabled)
+			{
+				if (m_scene_state == SceneState::Edit /*|| m_scene_state == SceneState::Simulate*/)
+					OnScenePlay();
+				else if (m_scene_state == SceneState::Play)
+					OnSceneStop();
+			}
+		}
+
+		/*if (hasSimulateButton)
+		{
+			if (hasPlayButton)
+				ImGui::SameLine();
+
+			Ref<Texture2D> icon = (m_scene_state == SceneState::Edit || m_scene_state == SceneState::Play)
+								  ? m_IconSimulate : m_IconStop;
+			if (ImGui::ImageButton((ImTextureID)(uint64_t)icon->GetRendererID(), ImVec2(size, size), ImVec2(0, 0),
+					ImVec2(1, 1), 0, ImVec4(0.0f, 0.0f, 0.0f, 0.0f), tintColor) && toolbarEnabled)
+			{
+				if (m_scene_state == SceneState::Edit || m_scene_state == SceneState::Play)
+					OnSceneSimulate();
+				else if (m_scene_state == SceneState::Simulate)
+					OnSceneStop();
+			}
+		}*/
+		/*if (hasPauseButton)
+		{
+			bool isPaused = m_active_scene->IsPaused();
+			ImGui::SameLine();
+			{
+				Ref<Texture2D> icon = m_IconPause;
+				if (ImGui::ImageButton((ImTextureID)(uint64_t)icon->GetRendererID(), ImVec2(size, size), ImVec2(0, 0),
+						ImVec2(1, 1), 0, ImVec4(0.0f, 0.0f, 0.0f, 0.0f), tintColor) && toolbarEnabled)
+				{
+					m_active_scene->SetPaused(!isPaused);
+				}
+			}
+
+			// Step button
+			if (isPaused)
+			{
+				ImGui::SameLine();
+				{
+					Ref<Texture2D> icon = m_IconStep;
+					bool isPaused = m_active_scene->IsPaused();
+					if (ImGui::ImageButton((ImTextureID)(uint64_t)icon->GetRendererID(), ImVec2(size, size),
+							ImVec2(0, 0), ImVec2(1, 1), 0, ImVec4(0.0f, 0.0f, 0.0f, 0.0f), tintColor) && toolbarEnabled)
+					{
+						m_active_scene->Step();
+					}
+				}
+			}
+		}
+		*/ImGui::PopStyleVar(2);
+		ImGui::PopStyleColor(3);
+		ImGui::End();
+	}
+
+	void EngineEditorLayer::OnScenePlay()
+	{
+		m_editor_scene = m_active_scene;
+		m_active_scene = Scene::Copy(m_editor_scene);
+		m_scene_hierarchy_panel.SetContext(m_active_scene);
+
+		m_scene_state = SceneState::Play;
+		m_active_scene->OnRuntimeBegin();
+	}
+
+	void EngineEditorLayer::OnSceneStop()
+	{
+		m_active_scene = m_editor_scene;
+		m_scene_hierarchy_panel.SetContext(m_active_scene);
+
+		m_scene_state = SceneState::Edit;
+		m_active_scene->OnRuntimeStop();
 	}
 
 }

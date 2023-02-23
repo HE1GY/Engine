@@ -80,24 +80,24 @@ namespace Engine
 		glBindVertexArray(0);
 	}
 
-	void OpenGLVertexArray::SetIndexBuffer(Ref<IndexBuffer> indexBuffer)
+	void OpenGLVertexArray::SetIndexBuffer(Ref<IndexBuffer> index_buffer)
 	{
 		PROFILER_FUNCTION();
 
 		glBindVertexArray(m_renderer_id);
-		indexBuffer->Bind();
-		m_indexBuffer = indexBuffer;
+		index_buffer->Bind();
+		m_index_buffer = index_buffer;
 	}
-	void OpenGLVertexArray::AddVertexBuffer(Ref<VertexBuffer> vertexBuffer)
+	void OpenGLVertexArray::SetVertexBuffer(Ref<VertexBuffer> vertex_buffer)
 	{
 		PROFILER_FUNCTION();
 
-		CORE_ASSERT(vertexBuffer->get_layout().get_elements().size(), "Vertex Buffer has no layout!");
+		CORE_ASSERT(vertex_buffer->get_layout().get_elements().size(), "Vertex Buffer has no layout!");
 		glBindVertexArray(m_renderer_id);
 
-		vertexBuffer->Bind();
+		vertex_buffer->Bind();
 
-		BufferLayout& layout = vertexBuffer->get_layout();
+		BufferLayout& layout = vertex_buffer->get_layout();
 		for (const auto& element : layout)
 		{
 			switch (element.type)
@@ -134,11 +134,11 @@ namespace Engine
 
 		}
 
-		m_vertexBuffers.push_back(vertexBuffer);
+		m_vertex_buffer = vertex_buffer;
 	}
-	std::shared_ptr<IndexBuffer> OpenGLVertexArray::get_indexBuffer()
+	Ref<IndexBuffer> OpenGLVertexArray::GetIndexBuffer()
 	{
-		return m_indexBuffer;
+		return m_index_buffer;
 	}
 
 } // namespace Engine

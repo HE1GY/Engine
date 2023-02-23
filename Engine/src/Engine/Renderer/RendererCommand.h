@@ -14,6 +14,15 @@ namespace Engine
 		{
 			m_renderer_API->DrawIndex(vertex_array, index_count);
 		}
+		inline static void DrawLine(std::shared_ptr<VertexArray> vertex_array, uint32_t index_count = 0)
+		{
+			m_renderer_API->DrawLine(vertex_array, index_count);
+		};
+
+		inline static void SetLineWidth(float width)
+		{
+			m_renderer_API->SetLineWidth(width);
+		}
 		inline static void Clear()
 		{
 			m_renderer_API->Clear();

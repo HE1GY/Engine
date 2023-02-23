@@ -18,6 +18,7 @@ add_subdirectory(external/stb_image)
 add_subdirectory(external/entt)
 add_subdirectory(external/yaml-cpp)
 add_subdirectory(external/imguizmo)
+add_subdirectory(external/box2d)
 
 
 target_link_libraries(Sandbox PRIVATE Engine)
@@ -35,6 +36,7 @@ target_link_libraries(Engine PUBLIC stb_image)
 target_link_libraries(Engine PUBLIC EnTT)
 target_link_libraries(Engine PUBLIC yaml-cpp)
 target_link_libraries(Engine PUBLIC imguizmo)
+target_link_libraries(Engine PUBLIC box2d)
 
 target_link_libraries(imgui PUBLIC glfw)
 

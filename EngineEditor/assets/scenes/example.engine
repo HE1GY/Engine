@@ -1,6 +1,6 @@
 Scene: Untitled
 Entities:
-  - EntityID: 12234124124
+  - EntityID: 15034329191696957557
     TagComponent:
       Tag: Top
     TransformComponent:
@@ -9,16 +9,16 @@ Entities:
       Scale: [0.999999881, 0.999999285, 0.999872327]
     SpriteRendererComponent:
       Color: [1, 0, 0, 1]
-  - EntityID: 12234124124
+  - EntityID: 845862294535043795
     TagComponent:
       Tag: Left
     TransformComponent:
-      Translation: [-0.309589922, 0.0886920542, -0.173970267]
+      Translation: [-0.303276151, 0.0886920542, -0.167656273]
       Rotation: [0, -0.785398245, 0]
       Scale: [1, 1, 1]
     SpriteRendererComponent:
       Color: [0.146718025, 0, 1, 1]
-  - EntityID: 12234124124
+  - EntityID: 9407602130117584412
     TagComponent:
       Tag: Right
     TransformComponent:
@@ -27,3 +27,21 @@ Entities:
       Scale: [0.999999881, 1, 0.999999881]
     SpriteRendererComponent:
       Color: [0.35521245, 1, 0, 1]
+  - EntityID: 6267459667435774846
+    TagComponent:
+      Tag: Cam
+    TransformComponent:
+      Translation: [-0.526766658, -1.9414081e-07, 3.97637081]
+      Rotation: [-3.1246562, -0.260053843, -3.08633474e-07]
+      Scale: [0.999999881, 1.00001299, 1.00001121]
+    CameraComponent:
+      Camera:
+        Projection type: 0
+        Orthographic near clip: -1
+        Orthographic far clip: 1
+        Orthographic size: 10
+        Perspective FOV: 1.30899692
+        Perspective near clip: 0.00999999978
+        Perspective far clip: 1000
+      Fix aspect ration: false
+      Primary: true

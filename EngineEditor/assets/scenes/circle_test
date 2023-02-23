@@ -1,0 +1,60 @@
+Scene: circle_test
+Entities:
+  - EntityID: 7243710602291039495
+    TagComponent:
+      Tag: c
+    TransformComponent:
+      Translation: [0, -1.43377459, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    CircleRendererComponent:
+      Color: [0.219793975, 0.277009279, 0.749034762, 1]
+      Thickness: 1
+      Fade: 0.00499999989
+    Rigidbody2DComponent:
+      Body Type: Dynamic
+      Fixed Rotation: false
+    CircleCollider2DComponent:
+      Offset: [0, 0]
+      Radius: 0.5
+      Density: 1
+      Friction: 0.5
+      Restitution: 0.180000007
+      Restitution Threshold: 0.5
+  - EntityID: 13654274066534280096
+    TagComponent:
+      Tag: q
+    TransformComponent:
+      Translation: [0, -2.44329166, 0]
+      Rotation: [0, 0, 0]
+      Scale: [8.36301517, 1, 1]
+    SpriteRendererComponent:
+      Color: [0.818532825, 0.278111547, 0.278111547, 1]
+    Rigidbody2DComponent:
+      Body Type: Static
+      Fixed Rotation: false
+    BoxCollider2DComponent:
+      Offset: [0, 0]
+      Size: [0.5, 0.5]
+      Density: 1
+      Friction: 0.5
+      Restitution: 0
+      Restitution Threshold: 0.5
+  - EntityID: 16211146423892128520
+    TagComponent:
+      Tag: cam
+    TransformComponent:
+      Translation: [0, -1.80476737, 13.0675516]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    CameraComponent:
+      Camera:
+        Projection type: 0
+        Orthographic near clip: -1
+        Orthographic far clip: 1
+        Orthographic size: 10
+        Perspective FOV: 1.46607661
+        Perspective near clip: 0
+        Perspective far clip: 100
+      Fix aspect ration: false
+      Primary: true

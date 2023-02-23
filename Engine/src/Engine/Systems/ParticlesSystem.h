@@ -21,8 +21,8 @@ namespace Engine
 	public:
 		void Init(const ParticlesProp& prop);
 		void Emit(const glm::vec3 pos);
-		void OnUpdate(Engine::TimeStep ts);
-		void OnRenderer(Engine::OrthographicCamera& cam);
+		void OnUpdate(TimeStep ts);
+		void OnRenderer(OrthographicCamera& cam);
 	private:
 		struct Particle
 		{

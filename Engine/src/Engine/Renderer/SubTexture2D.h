@@ -3,9 +3,9 @@
 #include <Engine/Core/Core.h>
 #include <glm/vec2.hpp>
 #include "Texture.h"
+
 namespace Engine
 {
-
 	class SubTexture2D
 	{
 	public:

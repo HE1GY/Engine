@@ -5,12 +5,16 @@
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtx/quaternion.hpp>
 #include <Engine/Renderer/Texture.h>
+#include <Engine/Core/UUID.h>
 
 #include "SceneCamera.h"
-#include "ScriptableEntity.h"
 
 namespace Engine
 {
+	struct IDComponent
+	{
+		UUID uuid;
+	};
 
 	struct TransformComponent
 	{
@@ -38,6 +42,13 @@ namespace Engine
 		Ref<Texture2D> texture;
 	};
 
+	struct CircleRendererComponent
+	{
+		glm::vec4 color{ 1, 1, 1, 1 };
+		float thickness = 1.0f;
+		float fade = 0.005f;
+	};
+
 	struct TagComponent
 	{
 		TagComponent(const std::string& tag)
@@ -56,6 +67,8 @@ namespace Engine
 		SceneCamera camera;
 	};
 
+	//forward declaration
+	class ScriptableEntity;
 	struct NativeScriptComponent
 	{
 		Ref<ScriptableEntity> instance;
@@ -76,17 +89,59 @@ namespace Engine
 		}
 	};
 
-	//Physic
-	struct Box2DComponent
+
+
+	//Physics
+
+	struct Rigidbody2DComponent
 	{
-		glm::vec2 position;
-		glm::vec2 size;
+		enum class BodyType
+		{
+			Static = 0, Dynamic, Kinematic
+		};
+		BodyType type = BodyType::Static;
+		bool fixed_rotation = false;
+
+		//storage for runtime
+		void* runtime_body = nullptr;
+
+		Rigidbody2DComponent() = default;
+		Rigidbody2DComponent(const Rigidbody2DComponent& other) = default;
 	};
 
-	struct Circle2DComponent
+	struct BoxCollider2DComponent
 	{
-		glm::vec2 position;
-		float radius;
+		glm::vec2 offset = { 0.0f, 0.0f };
+		glm::vec2 size = { 0.5f, 0.5f };
+
+		float density = 1.0f;
+		float friction = 0.5f;
+		float restitution = 0.0f;
+		float restitution_threshold = 0.5f;
+
+		//storage for runtime
+		void* RuntimeBody = nullptr;
+
+		BoxCollider2DComponent() = default;
+		BoxCollider2DComponent(const BoxCollider2DComponent& other) = default;
+	};
+
+	struct CircleCollider2DComponent
+	{
+		glm::vec2 offset = { 0.0f, 0.0f };
+		float radius = 0.5f;
+
+		float density = 1.0f;
+		float friction = 0.5f;
+		float restitution = 0.0f;
+		float restitution_threshold = 0.5f;
+
+		//storage for runtime
+		void* RuntimeBody = nullptr;
+
+		CircleCollider2DComponent() = default;
+		CircleCollider2DComponent(const CircleCollider2DComponent& other) = default;
+
 	};
 
 }

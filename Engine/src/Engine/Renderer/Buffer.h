@@ -19,7 +19,7 @@ namespace Engine
 		uint32_t offset;
 		uint32_t size;
 
-		BufferElement(const std::string& name, ShaderDataType type, bool normalized = false);
+		BufferElement(ShaderDataType type, const std::string& name, bool normalized = false);
 
 		uint32_t GetComponentCount() const;
 
@@ -73,7 +73,7 @@ namespace Engine
 
 		virtual void SetData(void* data, int32_t size) = 0;
 
-		virtual void set_layout(BufferLayout layout) = 0;
+		virtual void SetLayout(BufferLayout layout) = 0;
 		virtual BufferLayout& get_layout() = 0;
 
 	};

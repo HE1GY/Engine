@@ -38,8 +38,8 @@ void Sandbox2D::OnImGuiRender()
 	ImGui::Text("FPS: %d", (int)m_fps);
 	ImGui::Text("draw calls: %d", stats.draw_calls);
 	ImGui::Text("quads: %d", stats.quads);
-	ImGui::Text("indices: %d", stats.get_indices());
-	ImGui::Text("vertices: %d", stats.get_vertices());
+	ImGui::Text("indices: %d", stats.GetIndices());
+	ImGui::Text("vertices: %d", stats.GetVertices());
 
 	ImGui::End();
 
@@ -59,7 +59,7 @@ void Sandbox2D::OnUpdate(Engine::TimeStep ts)
 
 		glm::vec4 clip_space = { (x / width) * 2 - 1, 1 - 2 * (y / height), 0, 1 }; // to get -1<x<1 and -1<y<1
 
-		glm::mat4 inverse_view_proj = glm::inverse(m_camera_controller.get_camera().get_view_projection_matrix());
+		glm::mat4 inverse_view_proj = glm::inverse(m_camera_controller.get_camera().GetViewProjectionMatrix());
 		glm::vec4 world_space = inverse_view_proj * clip_space;
 		world_space /= world_space.w;
 
