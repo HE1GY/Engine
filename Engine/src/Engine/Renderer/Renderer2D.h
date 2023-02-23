@@ -66,6 +66,8 @@ namespace Engine
 		//Circle
 		static void
 		DrawCircle(const glm::mat4& transformation, const CircleRendererComponent& component, int32_t entity_id);
+		static void DrawCircle(const glm::mat4& transformation, const glm::vec4& color, float thickness,
+				int32_t entity_id);
 
 		//Line
 		static void

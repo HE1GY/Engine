@@ -87,6 +87,8 @@ namespace Engine
 			}
 		}
 
+		OnOverlayRender();
+
 		m_frame_buffer->UnBind();
 	}
 
@@ -108,12 +110,70 @@ namespace Engine
 
 		  DrawViewportWindow();
 
-		  DrawStatsWindow();
+		  DrawSettingsWindow();
 
 		  DrawToolbar();
 		  m_scene_hierarchy_panel.OnImGuiRender();
 		});
 
+	}
+
+	void EngineEditorLayer::OnOverlayRender()
+	{
+
+		switch (m_scene_state)
+		{
+		case SceneState::Play:
+		{
+			const auto& camera_entity = m_active_scene->GetPrimaryCameraEntity();
+			Renderer2D::BeginScene(camera_entity.GetComponent<CameraComponent>().camera,
+					camera_entity.GetComponent<TransformComponent>().get_transformation());
+			break;
+		}
+		case SceneState::Edit:
+		{
+			Renderer2D::BeginScene(m_editor_camera);
+			break;
+		}
+		}
+		if (m_show_colliders)
+		{
+			{
+				auto view = m_active_scene->GetAllEntitiesWith<TransformComponent, CircleCollider2DComponent>();
+
+				for (auto entity : view)
+				{
+					const auto [tr_cmp, cc2d_cmp] = view.get<TransformComponent, CircleCollider2DComponent>(entity);
+
+					glm::mat4 transformation = glm::translate(glm::mat4(1.0f),
+							{ tr_cmp.translation.x + cc2d_cmp.offset.x, tr_cmp.translation.y + cc2d_cmp.offset.y,
+							  tr_cmp.translation.z + 0.005f })
+							* glm::scale(glm::mat4(1.0f), cc2d_cmp.radius * tr_cmp.scale * 2.0f);
+
+					Renderer2D::DrawCircle(transformation, { 0, 1, 0, 1 }, 0.05f, 0);
+				}
+			}
+
+			{
+				auto view = m_active_scene->GetAllEntitiesWith<TransformComponent, BoxCollider2DComponent>();
+
+				for (auto entity : view)
+				{
+					const auto [tr_cmp, bc2d_cmp] = view.get<TransformComponent, BoxCollider2DComponent>(entity);
+
+					glm::mat4 transformation = glm::translate(glm::mat4(1.0f),
+							{ tr_cmp.translation.x + bc2d_cmp.offset.x, tr_cmp.translation.y + bc2d_cmp.offset.y,
+							  tr_cmp.translation.z + 0.005f })
+							* glm::rotate(glm::mat4(1.0f), tr_cmp.rotation.z, { 0, 0, 1 })
+							* glm::scale(glm::mat4(1.0f),
+									glm::vec3{ bc2d_cmp.size.x, bc2d_cmp.size.y, 1 } * tr_cmp.scale * 2.0f);
+
+					Renderer2D::SetLineWidth(1.0f);
+					Renderer2D::DrawRect(transformation, { 0, 1, 0, 1 }, 0);
+				}
+			}
+		}
+		Renderer2D::EndScene();
 	}
 
 	void EngineEditorLayer::DrawDockSpace(std::function<void()> func)
@@ -157,7 +217,7 @@ namespace Engine
 		ImGui::End();
 	}
 
-	void EngineEditorLayer::DrawStatsWindow()
+	void EngineEditorLayer::DrawSettingsWindow()
 	{
 		auto stats = Engine::Renderer2D::GetStats();
 		ImGui::Begin("Stats");
@@ -167,6 +227,12 @@ namespace Engine
 		ImGui::Text("quads: %d", stats.quads);
 		ImGui::Text("indices: %d", stats.get_indices());
 		ImGui::Text("vertices: %d", stats.get_vertices());
+
+		ImGui::End();
+
+		ImGui::Begin("Settings");
+
+		ImGui::Checkbox("Show Colliders", &m_show_colliders);
 
 		ImGui::End();
 	}

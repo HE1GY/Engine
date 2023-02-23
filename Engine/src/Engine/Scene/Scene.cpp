@@ -315,7 +315,7 @@ namespace Engine
 
 				b2CircleShape circle_shape;
 
-				circle_shape.m_radius = cc2d.radius;
+				circle_shape.m_radius = cc2d.radius * transform.scale.x;
 				circle_shape.m_p = { cc2d.offset.x, cc2d.offset.y };
 
 				b2FixtureDef fixture_def;

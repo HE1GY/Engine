@@ -555,7 +555,6 @@ namespace Engine
 	Renderer2D::DrawCircle(const glm::mat4& transformation, const CircleRendererComponent& component, int32_t entity_id)
 	{
 		PROFILER_FUNCTION();
-
 		for (int i = 0; i < 4; ++i)
 		{
 			s_data.circle_vertex_buffer_ptr->world_position = transformation * s_data.quad_vertices[i];
@@ -563,6 +562,27 @@ namespace Engine
 			s_data.circle_vertex_buffer_ptr->color = component.color;
 			s_data.circle_vertex_buffer_ptr->thickness = component.thickness;
 			s_data.circle_vertex_buffer_ptr->fade = component.fade;
+			s_data.circle_vertex_buffer_ptr->entity_id = entity_id;
+
+			s_data.circle_vertex_buffer_ptr++;
+		}
+
+		s_data.circle_index_count += 6;
+
+		s_data.stats.quads++;
+
+	}
+	void Renderer2D::DrawCircle(const glm::mat4& transformation, const glm::vec4& color, float thickness,
+			int32_t entity_id)
+	{
+		PROFILER_FUNCTION();
+		for (int i = 0; i < 4; ++i)
+		{
+			s_data.circle_vertex_buffer_ptr->world_position = transformation * s_data.quad_vertices[i];
+			s_data.circle_vertex_buffer_ptr->local_position = s_data.quad_vertices[i] * 2.0f;
+			s_data.circle_vertex_buffer_ptr->color = color;
+			s_data.circle_vertex_buffer_ptr->thickness = thickness;
+			s_data.circle_vertex_buffer_ptr->fade = 0.05f;
 			s_data.circle_vertex_buffer_ptr->entity_id = entity_id;
 
 			s_data.circle_vertex_buffer_ptr++;

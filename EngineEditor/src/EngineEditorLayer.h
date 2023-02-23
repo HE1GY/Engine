@@ -31,6 +31,8 @@ namespace Engine
 			Play, Edit,
 		};
 	private:
+		void OnOverlayRender();
+
 		bool OnKeyPress(KeyPress& event);
 		bool OnMouseButtonPress(MouseButtonPressed& event);
 		void NewScene();
@@ -41,7 +43,7 @@ namespace Engine
 		void OnSceneStop();
 
 		void DrawDockSpace(std::function<void()> func);
-		void DrawStatsWindow();
+		void DrawSettingsWindow();
 		void DrawGizmo();
 		void DrawViewportWindow();
 		void DrawFileMenu();
@@ -72,6 +74,8 @@ namespace Engine
 		Ref<Texture2D> m_stop_icon;
 
 		std::filesystem::path m_editor_scene_path;
+
+		bool m_show_colliders{ false };
 	};
 
 }

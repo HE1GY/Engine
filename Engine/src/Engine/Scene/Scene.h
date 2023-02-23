@@ -39,6 +39,12 @@ namespace Engine
 
 		Entity GetPrimaryCameraEntity();
 
+		template<typename... Components>
+		auto GetAllEntitiesWith()
+		{
+			return m_registry.view<Components...>();
+		}
+
 	private:
 		entt::registry m_registry;
 
