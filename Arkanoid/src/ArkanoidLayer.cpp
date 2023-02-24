@@ -29,11 +29,13 @@ namespace Arkanoid
 		quad.AddComponent<SpriteRendererComponent>().texture = Texture2D::Create(
 				"../../../Arkanoid/assets/textures/31-Breakout-Tiles.png");
 		auto& transform_cmp = quad.GetComponent<TransformComponent>();
-		transform_cmp.translation = { 0, -0.5f + 0.02, 0 };
-		transform_cmp.scale = { 0.2, 0.04, 1 };
+		transform_cmp.translation = { 0.5f, -0.5, 0 };
+		transform_cmp.scale = { 0.4, 0.2, 1 };
 
-		//quad.AddComponent<NativeScriptComponent>().Bind<Scripts::PlayerController>();
+		quad.AddComponent<NativeScriptComponent>().Bind<Scripts::PlayerController>();
 		//	quad.AddComponent<Box2DComponent>();
+
+
 
 		Entity ball = m_scene->CreateEntity("Ball");
 		TransformComponent& transform_cmp_ball = ball.GetComponent<TransformComponent>();
@@ -44,7 +46,7 @@ namespace Arkanoid
 				"../../../Arkanoid/assets/textures/63-Breakout-Tiles.png");
 		const std::array<glm::vec2, 2>& camera_bound = camera.GetOrthographicBound();
 
-		/*auto& nsc = ball.AddComponent<NativeScriptComponent>();
+		auto& nsc = ball.AddComponent<NativeScriptComponent>();
 		nsc.Bind<Scripts::BallController>([&](auto& instance)
 		{
 		  auto ball_controller = static_cast<Scripts::BallController*>(instance.get());
@@ -53,7 +55,7 @@ namespace Arkanoid
 			CreateLevel();
 		  };
 
-		});*/
+		});
 
 		//ball.AddComponent<Circle2DComponent>();
 
@@ -109,7 +111,7 @@ namespace Arkanoid
 
 	void ArkanoidLayer::CreateLevel()
 	{
-		//m_scene = CreateRef<Scene>();
+		m_scene = CreateRef<Scene>();
 	}
 
 }
