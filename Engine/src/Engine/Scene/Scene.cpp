@@ -62,11 +62,7 @@ namespace Engine
 	}
 	Scene::~Scene()
 	{
-		m_registry.each([=](auto entity)
-		{
-		  Entity e = { entity, this };
-		  DestroyEntity(e);
-		});
+		Clean();
 		if (m_physics_world)delete m_physics_world;
 	}
 
@@ -145,9 +141,24 @@ namespace Engine
 		if (entity.HasComponent<NativeScriptComponent>())
 		{
 			auto& nsc = entity.GetComponent<NativeScriptComponent>();
-			nsc.instance->OnDestroy();
+			if (nsc.instance)
+			{
+				nsc.instance->OnDestroy();
+
+			}
 		}
 		m_registry.destroy(entity);
+	}
+
+	void Scene::Clean()
+	{
+		auto view = m_registry.view<IDComponent>();
+
+		for (auto e : view)
+		{
+			Entity entity{ e, this };
+			DestroyEntity(entity);
+		}
 	}
 
 	void Scene::OnUpdateEditor(TimeStep ts, EditorCamera& camera)
@@ -192,10 +203,12 @@ namespace Engine
 			  if (!nsc.instance)
 			  {
 				  nsc.instance = nsc.InstantiateScript();
-				  nsc.AfterInstantiateScript(nsc.instance);
+
 				  nsc.instance->m_entity = Entity(entity, this);
 				  nsc.instance->m_scene = this;
 				  nsc.instance->OnCreate();
+
+				  nsc.AfterInstantiateScript(nsc.instance);
 			  }
 			  nsc.instance->OnUpdate(ts);
 			});

@@ -1,5 +1,6 @@
 #pragma once
 #include <Engine.h>
+#include "Action.h"
 
 namespace Arkanoid
 {
@@ -18,12 +19,13 @@ namespace Arkanoid
 
 		virtual void OnImGuiRender() override;
 	private:
-		void CreateLevel();
 		bool OnResize(WindowResized& event);
 	private:
 		Ref<Texture2D> m_platform_texture;
 
 		Ref<Scene> m_scene;
 		bool m_run{ true };
+
+		Action<> m_restart_level;
 	};
 }

@@ -1,5 +1,6 @@
 #pragma once
 #include <Engine.h>
+#include "../src/Action.h"
 
 namespace Scripts
 {
@@ -7,8 +8,8 @@ namespace Scripts
 	class BallController : public ScriptableEntity
 	{
 	public:
-		ScriptableEvent<> out_of_field;
-		
+		Action<> out_of_field;
+
 		virtual void OnUpdate(TimeStep ts);
 
 		virtual void OnCollision2D(glm::vec2& normal) override;

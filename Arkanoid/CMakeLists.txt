@@ -10,7 +10,7 @@ add_executable(Arkanoid
         scripts/PlayerController.cpp
         scripts/BallController.cpp
         scripts/PlayerController.h
-        scripts/BallController.h scripts/PlatformController.h scripts/PlatformController.cpp)
+        scripts/BallController.h scripts/PlatformController.h scripts/PlatformController.cpp src/Action.h)
 
 target_include_directories(Arkanoid PRIVATE scripts)
 

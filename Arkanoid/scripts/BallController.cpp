@@ -9,7 +9,7 @@ namespace Scripts
 						 2>& camera_bound = GetMainCamera().GetComponent<CameraComponent>().camera.GetOrthographicBound();
 
 		const float ball_speed = 0.7f;
-		m_transform_cmp->translation += m_velocity * ts.GetInSeconds() * ball_speed;
+		m_transform_cmp->translation += m_velocity * 0.02f * ball_speed;
 
 		static bool wall_bounce_side{ false };
 		if ((m_transform_cmp->translation.x > camera_bound[1].x - (m_transform_cmp->scale.x / 2.0f)

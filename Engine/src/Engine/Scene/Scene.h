@@ -29,6 +29,8 @@ namespace Engine
 
 		void DestroyEntity(Entity& entity);
 
+		void Clean();
+
 		void OnUpdateEditor(TimeStep ts, EditorCamera& camera);
 		void OnUpdateRuntime(TimeStep ts);
 
