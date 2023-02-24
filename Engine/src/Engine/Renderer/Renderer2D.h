@@ -42,13 +42,11 @@ namespace Engine
 		static void FlushCircle();
 		static void FlushLine();
 
-		static void DrawQuad(const glm::mat4& transformation, const glm::vec4& color, int32_t entity_id);
+		static void DrawQuad(const glm::mat4& transformation,
+				const Ref<Texture>& texture, const glm::vec4& color, int32_t entity_id);
 
 		static void DrawQuad(const glm::mat4& transformation, const Ref<SubTexture2D>& texture,
 				const glm::vec4& color, int32_t entity_id);
-
-		static void DrawQuad(const glm::mat4& transformation,
-				const Ref<Texture>& texture, const glm::vec4& color, int32_t entity_id);
 
 		static void DrawCircle(const glm::mat4& transformation, const glm::vec4& color, float thickness, float fade,
 				int32_t entity_id);
@@ -56,7 +54,8 @@ namespace Engine
 		static void
 		DrawLine(const glm::vec3& p0, const glm::vec3& p1, const glm::vec4& color, float thickness, int32_t entity_id);
 
-		static void DrawRect(const glm::mat4& transformation, const glm::vec4& color, int32_t entity_id);
+		static void
+		DrawRect(const glm::mat4& transformation, const glm::vec4& color, float thickness, int32_t entity_id);
 
 		static void SetLineWidth(float width);
 

@@ -126,13 +126,13 @@ namespace Engine
 		case SceneState::Play:
 		{
 			const auto& camera_entity = m_active_scene->GetPrimaryCameraEntity();
-			Renderer2D::BeginScene(camera_entity.GetComponent<CameraComponent>().camera,
-					camera_entity.GetComponent<TransformComponent>().get_transformation());
+			Renderer2D::BeginScene(camera_entity.GetComponent<CameraComponent>().camera.GetProjection(),
+					glm::inverse(camera_entity.GetComponent<TransformComponent>().get_transformation()));
 			break;
 		}
 		case SceneState::Edit:
 		{
-			Renderer2D::BeginScene(m_editor_camera);
+			Renderer2D::BeginScene(m_editor_camera.GetProjection(), m_editor_camera.GetViewMatrix());
 			break;
 		}
 		}
@@ -150,7 +150,7 @@ namespace Engine
 							  tr_cmp.translation.z + 0.005f })
 							* glm::scale(glm::mat4(1.0f), cc2d_cmp.radius * tr_cmp.scale * 2.0f);
 
-					Renderer2D::DrawCircle(transformation, { 0, 1, 0, 1 }, 0.05f, 0);
+					Renderer2D::DrawCircle(transformation, { 0, 1, 0, 1 }, 0.05f, 0.005f, 0);
 				}
 			}
 
@@ -168,8 +168,7 @@ namespace Engine
 							* glm::scale(glm::mat4(1.0f),
 									glm::vec3{ bc2d_cmp.size.x, bc2d_cmp.size.y, 1 } * tr_cmp.scale * 2.0f);
 
-					Renderer2D::SetLineWidth(1.0f);
-					Renderer2D::DrawRect(transformation, { 0, 1, 0, 1 }, 0);
+					Renderer2D::DrawRect(transformation, { 0, 1, 0, 1 }, 1.0f, 0);
 				}
 			}
 		}
@@ -225,6 +224,8 @@ namespace Engine
 		ImGui::Text("FPS: %d", (int)m_fps);
 		ImGui::Text("draw calls: %d", stats.draw_calls);
 		ImGui::Text("quads: %d", stats.quads);
+		ImGui::Text("circle: %d", stats.circles);
+		ImGui::Text("lines: %d", stats.lines);
 		ImGui::Text("indices: %d", stats.GetIndices());
 		ImGui::Text("vertices: %d", stats.GetVertices());
 
@@ -491,8 +492,6 @@ namespace Engine
 		}
 	}
 
-<<<<<<< HEAD
-=======
 	void EngineEditorLayer::SaveScene()
 	{
 		if (!m_editor_scene_path.empty())
@@ -506,7 +505,6 @@ namespace Engine
 		}
 	}
 
->>>>>>> master
 	bool EngineEditorLayer::OnMouseButtonPress(MouseButtonPressed& event)
 	{
 		if (event.get_key() == (int)MouseButtonCode::E_MOUSE_BUTTON_LEFT)

@@ -3,36 +3,108 @@
 
 #include "Renderer2D.h"
 #include "RendererCommand.h"
-#include "Batch2D.h"
+#include "Batch.h"
+#include "Shader.h"
 
 namespace Engine
 {
+	struct QuadVertex
+	{
+		glm::vec3 position;
+		glm::vec4 color;
+		glm::vec2 tex_coord;
+		uint32_t texture_slot;
+
+		//for editor
+		int32_t entity_id{ 0 };
+	};
+	struct CircleVertex
+	{
+		glm::vec3 position;
+		glm::vec3 local_position;
+		glm::vec4 color;
+		float thickness;
+		float fade;
+
+		//for editor
+		int32_t entity_id{ 0 };
+	};
+
+	struct LineVertex
+	{
+		glm::vec3 position;
+		glm::vec4 color;
+		int32_t entity_id{ 0 };
+	};
+
 	struct Renderer2DData
 	{
 		Renderer2DData()
 		{
-			quad_batch = CreateScope<Batch2D<QuadVertex>>(
-					"../../../Sandbox/assets/shaders/default_2D_shader.glsl", Primitive::Quad);
+			quad_batch = CreateScope<Batch<QuadVertex>>(
+					BufferLayout({
+							{ ShaderDataType::Float3, "a_position" },
+							{ ShaderDataType::Float4, "a_color" },
+							{ ShaderDataType::Float2, "a_tex_coord" },
+							{ ShaderDataType::Int, "a_tex_slot" },
+							{ ShaderDataType::Int, "a_entity_id" }})
+			);
+			quad_shader = Shader::Create("../../../Sandbox/assets/shaders/default_2D_shader.glsl");
 
-			circle_batch = CreateScope<Batch2D<CircleVertex>>(
-					"../../../Sandbox/assets/shaders/default_2D_circle_shader.glsl", Primitive::Circle);
+			int sampler[Renderer2D::k_max_texture_slot];
+			for (int i = 0; i < Renderer2D::k_max_texture_slot; ++i)
+			{
+				sampler[i] = i;
+			}
+			quad_shader->Bind();
+			quad_shader->SetIntArray("u_texture2D", sampler, Renderer2D::k_max_texture_slot);
 
-			line_batch = CreateScope<Batch2D<LineVertex>>(
-					"../../../Sandbox/assets/shaders/default_2D_line_shader.glsl", Primitive::Line);
+			circle_batch = CreateScope<Batch<CircleVertex>>(
+					BufferLayout({
+							{ ShaderDataType::Float3, "a_position", },
+							{ ShaderDataType::Float3, "a_local" },
+							{ ShaderDataType::Float4, "a_color" },
+							{ ShaderDataType::Float, "a_thickness" },
+							{ ShaderDataType::Float, "a_fade", },
+							{ ShaderDataType::Int, "a_entity_id" }
+					}));
+			circle_shader = Shader::Create("../../../Sandbox/assets/shaders/default_2D_circle_shader.glsl");
+
+			line_batch = CreateScope<Batch<LineVertex>>(
+					BufferLayout({
+							{ ShaderDataType::Float3, "a_position", },
+							{ ShaderDataType::Float4, "a_color" },
+							{ ShaderDataType::Int, "a_entity_id" }
+					}));
+			line_shader = Shader::Create("../../../Sandbox/assets/shaders/default_2D_line_shader.glsl");
+
+			quad_vertices[0] = { -0.5f, -0.5f, 0, 1 };
+			quad_vertices[1] = { 0.5f, -0.5f, 0, 1 };
+			quad_vertices[2] = { 0.5f, 0.5f, 0, 1 };
+			quad_vertices[3] = { -0.5f, 0.5f, 0, 1 };
 
 			white_texture = Texture2D::Create(1, 1);
 			uint32_t tex_data = 0xffffffff;
 			white_texture->SetData(&tex_data, sizeof(tex_data));
+			textures[0] = white_texture;
 
-			camera_matrices = UniformBuffer::Create({{ ShaderDataType::Mat4, "projection" },
-													 { ShaderDataType::Mat4, "view" }}, 2);
+			camera_matrices = UniformBuffer::Create(
+					{{ ShaderDataType::Mat4, "projection" }, { ShaderDataType::Mat4, "view" }}, 2);
 		}
 
-		Scope<Batch2D<QuadVertex>> quad_batch;
-		Scope<Batch2D<CircleVertex>> circle_batch;
-		Scope<Batch2D<LineVertex>> line_batch;
+		Scope<Batch<QuadVertex>> quad_batch;
+		Scope<Batch<CircleVertex>> circle_batch;
+		Scope<Batch<LineVertex>> line_batch;
+
+		std::array<glm::vec4, 4> quad_vertices;
+
+		Ref<Shader> quad_shader;
+		Ref<Shader> circle_shader;
+		Ref<Shader> line_shader;
 
 		Ref<Texture> white_texture;
+		std::array<Ref<Texture>, Renderer2D::k_max_texture_slot> textures;
+		uint32_t texture_count = { 1 };
 
 		Ref<UniformBuffer> camera_matrices;
 
@@ -62,6 +134,7 @@ namespace Engine
 		s_data->circle_batch->Begin();
 		s_data->line_batch->Begin();
 	}
+
 	void Renderer2D::EndScene()
 	{
 		s_data->quad_batch->End();
@@ -72,57 +145,89 @@ namespace Engine
 		FlushCircle();
 		FlushLine();
 	}
+
 	void Renderer2D::FlushQuad()
 	{
-		uint32_t index_count = s_data->quad_batch->GetIndexCount();
-		Ref<VertexArray> va = s_data->quad_batch->Flush();
+		uint32_t index_count = s_data->quad_batch->GetVertexCount() * 6;
+		if (index_count)
+		{
+			Ref<VertexArray> va = s_data->quad_batch->Flush();
 
-		RendererCommand::DrawIndex(va, index_count);
+			for (int i = 0; i < s_data->texture_count; ++i)
+			{
+				s_data->textures[i]->Bind(i);
+			}
+			s_data->quad_shader->Bind();
+			RendererCommand::DrawIndex(va, index_count);
 
-		s_data->stats.draw_calls++;
+			s_data->stats.draw_calls++;
+		}
 	}
+
 	void Renderer2D::FlushCircle()
 	{
-		uint32_t index_count = s_data->circle_batch->GetIndexCount();
-		std::shared_ptr<VertexArray> va = s_data->circle_batch->Flush();
+		uint32_t index_count = s_data->circle_batch->GetVertexCount() * 6;
+		if (index_count)
+		{
+			std::shared_ptr<VertexArray> va = s_data->circle_batch->Flush();
+			s_data->circle_shader->Bind();
+			RendererCommand::DrawIndex(va, index_count);
 
-		RendererCommand::DrawIndex(va, index_count);
-
-		s_data->stats.draw_calls++;
+			s_data->stats.draw_calls++;
+		}
 	}
+
 	void Renderer2D::FlushLine()
 	{
-		uint32_t index_count = s_data->line_batch->GetIndexCount();
-		std::shared_ptr<VertexArray> va = s_data->line_batch->Flush();
+		uint32_t index_count = s_data->line_batch->GetVertexCount() * 2;
+		if (index_count)
+		{
+			std::shared_ptr<VertexArray> va = s_data->line_batch->Flush();
 
-		RendererCommand::DrawLine(va, index_count);
+			s_data->line_shader->Bind();
+			RendererCommand::DrawLine(va, index_count);
 
-		s_data->stats.draw_calls++;
+			s_data->stats.draw_calls++;
+		}
 	}
 
-	//
 	void Renderer2D::DrawQuad(const glm::mat4& transformation,
 			const Ref<Texture>& texture, const glm::vec4& color, int32_t entity_id)
 	{
-		const Ref<Texture>& texture_to_draw = texture ? texture : s_data->white_texture;
+		uint32_t texture_slot{ 0 };
+		if (texture)
+		{
+			for (int i = 1; i < s_data->texture_count; ++i)
+			{
+				if (texture->GetRendererId() == s_data->textures[i]->GetRendererId())
+				{
+					texture_slot = i;
+				}
+			}
+			if (texture_slot == 0)
+			{
+				texture_slot = s_data->texture_count;
+				s_data->textures[texture_slot] = texture;
+				s_data->texture_count++;
+			}
+		}
 
-		bool full = !s_data->quad_batch->Add(transformation, texture_to_draw, color, entity_id);
+		bool full = false;
+		for (int i = 0; i < 4; ++i)
+		{
+			full |= !s_data->quad_batch->AddIfCan(
+					{ transformation * s_data->quad_vertices[i],
+					  color,
+					  { i > 0 && i < 3 ? 1 : 0, i > 1 ? 1 : 0 },
+					  texture_slot,
+					  entity_id });
+		}
 
 		if (full)
 		{
+			s_data->quad_batch->End();
 			FlushQuad();
-		}
-
-		s_data->stats.quads++;
-	}
-	void Renderer2D::DrawQuad(const glm::mat4& transformation, const glm::vec4& color, int32_t entity_id)
-	{
-		bool full = !s_data->quad_batch->Add(transformation, s_data->white_texture, color, entity_id);
-
-		if (full)
-		{
-			FlushQuad();
-		}
+		};
 
 		s_data->stats.quads++;
 	}
@@ -130,40 +235,60 @@ namespace Engine
 	void Renderer2D::DrawQuad(const glm::mat4& transformation, const Ref<SubTexture2D>& texture,
 			const glm::vec4& color, int32_t entity_id)
 	{
-		//TODO sub texture
+		/*//TODO sub texture
 		bool full = !s_data->quad_batch->Add(transformation, s_data->white_texture, color, entity_id);
 
 		if (full)
 		{
 			FlushQuad();
 		}
-		s_data->stats.quads++;
+		s_data->stats.quads++;*/
 	}
 
-	//
 	void
 	Renderer2D::DrawCircle(const glm::mat4& transformation, const glm::vec4& color, float thickness, float fade,
 			int32_t entity_id)
 	{
-		bool full = !s_data->circle_batch->Add(transformation, color, thickness, fade, entity_id);
+		bool full = false;
+		for (int i = 0; i < 4; ++i)
+		{
+			full |= !s_data->circle_batch->AddIfCan(
+					{ transformation * s_data->quad_vertices[i],
+					  s_data->quad_vertices[i] * 2.0f,
+					  color,
+					  thickness,
+					  fade,
+					  entity_id });
+		}
 
 		if (full)
 		{
+			s_data->circle_batch->End();
 			FlushCircle();
-		}
+		};
+
 		s_data->stats.circles++;
 	}
-	//
+
 	void Renderer2D::DrawLine(const glm::vec3& p0, const glm::vec3& p1, const glm::vec4& color, float thickness,
 			int32_t entity_id)
 	{
-		SetLineWidth(thickness);
-		bool full = !s_data->line_batch->Add(p0, p1, color, entity_id);
+		bool full = false;
+
+		full |= !s_data->line_batch->AddIfCan(
+				{ p0,
+				  color,
+				  entity_id });
+		full |= !s_data->line_batch->AddIfCan(
+				{ p1,
+				  color,
+				  entity_id });
 
 		if (full)
 		{
+			s_data->line_batch->End();
 			FlushLine();
-		}
+		};
 
 		s_data->stats.lines++;
 	}
@@ -173,12 +298,19 @@ namespace Engine
 		RendererCommand::SetLineWidth(width);
 	}
 
-	//
-	void Renderer2D::DrawRect(const glm::mat4& transformation, const glm::vec4& color, int32_t entity_id)
+	void
+	Renderer2D::DrawRect(const glm::mat4& transformation, const glm::vec4& color, float thickness, int32_t entity_id)
 	{
-		CORE_ASSERT(false, "Draw Rect currently not supported");
+		glm::vec3 p0 = { transformation * s_data->quad_vertices[0] };
+		glm::vec3 p1 = { transformation * s_data->quad_vertices[1] };
+		glm::vec3 p2 = { transformation * s_data->quad_vertices[2] };
+		glm::vec3 p3 = { transformation * s_data->quad_vertices[3] };
+
+		DrawLine(p0, p1, color, thickness, entity_id);
+		DrawLine(p1, p2, color, thickness, entity_id);
+		DrawLine(p2, p3, color, thickness, entity_id);
+		DrawLine(p3, p0, color, thickness, entity_id);
 	}
-	//
 
 	Renderer2D::Statistics Renderer2D::GetStats()
 	{
