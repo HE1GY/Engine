@@ -224,6 +224,17 @@ namespace Engine
 			emitter << YAML::EndMap;
 		}
 
+		if (entity.HasComponent<LineRendererComponent>())
+		{
+			emitter << YAML::Key << "LineRendererComponent";
+			auto& component = entity.GetComponent<LineRendererComponent>();
+
+			emitter << YAML::BeginMap;
+			emitter << YAML::Key << "Color" << YAML::Value << component.color;
+			emitter << YAML::Key << "Thickness" << YAML::Value << component.thickness;
+			emitter << YAML::EndMap;
+		}
+
 		if (entity.HasComponent<Rigidbody2DComponent>())
 		{
 			emitter << YAML::Key << "Rigidbody2DComponent";
@@ -402,6 +413,14 @@ namespace Engine
 					circle_renderer_comp.color = circle_renderer_comp_node["Color"].as<glm::vec4>();
 					circle_renderer_comp.thickness = circle_renderer_comp_node["Thickness"].as<float>();
 					circle_renderer_comp.fade = circle_renderer_comp_node["Fade"].as<float>();
+				}
+
+				auto line_renderer_comp_node = entity["LineRendererComponent"];
+				if (line_renderer_comp_node)
+				{
+					auto& comp = deserialized_entity.AddComponent<LineRendererComponent>();
+					comp.color = circle_renderer_comp_node["Color"].as<glm::vec4>();
+					comp.thickness = circle_renderer_comp_node["Thickness"].as<float>();
 				}
 
 				auto rigidbody2d_comp_node = entity["Rigidbody2DComponent"];

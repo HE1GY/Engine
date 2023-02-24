@@ -7,7 +7,7 @@
 
 namespace Engine
 {
-	static uint32_t ShaderDataTypeSize(ShaderDataType type)
+	uint32_t ShaderDataTypeSize(ShaderDataType type)
 	{
 		switch (type)
 		{
@@ -134,4 +134,18 @@ namespace Engine
 			return nullptr;
 		}
 	}
+
+	Ref<UniformBuffer> UniformBuffer::Create(BufferLayout layout, uint32_t binding_point)
+	{
+		switch (RendererAPI::get_renderer_API())
+		{
+		case RendererAPI::API::OpenGL:
+			return CreateRef<OpenGLUniformBuffer>(layout, binding_point);
+
+		default:
+		CORE_ASSERT(false, "Renderer API = None");
+			return nullptr;
+		}
+	}
+
 } // namespace Engine

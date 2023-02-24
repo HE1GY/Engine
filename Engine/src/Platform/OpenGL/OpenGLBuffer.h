@@ -43,4 +43,19 @@ namespace Engine
 		GLuint m_renderer_id;
 		uint32_t m_count;
 	};
+
+	class OpenGLUniformBuffer : public UniformBuffer
+	{
+	public:
+		OpenGLUniformBuffer(BufferLayout layout, uint32_t binding_point);
+		virtual ~OpenGLUniformBuffer();
+		virtual void Bind() override;
+		virtual void UnBind() override;
+
+		virtual void Set(BufferElement element, const void* value) override;
+	private:
+		BufferLayout m_layout;
+		uint32_t m_renderer_id;
+		uint32_t m_binding_point;
+	};
 } // namespace Engine

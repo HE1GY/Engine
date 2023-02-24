@@ -49,6 +49,13 @@ namespace Engine
 		float fade = 0.005f;
 	};
 
+	struct LineRendererComponent
+	{
+		std::vector<glm::vec3> points;
+		glm::vec4 color{ 1, 1, 1, 1 };
+		float thickness = 1.0f;
+	};
+
 	struct TagComponent
 	{
 		TagComponent(const std::string& tag)

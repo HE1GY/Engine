@@ -46,7 +46,7 @@ namespace Engine
 			sampler[i] = i;
 		}
 		m_shader->Bind();
-		m_shader->SetIntArray("u_textures", sampler, sizeof(sampler));
+		m_shader->SetIntArray("u_texture2D", sampler, Renderer2D::k_max_texture_slot);
 
 		m_va = VertexArray::Create();
 		m_va->Bind();
@@ -134,15 +134,15 @@ namespace Engine
 		if (m_index_count >= Renderer2D::k_max_indices)
 			return false;
 
-		int32_t texture_slot{ 0 };
-		for (int i = 1; i < m_texture_count; ++i)
+		int32_t texture_slot{ -1 };
+		for (int i = 0; i < m_texture_count; ++i)
 		{
 			if (texture->GetRendererId() == m_textures[i]->GetRendererId())
 			{
 				texture_slot = i;
 			}
 		}
-		if (texture_slot == 0)
+		if (texture_slot == -1)
 		{
 			texture_slot = (float)m_texture_count;
 			m_textures[texture_slot] = texture;

@@ -1,4 +1,5 @@
 #include <glm/ext/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 #include "Renderer2D.h"
 #include "RendererCommand.h"
@@ -22,6 +23,9 @@ namespace Engine
 			white_texture = Texture2D::Create(1, 1);
 			uint32_t tex_data = 0xffffffff;
 			white_texture->SetData(&tex_data, sizeof(tex_data));
+
+			camera_matrices = UniformBuffer::Create({{ ShaderDataType::Mat4, "projection" },
+													 { ShaderDataType::Mat4, "view" }}, 2);
 		}
 
 		Scope<Batch2D<QuadVertex>> quad_batch;
@@ -29,6 +33,8 @@ namespace Engine
 		Scope<Batch2D<LineVertex>> line_batch;
 
 		Ref<Texture> white_texture;
+
+		Ref<UniformBuffer> camera_matrices;
 
 		Renderer2D::Statistics stats;
 	};
@@ -46,7 +52,11 @@ namespace Engine
 
 	void Renderer2D::BeginScene(const glm::mat4& projection, const glm::mat4& view)
 	{
-		//Uniform buffer
+		s_data->camera_matrices->Bind();
+		s_data->camera_matrices->Set({ ShaderDataType::Mat4, "projection" },
+				(const void*)glm::value_ptr(projection));
+		s_data->camera_matrices->Set({ ShaderDataType::Mat4, "view" },
+				(const void*)glm::value_ptr(view));
 
 		s_data->quad_batch->Begin();
 		s_data->circle_batch->Begin();
@@ -94,7 +104,9 @@ namespace Engine
 	void Renderer2D::DrawQuad(const glm::mat4& transformation,
 			const Ref<Texture>& texture, const glm::vec4& color, int32_t entity_id)
 	{
-		bool full = !s_data->quad_batch->Add(transformation, texture, color, entity_id);
+		const Ref<Texture>& texture_to_draw = texture ? texture : s_data->white_texture;
+
+		bool full = !s_data->quad_batch->Add(transformation, texture_to_draw, color, entity_id);
 
 		if (full)
 		{
@@ -114,11 +126,11 @@ namespace Engine
 
 		s_data->stats.quads++;
 	}
+
 	void Renderer2D::DrawQuad(const glm::mat4& transformation, const Ref<SubTexture2D>& texture,
 			const glm::vec4& color, int32_t entity_id)
 	{
 		//TODO sub texture
-
 		bool full = !s_data->quad_batch->Add(transformation, s_data->white_texture, color, entity_id);
 
 		if (full)
@@ -164,7 +176,7 @@ namespace Engine
 	//
 	void Renderer2D::DrawRect(const glm::mat4& transformation, const glm::vec4& color, int32_t entity_id)
 	{
-		//TODO
+		CORE_ASSERT(false, "Draw Rect currently not supported");
 	}
 	//
 

@@ -95,6 +95,7 @@ namespace Engine
 		CopyComponent<CameraComponent>(dst_registry, src_registry, dst_entity_ids);
 		CopyComponent<SpriteRendererComponent>(dst_registry, src_registry, dst_entity_ids);
 		CopyComponent<CircleRendererComponent>(dst_registry, src_registry, dst_entity_ids);
+		CopyComponent<LineRendererComponent>(dst_registry, src_registry, dst_entity_ids);
 		CopyComponent<Rigidbody2DComponent>(dst_registry, src_registry, dst_entity_ids);
 		CopyComponent<BoxCollider2DComponent>(dst_registry, src_registry, dst_entity_ids);
 		CopyComponent<CircleCollider2DComponent>(dst_registry, src_registry, dst_entity_ids);
@@ -130,6 +131,7 @@ namespace Engine
 		CopyComponent<CameraComponent>(new_entity, entity);
 		CopyComponent<SpriteRendererComponent>(new_entity, entity);
 		CopyComponent<CircleRendererComponent>(new_entity, entity);
+		CopyComponent<LineRendererComponent>(new_entity, entity);
 		CopyComponent<Rigidbody2DComponent>(new_entity, entity);
 		CopyComponent<BoxCollider2DComponent>(new_entity, entity);
 		CopyComponent<CircleCollider2DComponent>(new_entity, entity);
@@ -244,7 +246,7 @@ namespace Engine
 		//Render
 		if (main_camera)
 		{
-			Renderer2D::BeginScene(main_camera->GetProjection(), cam_transform);
+			Renderer2D::BeginScene(main_camera->GetProjection(), glm::inverse(cam_transform));
 
 			auto group = m_registry.group<TransformComponent>(entt::get<SpriteRendererComponent>);
 			for (auto entity : group)
@@ -261,7 +263,21 @@ namespace Engine
 				Renderer2D::DrawCircle(transform.get_transformation(), circle_renderer.color, circle_renderer.thickness,
 						circle_renderer.fade, (int32_t)entity);
 			}
+			{
+				auto view = m_registry.view<TransformComponent, LineRendererComponent>();
+				for (auto entity : view)
+				{
+					auto [transform, line_renderer] = m_registry.get<TransformComponent, LineRendererComponent>(
+							entity);
 
+					for (int i = 0; i < line_renderer.points.size() - 1; i++)
+					{
+						glm::vec3 p = line_renderer.points[i];
+						glm::vec3 p1 = line_renderer.points[i + 1];
+						Renderer2D::DrawLine(p, p1, line_renderer.color, line_renderer.thickness, (int32_t)entity);
+					}
+				}
+			}
 			Renderer2D::EndScene();
 		}
 		else

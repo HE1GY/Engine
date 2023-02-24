@@ -86,6 +86,7 @@ namespace Engine
 
 		glDeleteTextures(1, &m_renderer_id);
 	}
+
 	void OpenGLTexture2D::Bind(uint32_t slot)
 	{
 		PROFILER_FUNCTION();

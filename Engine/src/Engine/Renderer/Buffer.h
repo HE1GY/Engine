@@ -9,7 +9,7 @@ namespace Engine
 		None = 0, Float, Float2, Float3, Float4, Int, Int2, Int3, Int4, Mat3, Mat4, Bool,
 	};
 
-	static uint32_t ShaderDataTypeSize(ShaderDataType type);
+	uint32_t ShaderDataTypeSize(ShaderDataType type);
 
 	struct BufferElement
 	{
@@ -22,6 +22,11 @@ namespace Engine
 		BufferElement(ShaderDataType type, const std::string& name, bool normalized = false);
 
 		uint32_t GetComponentCount() const;
+
+		bool operator==(const BufferElement& other)
+		{
+			return type == other.type && name == other.name;
+		}
 
 	};
 
@@ -92,4 +97,22 @@ namespace Engine
 
 		virtual inline uint32_t get_count() = 0;
 	};
+
+	class UniformBuffer
+	{
+	public:
+		static Ref<UniformBuffer> Create(BufferLayout layout, uint32_t binding_point);
+
+		virtual ~UniformBuffer()
+		{
+		};
+
+		virtual void Bind() = 0;
+
+		virtual void UnBind() = 0;
+
+		virtual void Set(BufferElement element, const void* value) = 0;
+
+	};
+
 }; // namespace Engine

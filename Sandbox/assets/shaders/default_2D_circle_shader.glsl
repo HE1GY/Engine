@@ -8,7 +8,11 @@ layout(location=3)in float a_thickness;
 layout(location=4)in float a_fade;
 layout(location=5)in int a_entity_id;
 
-uniform mat4 u_view_projection;
+layout(std140, binding =2) uniform Matrix
+{
+    mat4 projection;
+    mat4 view;
+};
 
 out vec3 v_local;
 out vec4 v_color;
@@ -25,7 +29,7 @@ void main()
     v_fade=a_fade;
     v_entity_id= a_entity_id;
 
-    gl_Position=u_view_projection*vec4(a_position, 1);
+    gl_Position=projection*view*vec4(a_position, 1);
 }
 
 #type fragment

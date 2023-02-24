@@ -207,6 +207,7 @@ namespace Engine
 	{
 		ASSERT(m_renderer_id);
 		GLint location = glGetUniformLocation(m_renderer_id, name.c_str());
+		if (location < 0)WARN("Uniform {0} not found", name);
 		glUniform1iv(location, count, value);
 	}
 
