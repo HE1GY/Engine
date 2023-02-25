@@ -15,7 +15,7 @@ namespace Engine
 		EditorCamera() = default;
 		EditorCamera(float fov, float aspectRatio, float nearClip, float farClip);
 
-		void OnUpdate(TimeStep ts);
+		void OnUpdate(TimeStep ts, bool view_port_hovered);
 		void OnEvent(Event& e);
 
 		inline float GetDistance() const

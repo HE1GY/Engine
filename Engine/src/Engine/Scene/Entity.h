@@ -73,9 +73,9 @@ namespace Engine
 			return m_entity_handler != entt::null;
 		}
 
-		operator uint32_t()
+		operator int32_t()
 		{
-			return (uint32_t)m_entity_handler;
+			return (int32_t)m_entity_handler;
 		}
 
 		operator entt::entity()

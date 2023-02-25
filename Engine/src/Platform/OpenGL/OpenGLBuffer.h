@@ -16,10 +16,10 @@ namespace Engine
 		virtual void Bind() override;
 		virtual void UnBind() override;
 
-		virtual void SetData(void* data, int32_t size) override;
+		virtual void SetData(void* data, uint32_t size) override;
 
 		virtual void SetLayout(BufferLayout layout) override;
-		virtual BufferLayout& get_layout() override;
+		virtual BufferLayout& GetLayout() override;
 
 	private:
 		GLuint m_renderer_id;

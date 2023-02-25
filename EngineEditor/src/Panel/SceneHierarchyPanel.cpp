@@ -184,7 +184,7 @@ namespace Engine
 		ImGuiTreeNodeFlags flag =
 				((m_selection_entity == entity) ? ImGuiTreeNodeFlags_Selected : 0) | ImGuiTreeNodeFlags_OpenOnArrow
 						| ImGuiTreeNodeFlags_SpanAvailWidth;
-		bool open = ImGui::TreeNodeEx((void*)(uint64_t)(uint32_t)entity, flag, tc.tag.c_str());
+		bool open = ImGui::TreeNodeEx((void*)(int64_t)(int32_t)entity, flag, tc.tag.c_str());
 
 		if (ImGui::IsItemClicked())
 		{
@@ -321,8 +321,10 @@ namespace Engine
 		  ImGui::Checkbox("Primary", &cam_cmp.primary);
 
 		  const char* projection_type_string[] = { "Perspective", "Orthographic" };
-		  const char* current_projection_type_string = projection_type_string[(int)cam_cmp.camera.get_projection_type()];
-		  if (ImGui::BeginCombo("Projection", current_projection_type_string))
+		  const char* current_projection_type_string = projection_type_string[(int)cam_cmp.camera.GetProjectionType()];
+		  ImGui::Text("Projection");
+		  ImGui::SameLine();
+		  if (ImGui::BeginCombo("##Projection", current_projection_type_string))
 		  {
 			  for (int i = 0; i < 2; ++i)
 			  {
@@ -330,7 +332,7 @@ namespace Engine
 				  if (ImGui::Selectable(projection_type_string[i], is_selected))
 				  {
 					  current_projection_type_string = projection_type_string[i];
-					  cam_cmp.camera.SetProjectionType((SceneCamera::ProjectionType)i);
+					  cam_cmp.camera.SetProjectionType((ProjectionType)i);
 				  }
 
 				  if (is_selected)
@@ -340,36 +342,50 @@ namespace Engine
 			  ImGui::EndCombo();
 		  }
 
-		  if (cam_cmp.camera.get_projection_type() == SceneCamera::ProjectionType::Perspective)
+		  if (cam_cmp.camera.GetProjectionType() == ProjectionType::Perspective)
 		  {
 			  float persp_FOV = glm::degrees(cam_cmp.camera.get_perspective_FOV());
 			  float persp_near_clip = cam_cmp.camera.get_perspective_near_clip();
 			  float persp_far_clip = cam_cmp.camera.get_perspective_far_clip();
 
-			  ImGui::DragFloat("FOV", &persp_FOV);
-			  ImGui::DragFloat("Near clip", &persp_near_clip);
-			  ImGui::DragFloat("Far clip", &persp_far_clip);
+			  ImGui::Text("FOV");
+			  ImGui::SameLine();
+			  ImGui::DragFloat("##FOV", &persp_FOV);
+			  ImGui::Text("Near clip");
+			  ImGui::SameLine();
+			  ImGui::DragFloat("##Near clip", &persp_near_clip);
+			  ImGui::Text("Far clip");
+			  ImGui::SameLine();
+			  ImGui::DragFloat("##Far clip", &persp_far_clip);
 
 			  cam_cmp.camera.set_perspective_FOV(glm::radians(persp_FOV));
 			  cam_cmp.camera.set_perspective_near_clip(persp_near_clip);
 			  cam_cmp.camera.set_perspective_far_clip(persp_far_clip);
 		  }
 
-		  if (cam_cmp.camera.get_projection_type() == SceneCamera::ProjectionType::Orthographic)
+		  if (cam_cmp.camera.GetProjectionType() == ProjectionType::Orthographic)
 		  {
 			  float ortho_size = cam_cmp.camera.get_orthographic_size();
 			  float ortho_near_clip = cam_cmp.camera.get_orthographic_near_clip();
 			  float ortho_far_clip = cam_cmp.camera.get_orthographic_far_clip();
 
-			  ImGui::DragFloat("Size", &ortho_size);
-			  ImGui::DragFloat("Near clip", &ortho_near_clip);
-			  ImGui::DragFloat("Far clip", &ortho_far_clip);
+			  ImGui::Text("Size");
+			  ImGui::SameLine();
+			  ImGui::DragFloat("##Size", &ortho_size);
+			  ImGui::Text("Near clip");
+			  ImGui::SameLine();
+			  ImGui::DragFloat("##Near clip", &ortho_near_clip);
+			  ImGui::Text("Far clip");
+			  ImGui::SameLine();
+			  ImGui::DragFloat("##Far clip", &ortho_far_clip);
 
 			  cam_cmp.camera.set_orthographic_size(ortho_size);
 			  cam_cmp.camera.set_orthographic_near_clip(ortho_near_clip);
 			  cam_cmp.camera.set_orthographic_far_clip(ortho_far_clip);
 
-			  ImGui::Checkbox("Fixed aspect ratio", &cam_cmp.fix_aspect_ratio);
+			  ImGui::Text("Fixed aspect ratio");
+			  ImGui::SameLine();
+			  ImGui::Checkbox("##Fixed aspect ratio", &cam_cmp.fix_aspect_ratio);
 
 		  }
 		});
@@ -377,29 +393,45 @@ namespace Engine
 		DrawComponent<SpriteRendererComponent>("SpriteRendererComponent", entity,
 				[](SpriteRendererComponent& sprite_renderer)
 				{
-				  ImGui::ColorEdit4("Color", glm::value_ptr(sprite_renderer.color));
+				  ImGui::Text("Color");
+				  ImGui::SameLine();
+				  ImGui::ColorEdit4("##Color", glm::value_ptr(sprite_renderer.color));
 				});
 
 		DrawComponent<CircleRendererComponent>("CircleRendererComponent", entity,
 				[](auto& component)
 				{
-				  ImGui::ColorEdit4("Color", glm::value_ptr(component.color));
-				  ImGui::DragFloat("Thickness", &component.thickness, 0.1f, 0.0f, 1.0f);
-				  ImGui::DragFloat("Fade", &component.fade, 0.001f, 0.0f, 1.0f);
+				  ImGui::Text("Color");
+				  ImGui::SameLine();
+				  ImGui::ColorEdit4("##Color", glm::value_ptr(component.color));
+				  ImGui::Text("Thickness");
+				  ImGui::SameLine();
+				  ImGui::DragFloat("##Thickness", &component.thickness, 0.1f, 0.0f, 1.0f);
+				  ImGui::Text("Fade");
+				  ImGui::SameLine();
+				  ImGui::DragFloat("##Fade", &component.fade, 0.001f, 0.0f, 1.0f);
 				});
 
 		DrawComponent<LineRendererComponent>("LineRendererComponent", entity,
 				[](auto& component)
 				{
-				  ImGui::ColorEdit4("Color", glm::value_ptr(component.color));
-				  ImGui::DragFloat("Thickness", &component.thickness, 0.1f, 0.0f, 1.0f);
+				  ImGui::Text("Color");
+				  ImGui::SameLine();
+				  ImGui::ColorEdit4("##Color", glm::value_ptr(component.color));
+				  ImGui::Text("Thickness");
+				  ImGui::SameLine();
+				  ImGui::DragFloat("##Thickness", &component.thickness, 0.1f, 0.0f, 1.0f);
+				  //TODO List of vertex
 				});
 
 		DrawComponent<Rigidbody2DComponent>("Rigidbody2DComponent", entity, [](Rigidbody2DComponent& rb2d)
 		{
 		  const char* body_type_string[] = { "Static", "Dynamic", "Kinematic" };
 		  const char* current_body_type_string = body_type_string[(int)rb2d.type];
-		  if (ImGui::BeginCombo("Body Type", current_body_type_string))
+
+		  ImGui::Text("Body Type");
+		  ImGui::SameLine();
+		  if (ImGui::BeginCombo("##Body Type", current_body_type_string))
 		  {
 			  for (int i = 0; i < 3; ++i)
 			  {
@@ -416,30 +448,56 @@ namespace Engine
 
 			  ImGui::EndCombo();
 		  }
-
-		  ImGui::Checkbox("Fixed Rotation", &rb2d.fixed_rotation);
+		  ImGui::Text("Fixed Rotation");
+		  ImGui::SameLine();
+		  ImGui::Checkbox("##Fixed Rotation", &rb2d.fixed_rotation);
 		});
 
 		DrawComponent<BoxCollider2DComponent>("BoxCollider2DComponent", entity, [](BoxCollider2DComponent& box2d)
 		{
-		  ImGui::DragFloat2("Offset", glm::value_ptr(box2d.offset));
-		  ImGui::DragFloat2("Size", glm::value_ptr(box2d.size));
+		  ImGui::Text("Offset");
+		  ImGui::SameLine();
+		  ImGui::DragFloat2("##Offset", glm::value_ptr(box2d.offset), 0.1f);
 
-		  ImGui::DragFloat("Density", &box2d.density, 0.01f, 0.0f, 1.0f);
-		  ImGui::DragFloat("Friction", &box2d.friction, 0.01f, 0.0f, 1.0f);
-		  ImGui::DragFloat("Restitution", &box2d.restitution, 0.01f, 0.0f, 1.0f);
-		  ImGui::DragFloat("Restitution Threshold", &box2d.restitution_threshold, 0.01f, 0.0f);
+		  ImGui::Text("Size");
+		  ImGui::SameLine();
+		  ImGui::DragFloat2("##Size", glm::value_ptr(box2d.size));
+
+		  ImGui::Text("Density");
+		  ImGui::SameLine();
+		  ImGui::DragFloat("##Density", &box2d.density, 0.01f, 0.0f, 1.0f);
+		  ImGui::Text("Friction");
+		  ImGui::SameLine();
+		  ImGui::DragFloat("##Friction", &box2d.friction, 0.01f, 0.0f, 1.0f);
+		  ImGui::Text("Restitution");
+		  ImGui::SameLine();
+		  ImGui::DragFloat("##Restitution", &box2d.restitution, 0.01f, 0.0f, 1.0f);
+		  ImGui::Text("Restitution Threshold");
+		  ImGui::SameLine();
+		  ImGui::DragFloat("##Restitution Threshold", &box2d.restitution_threshold, 0.01f, 0.0f);
 		});
 
 		DrawComponent<CircleCollider2DComponent>("CircleCollider2DComponent", entity, [](auto& component)
 		{
-		  ImGui::DragFloat2("Offset", glm::value_ptr(component.offset));
-		  ImGui::DragFloat("Radius", &component.radius);
+		  ImGui::Text("Offset");
+		  ImGui::SameLine();
+		  ImGui::DragFloat2("##Offset", glm::value_ptr(component.offset), 0.1f);
+		  ImGui::Text("Radius");
+		  ImGui::SameLine();
+		  ImGui::DragFloat("##Radius", &component.radius);
 
-		  ImGui::DragFloat("Density", &component.density, 0.01f, 0.0f, 1.0f);
-		  ImGui::DragFloat("Friction", &component.friction, 0.01f, 0.0f, 1.0f);
-		  ImGui::DragFloat("Restitution", &component.restitution, 0.01f, 0.0f, 1.0f);
-		  ImGui::DragFloat("Restitution Threshold", &component.restitution_threshold, 0.01f, 0.0f);
+		  ImGui::Text("Density");
+		  ImGui::SameLine();
+		  ImGui::DragFloat("##Density", &component.density, 0.01f, 0.0f, 1.0f);
+		  ImGui::Text("Friction");
+		  ImGui::SameLine();
+		  ImGui::DragFloat("##Friction", &component.friction, 0.01f, 0.0f, 1.0f);
+		  ImGui::Text("Restitution");
+		  ImGui::SameLine();
+		  ImGui::DragFloat("##Restitution", &component.restitution, 0.01f, 0.0f, 1.0f);
+		  ImGui::Text("Restitution Threshold");
+		  ImGui::SameLine();
+		  ImGui::DragFloat("##Restitution Threshold", &component.restitution_threshold, 0.01f, 0.0f);
 		});
 	}
 

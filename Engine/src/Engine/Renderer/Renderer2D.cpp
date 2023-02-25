@@ -18,7 +18,7 @@ namespace Engine
 		uint32_t texture_slot;
 
 		//for editor
-		int32_t entity_id{ 0 };
+		int32_t entity_id{ -1 };
 	};
 	struct CircleVertex
 	{
@@ -29,14 +29,14 @@ namespace Engine
 		float fade;
 
 		//for editor
-		int32_t entity_id{ 0 };
+		int32_t entity_id{ -1 };
 	};
 
 	struct LineVertex
 	{
 		glm::vec3 position;
 		glm::vec4 color;
-		int32_t entity_id{ 0 };
+		int32_t entity_id{ -1 };
 	};
 
 	struct Renderer2DData
@@ -150,7 +150,7 @@ namespace Engine
 
 	void Renderer2D::FlushQuad()
 	{
-		uint32_t index_count = s_data->quad_batch->GetVertexCount() * 6;
+		uint32_t index_count = s_data->quad_batch->GetVertexCount() * 1.5f;
 		if (index_count)
 		{
 			Ref<VertexArray> va = s_data->quad_batch->Flush();
@@ -168,10 +168,10 @@ namespace Engine
 
 	void Renderer2D::FlushCircle()
 	{
-		uint32_t index_count = s_data->circle_batch->GetVertexCount() * 6;
+		uint32_t index_count = s_data->circle_batch->GetVertexCount() * 1.5f;
 		if (index_count)
 		{
-			std::shared_ptr<VertexArray> va = s_data->circle_batch->Flush();
+			Ref<VertexArray> va = s_data->circle_batch->Flush();
 			s_data->circle_shader->Bind();
 			RendererCommand::DrawIndex(va, index_count);
 
@@ -181,10 +181,10 @@ namespace Engine
 
 	void Renderer2D::FlushLine()
 	{
-		uint32_t index_count = s_data->line_batch->GetVertexCount() * 2;
+		uint32_t index_count = s_data->line_batch->GetVertexCount();
 		if (index_count)
 		{
-			std::shared_ptr<VertexArray> va = s_data->line_batch->Flush();
+			Ref<VertexArray> va = s_data->line_batch->Flush();
 
 			s_data->line_shader->Bind();
 			RendererCommand::DrawLine(va, index_count);
@@ -229,6 +229,7 @@ namespace Engine
 		{
 			s_data->quad_batch->End();
 			FlushQuad();
+			WARN(" Batch overflow");
 		};
 
 		s_data->stats.quads++;
@@ -267,6 +268,7 @@ namespace Engine
 		{
 			s_data->circle_batch->End();
 			FlushCircle();
+			WARN(" Batch overflow");
 		};
 
 		s_data->stats.circles++;
@@ -275,21 +277,20 @@ namespace Engine
 	void Renderer2D::DrawLine(const glm::vec3& p0, const glm::vec3& p1, const glm::vec4& color, float thickness,
 			int32_t entity_id)
 	{
-		bool full = false;
+		SetLineWidth(thickness);
 
-		full |= !s_data->line_batch->AddIfCan(
-				{ p0,
-				  color,
-				  entity_id });
-		full |= !s_data->line_batch->AddIfCan(
-				{ p1,
-				  color,
-				  entity_id });
+		bool full = false;
+		LineVertex l0 = { p0, color, entity_id };
+		LineVertex l1 = { p1, color, entity_id };
+
+		full |= !s_data->line_batch->AddIfCan(l0);
+		full |= !s_data->line_batch->AddIfCan(l1);
 
 		if (full)
 		{
 			s_data->line_batch->End();
 			FlushLine();
+			WARN(" Batch overflow");
 		};
 
 		s_data->stats.lines++;

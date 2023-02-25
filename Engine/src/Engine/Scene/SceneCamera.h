@@ -7,11 +7,6 @@ namespace Engine
 	class SceneCamera : public Camera
 	{
 	public:
-		enum class ProjectionType
-		{
-			Perspective, Orthographic
-		};
-
 		SceneCamera() = default;
 		virtual ~SceneCamera() override = default;
 
@@ -41,7 +36,7 @@ namespace Engine
 			RecalculateProjection();
 		}
 
-		ProjectionType get_projection_type() const
+		ProjectionType GetProjectionType() const
 		{
 			return m_projection_type;
 		}
@@ -106,13 +101,13 @@ namespace Engine
 		ProjectionType m_projection_type{ ProjectionType::Orthographic };
 
 		float m_orthographic_size{ 10 };
-		float m_orthographic_near{ -1 };
-		float m_orthographic_far{ 1 };
+		float m_orthographic_near{ 1 };
+		float m_orthographic_far{ -1 };
 		std::array<glm::vec2, 2> m_orthographic_bound;
 
 		float m_perspective_FOV{ glm::radians(45.0f) };
 		float m_perspective_near{ 0.01f };
 		float m_perspective_far{ 1000.0f };
-		float m_aspect_ration;
+		float m_aspect_ration{ 1.78f };
 	};
 }

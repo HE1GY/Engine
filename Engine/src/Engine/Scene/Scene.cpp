@@ -171,8 +171,6 @@ namespace Engine
 			auto [transform, sprite_renderer] = m_registry.get<TransformComponent, SpriteRendererComponent>(entity);
 			Renderer2D::DrawQuad(transform.get_transformation(), sprite_renderer.texture, sprite_renderer.color,
 					(int32_t)entity);
-
-			//Renderer2D::DrawRect(transform.get_transformation(), { 1, 1, 0, 1 }, 0);
 		}
 
 		auto view = m_registry.view<TransformComponent, CircleRendererComponent>();
@@ -182,14 +180,6 @@ namespace Engine
 			Renderer2D::DrawCircle(transform.get_transformation(), circle_renderer.color, circle_renderer.thickness,
 					circle_renderer.fade, (int32_t)entity);
 		}
-
-		/*Renderer2D::SetLineWidth(2.0f);
-		Renderer2D::DrawLine({ 0, 0, 0 }, glm::vec3(5.0f), { 1, 0, 1, 1 }, 0);
-
-		Renderer2D::DrawRect({ 0, 0, 0 }, { 1, 1 }, { 1, 1, 1, 1 }, 0);
-
-		glm::mat4 rect = glm::rotate(glm::mat4(1.0f), glm::radians(45.0f), { 0, 0, 1 });
-		Renderer2D::DrawRect(rect, { 1, 1, 0, 1 }, 0);*/
 
 		Renderer2D::EndScene();
 	}
@@ -344,7 +334,8 @@ namespace Engine
 
 				b2PolygonShape box_shape;
 
-				box_shape.SetAsBox(transform.scale.x * bc2d.size.x, transform.scale.y * bc2d.size.y);
+				box_shape.SetAsBox(transform.scale.x * bc2d.size.x, transform.scale.y * bc2d.size.y,
+						{ bc2d.offset.x, bc2d.offset.y }, 0);
 
 				b2FixtureDef fixture_def;
 				fixture_def.shape = &box_shape;
@@ -362,8 +353,8 @@ namespace Engine
 
 				b2CircleShape circle_shape;
 
+				circle_shape.m_p.Set(cc2d.offset.x, cc2d.offset.y);
 				circle_shape.m_radius = cc2d.radius * transform.scale.x;
-				circle_shape.m_p = { cc2d.offset.x, cc2d.offset.y };
 
 				b2FixtureDef fixture_def;
 				fixture_def.shape = &circle_shape;

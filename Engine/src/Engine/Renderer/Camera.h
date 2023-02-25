@@ -4,6 +4,11 @@
 
 namespace Engine
 {
+	enum class ProjectionType
+	{
+		Perspective, Orthographic
+	};
+
 	class Camera
 	{
 	public:

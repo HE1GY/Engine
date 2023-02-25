@@ -43,7 +43,7 @@ namespace Engine
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 	}
 
-	void OpenGLVertexBuffer::SetData(void* data, int32_t size)
+	void OpenGLVertexBuffer::SetData(void* data, uint32_t size)
 	{
 		PROFILER_FUNCTION();
 
@@ -55,7 +55,7 @@ namespace Engine
 	{
 		m_layout = layout;
 	}
-	BufferLayout& OpenGLVertexBuffer::get_layout()
+	BufferLayout& OpenGLVertexBuffer::GetLayout()
 	{
 		return m_layout;
 	}

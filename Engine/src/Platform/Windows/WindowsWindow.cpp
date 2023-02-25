@@ -134,7 +134,7 @@ namespace Engine
 	{
 		m_window_data.callback = fun;
 	}
-	void* WindowsWindow::get_native_window()
+	void* WindowsWindow::GetNativeWindow()
 	{
 		return m_native_window;
 	}

@@ -3,7 +3,7 @@
 
 layout(location=0)in vec3 a_position;
 layout(location=1)in vec4 a_color;
-layout(location=5)in int a_entity_id;
+layout(location=2)in int a_entity_id;
 
 layout(std140, binding =2) uniform Matrix
 {
@@ -36,7 +36,6 @@ layout(location=1)out int id;
 
 void main()
 {
-
     color = v_color;
     id=v_entity_id;
 }

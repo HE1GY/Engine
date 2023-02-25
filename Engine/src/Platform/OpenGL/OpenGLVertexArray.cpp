@@ -92,12 +92,12 @@ namespace Engine
 	{
 		PROFILER_FUNCTION();
 
-		CORE_ASSERT(vertex_buffer->get_layout().get_elements().size(), "Vertex Buffer has no layout!");
+		CORE_ASSERT(vertex_buffer->GetLayout().get_elements().size(), "Vertex Buffer has no layout!");
 		glBindVertexArray(m_renderer_id);
 
 		vertex_buffer->Bind();
 
-		BufferLayout& layout = vertex_buffer->get_layout();
+		BufferLayout& layout = vertex_buffer->GetLayout();
 		for (const auto& element : layout)
 		{
 			switch (element.type)

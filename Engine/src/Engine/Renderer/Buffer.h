@@ -76,10 +76,10 @@ namespace Engine
 		virtual void Bind() = 0;
 		virtual void UnBind() = 0;
 
-		virtual void SetData(void* data, int32_t size) = 0;
+		virtual void SetData(void* data, uint32_t size) = 0;
 
 		virtual void SetLayout(BufferLayout layout) = 0;
-		virtual BufferLayout& get_layout() = 0;
+		virtual BufferLayout& GetLayout() = 0;
 
 	};
 

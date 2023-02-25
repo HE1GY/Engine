@@ -15,7 +15,7 @@ namespace Engine
 		virtual void OnUpdate() override;
 
 		virtual void set_event_callback(const EventCallbackFn& fun) override;
-		void* get_native_window() override;
+		void* GetNativeWindow() override;
 
 		virtual void set_VSync(bool on) override;
 		inline virtual bool get_VSync() const override

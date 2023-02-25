@@ -9,6 +9,14 @@
 
 namespace Engine
 {
+	enum class GizmoType
+	{
+		NONE = -1,
+		TRANSLATE = 0,
+		ROTATE = 1,
+		SCALE = 2,
+	};
+
 	class EngineEditorLayer : public Layer
 	{
 	public:
@@ -62,7 +70,7 @@ namespace Engine
 		Ref<Scene> m_active_scene;
 
 		SceneHierarchyPanel m_scene_hierarchy_panel;
-		int m_gizmo_type{ -1 };
+		GizmoType m_gizmo_type{ GizmoType::TRANSLATE };
 
 		EditorCamera m_editor_camera;
 

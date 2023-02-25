@@ -4,6 +4,7 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
+#include "config.h"
 #include "Engine/Utils/FileDialogs.h"
 #include "EngineEditorLayer.h"
 
@@ -32,8 +33,8 @@ namespace Engine
 
 		m_scene_hierarchy_panel.SetContext(m_active_scene);
 
-		m_play_icon = Texture2D::Create("../../../EngineEditor/resources/icon/PlayButton.png");
-		m_stop_icon = Texture2D::Create("../../../EngineEditor/resources/icon/PauseButton.png");
+		m_play_icon = Texture2D::Create(CMAKE_SOURCE_DIR"/EngineEditor/resources/icon/PlayButton.png");
+		m_stop_icon = Texture2D::Create(CMAKE_SOURCE_DIR"/EngineEditor/resources/icon/PauseButton.png");
 	}
 
 	void EngineEditorLayer::OnDetach()
@@ -59,11 +60,13 @@ namespace Engine
 		}
 		case SceneState::Edit:
 		{
-			m_editor_camera.OnUpdate(ts);
+			m_editor_camera.OnUpdate(ts, m_viewport_hovered);
 			m_active_scene->OnUpdateEditor(ts, m_editor_camera);
 			break;
 		}
 		}
+
+		OnOverlayRender();
 
 		auto [mx, my] = ImGui::GetMousePos();
 		mx -= m_viewport_bound[0].x;
@@ -83,11 +86,9 @@ namespace Engine
 			}
 			else
 			{
-				m_hovered_entity = Entity();
+				m_hovered_entity = Entity(entt::null, nullptr);
 			}
 		}
-
-		OnOverlayRender();
 
 		m_frame_buffer->UnBind();
 	}
@@ -100,6 +101,97 @@ namespace Engine
 
 		m_editor_camera.OnEvent(event);
 
+	}
+
+	void EngineEditorLayer::OnOverlayRender()
+	{
+
+		switch (m_scene_state)
+		{
+		case SceneState::Play:
+		{
+			auto camera_entity = m_active_scene->GetPrimaryCameraEntity();
+			if (camera_entity)
+			{
+				Renderer2D::BeginScene(camera_entity.GetComponent<CameraComponent>().camera.GetProjection(),
+						glm::inverse(camera_entity.GetComponent<TransformComponent>().get_transformation()));
+			}
+			break;
+		}
+		case SceneState::Edit:
+		{
+			Renderer2D::BeginScene(m_editor_camera.GetProjection(), m_editor_camera.GetViewMatrix());
+			break;
+		}
+		}
+
+		//Colliders
+		if (m_show_colliders)
+		{
+			{
+				auto view = m_active_scene->GetAllEntitiesWith<TransformComponent, CircleCollider2DComponent>();
+
+				for (auto entity : view)
+				{
+					const auto [tr_cmp, cc2d_cmp] = view.get<TransformComponent, CircleCollider2DComponent>(entity);
+
+					glm::mat4 transformation = glm::translate(glm::mat4(1.0f),
+							{ tr_cmp.translation.x + cc2d_cmp.offset.x,
+							  tr_cmp.translation.y + cc2d_cmp.offset.y,
+							  tr_cmp.translation.z + 0.05f })
+							* glm::rotate(glm::mat4(1.0f), tr_cmp.rotation.z, { 0, 0, 1 })
+							* glm::scale(glm::mat4(1.0f), cc2d_cmp.radius * tr_cmp.scale * 2.1f);
+
+					Renderer2D::DrawCircle(transformation, { 0, 1, 0, 1 }, 0.05f, 0.005f, (int32_t)entity);
+				}
+			}
+
+			{
+				auto view = m_active_scene->GetAllEntitiesWith<TransformComponent, BoxCollider2DComponent>();
+
+				for (auto entity : view)
+				{
+					const auto [tr_cmp, bc2d_cmp] = view.get<TransformComponent, BoxCollider2DComponent>(entity);
+
+					glm::mat4 transformation = glm::translate(glm::mat4(1.0f),
+							{ tr_cmp.translation.x + bc2d_cmp.offset.x, tr_cmp.translation.y + bc2d_cmp.offset.y,
+							  tr_cmp.translation.z + 0.05f })
+							* glm::rotate(glm::mat4(1.0f), tr_cmp.rotation.z, { 0, 0, 1 })
+							* glm::scale(glm::mat4(1.0f),
+									glm::vec3{ bc2d_cmp.size.x, bc2d_cmp.size.y, 1 } * tr_cmp.scale * 2.0f);
+
+					Renderer2D::DrawRect(transformation, { 0, 1, 0, 1 }, 3.0f, (int32_t)entity);
+				}
+			}
+		}
+		{
+			//Camera frustum
+			if (m_scene_state == SceneState::Edit)
+			{
+
+				auto cam_entity = m_active_scene->GetPrimaryCameraEntity();
+				if (cam_entity)
+				{
+					auto& cam_cmp = cam_entity.GetComponent<CameraComponent>();
+					if (cam_cmp.camera.GetProjectionType() == ProjectionType::Orthographic)
+					{
+						auto& transform_cmp = cam_entity.GetComponent<TransformComponent>();
+
+						std::array<glm::vec2, 2> bound = cam_cmp.camera.GetOrthographicBound();
+
+						glm::mat4 transform = transform_cmp.get_transformation()
+								* glm::translate(glm::mat4(1.0f), { 0, 0, 0.5f })
+								* glm::scale(glm::mat4(1.0f), { bound[1].x * 2, bound[0].y * 2, 0 });
+
+						Renderer2D::DrawRect(transform, { 0.8, 0.8, 0.8, 1 }, 3.0f, (int32_t)cam_entity);
+
+						/*Ref<Texture> tex;
+						Renderer2D::DrawQuad(transform, tex, { 0.8, 0.8, 0.8, 0.4 }, (int32_t)cam_entity);*/
+					}
+				}
+			}
+		}
+		Renderer2D::EndScene();
 	}
 
 	void EngineEditorLayer::OnImGuiRender()
@@ -115,64 +207,6 @@ namespace Engine
 		  DrawToolbar();
 		  m_scene_hierarchy_panel.OnImGuiRender();
 		});
-
-	}
-
-	void EngineEditorLayer::OnOverlayRender()
-	{
-
-		switch (m_scene_state)
-		{
-		case SceneState::Play:
-		{
-			const auto& camera_entity = m_active_scene->GetPrimaryCameraEntity();
-			Renderer2D::BeginScene(camera_entity.GetComponent<CameraComponent>().camera.GetProjection(),
-					glm::inverse(camera_entity.GetComponent<TransformComponent>().get_transformation()));
-			break;
-		}
-		case SceneState::Edit:
-		{
-			Renderer2D::BeginScene(m_editor_camera.GetProjection(), m_editor_camera.GetViewMatrix());
-			break;
-		}
-		}
-		if (m_show_colliders)
-		{
-			{
-				auto view = m_active_scene->GetAllEntitiesWith<TransformComponent, CircleCollider2DComponent>();
-
-				for (auto entity : view)
-				{
-					const auto [tr_cmp, cc2d_cmp] = view.get<TransformComponent, CircleCollider2DComponent>(entity);
-
-					glm::mat4 transformation = glm::translate(glm::mat4(1.0f),
-							{ tr_cmp.translation.x + cc2d_cmp.offset.x, tr_cmp.translation.y + cc2d_cmp.offset.y,
-							  tr_cmp.translation.z + 0.005f })
-							* glm::scale(glm::mat4(1.0f), cc2d_cmp.radius * tr_cmp.scale * 2.0f);
-
-					Renderer2D::DrawCircle(transformation, { 0, 1, 0, 1 }, 0.05f, 0.005f, 0);
-				}
-			}
-
-			{
-				auto view = m_active_scene->GetAllEntitiesWith<TransformComponent, BoxCollider2DComponent>();
-
-				for (auto entity : view)
-				{
-					const auto [tr_cmp, bc2d_cmp] = view.get<TransformComponent, BoxCollider2DComponent>(entity);
-
-					glm::mat4 transformation = glm::translate(glm::mat4(1.0f),
-							{ tr_cmp.translation.x + bc2d_cmp.offset.x, tr_cmp.translation.y + bc2d_cmp.offset.y,
-							  tr_cmp.translation.z + 0.005f })
-							* glm::rotate(glm::mat4(1.0f), tr_cmp.rotation.z, { 0, 0, 1 })
-							* glm::scale(glm::mat4(1.0f),
-									glm::vec3{ bc2d_cmp.size.x, bc2d_cmp.size.y, 1 } * tr_cmp.scale * 2.0f);
-
-					Renderer2D::DrawRect(transformation, { 0, 1, 0, 1 }, 1.0f, 0);
-				}
-			}
-		}
-		Renderer2D::EndScene();
 	}
 
 	void EngineEditorLayer::DrawDockSpace(std::function<void()> func)
@@ -229,6 +263,23 @@ namespace Engine
 		ImGui::Text("indices: %d", stats.GetIndices());
 		ImGui::Text("vertices: %d", stats.GetVertices());
 
+		if (m_hovered_entity)
+		{
+			if (m_hovered_entity.HasComponent<TagComponent>())
+			{
+				ImGui::Text("Hovered entity: %s  id=%d", m_hovered_entity.GetComponent<TagComponent>().tag.c_str(),
+						(int32_t)m_hovered_entity);
+			}
+			else
+			{
+				ImGui::Text("Dead entity id = %d", (int32_t)m_hovered_entity);
+			}
+		}
+		else
+		{
+			ImGui::Text("Hovered entity: Empty");
+		}
+
 		ImGui::End();
 
 		ImGui::Begin("Settings");
@@ -243,21 +294,15 @@ namespace Engine
 
 		Entity selected_entity = m_scene_hierarchy_panel.GetSelectedEntity();
 
-		if (selected_entity && m_gizmo_type != -1)
+		if (selected_entity)
 		{
-			ImGuizmo::SetOrthographic(false);
+			ImGuizmo::SetOrthographic(true);
 			ImGuizmo::SetDrawlist();
 
 			float window_width = (float)ImGui::GetWindowWidth();
 			float window_height = (float)ImGui::GetWindowHeight();
 			ImGuizmo::SetRect(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y, window_width, window_height);
 
-			//camera runtime
-			/*Entity camera_entity = m_active_scene->GetPrimaryCameraEntity();
-			const auto& camera = camera_entity.GetComponent<CameraComponent>().camera;
-			const glm::mat4& camera_projection = camera.get_projection();
-			glm::mat4 camera_view = glm::inverse(
-					camera_entity.GetComponent<TransformComponent>().get_transformation());*/
 
 			//editor camera
 			const glm::mat4& camera_projection = m_editor_camera.GetProjection();
@@ -270,7 +315,7 @@ namespace Engine
 			//Sanaping
 			bool snap = Input::IsKeyPress(KeyCode::E_KEY_LEFT_CONTROL);
 			float snap_value = 0.5;
-			if (m_gizmo_type == ImGuizmo::OPERATION::ROTATE)
+			if (m_gizmo_type == GizmoType::ROTATE)
 				snap_value = 45.0f;
 
 			float snap_values[3] = { snap_value, snap_value, snap_value };
@@ -409,19 +454,19 @@ namespace Engine
 
 			//Gizmo
 		case (int)KeyCode::E_KEY_Q:
-			m_gizmo_type = -1;
+			m_gizmo_type = GizmoType::NONE;
 			break;
 
 		case (int)KeyCode::E_KEY_W:
-			m_gizmo_type = 0;
+			m_gizmo_type = GizmoType::TRANSLATE;
 			break;
 
 		case (int)KeyCode::E_KEY_E:
-			m_gizmo_type = 1;
+			m_gizmo_type = GizmoType::ROTATE;
 			break;
 
 		case (int)KeyCode::E_KEY_R:
-			m_gizmo_type = 2;
+			m_gizmo_type = GizmoType::SCALE;
 			break;
 
 
@@ -509,7 +554,7 @@ namespace Engine
 	{
 		if (event.get_key() == (int)MouseButtonCode::E_MOUSE_BUTTON_LEFT)
 		{
-			if (m_viewport_hovered && !ImGuizmo::IsOver() && Input::IsKeyPress(KeyCode::E_KEY_LEFT_ALT))
+			if (m_viewport_hovered && !ImGuizmo::IsOver())
 			{
 				m_scene_hierarchy_panel.SetSelectedEntity(m_hovered_entity);
 			}

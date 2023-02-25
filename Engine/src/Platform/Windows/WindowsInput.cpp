@@ -10,7 +10,7 @@ namespace Engine
 {
 	std::pair<float, float> Input::GetMousePos()
 	{
-		GLFWwindow* window = static_cast<GLFWwindow*>(Application::get()->GetWindow()->get_native_window());
+		GLFWwindow* window = static_cast<GLFWwindow*>(Application::get()->GetWindow()->GetNativeWindow());
 
 		double x, y;
 		glfwGetCursorPos(window, &x, &y);
@@ -18,14 +18,14 @@ namespace Engine
 	}
 	bool Input::IsMouseButtonPress(int button)
 	{
-		GLFWwindow* window = static_cast<GLFWwindow*>(Application::get()->GetWindow()->get_native_window());
+		GLFWwindow* window = static_cast<GLFWwindow*>(Application::get()->GetWindow()->GetNativeWindow());
 
 		bool press = glfwGetMouseButton(window, button);
 		return press;
 	}
 	bool Input::IsKeyPress(int key_code)
 	{
-		GLFWwindow* window = static_cast<GLFWwindow*>(Application::get()->GetWindow()->get_native_window());
+		GLFWwindow* window = static_cast<GLFWwindow*>(Application::get()->GetWindow()->GetNativeWindow());
 
 		bool press = glfwGetKey(window, key_code);
 		return press;

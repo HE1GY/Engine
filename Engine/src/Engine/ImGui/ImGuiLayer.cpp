@@ -1,5 +1,6 @@
 #include "pch.h"
 
+#include "config.h"
 #include "ImGuiLayer.h"
 #include <Engine/Event/KeyEvent.h>
 
@@ -27,21 +28,21 @@ namespace Engine
 		io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
 		io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
 
-		io.Fonts->AddFontFromFileTTF("../../../EngineEditor/assets/fonts/opensans/OpenSans-Bold.ttf", 18.0f);
+		io.Fonts->AddFontFromFileTTF(CMAKE_SOURCE_DIR"/EngineEditor/assets/fonts/opensans/OpenSans-Bold.ttf", 18.0f);
 		io.FontDefault = io.Fonts->AddFontFromFileTTF(
-				"../../../EngineEditor/assets/fonts/opensans/OpenSans-Regular.ttf", 18.0f);
+				CMAKE_SOURCE_DIR"/EngineEditor/assets/fonts/opensans/OpenSans-Regular.ttf", 18.0f);
 
 		ImGuiStyle& style = ImGui::GetStyle();
 		if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
 		{
-			style.WindowRounding = 0.0f;
+			style.WindowRounding = 0.2f;
 			style.Colors[ImGuiCol_WindowBg].w = 1.0f;
 		}
 
 		SetDarkThemeColors();
 
 		Application* app = Application::get();
-		GLFWwindow* window = static_cast<GLFWwindow*>(app->GetWindow()->get_native_window());
+		GLFWwindow* window = static_cast<GLFWwindow*>(app->GetWindow()->GetNativeWindow());
 
 		ImGui_ImplGlfw_InitForOpenGL(window, true);
 		ImGui_ImplOpenGL3_Init("#version 460");
@@ -61,8 +62,8 @@ namespace Engine
 		if (m_block_event)
 		{
 			ImGuiIO& io = ImGui::GetIO();
-			event.Handled |= event.IsInCategory(EventCategoryMouse) & io.WantCaptureMouse;
-			event.Handled |= event.IsInCategory(EventCategoryKeyboard) & io.WantCaptureKeyboard;
+			event.Handled |= event.IsInCategory(EventCategoryMouse);
+			event.Handled |= event.IsInCategory(EventCategoryKeyboard) & io.WantCaptureKeyboard & io.WantTextInput;
 		}
 	}
 	void ImGuiLayer::Begin()

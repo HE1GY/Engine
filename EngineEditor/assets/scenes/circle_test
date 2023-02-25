@@ -4,7 +4,7 @@ Entities:
     TagComponent:
       Tag: c
     TransformComponent:
-      Translation: [0, -1.43377459, 0]
+      Translation: [-0.0190761071, 4.07057762, 4.65661287e-10]
       Rotation: [0, 0, 0]
       Scale: [1, 1, 1]
     CircleRendererComponent:
@@ -40,21 +40,3 @@ Entities:
       Friction: 0.5
       Restitution: 0
       Restitution Threshold: 0.5
-  - EntityID: 16211146423892128520
-    TagComponent:
-      Tag: cam
-    TransformComponent:
-      Translation: [0, -1.80476737, 13.0675516]
-      Rotation: [0, 0, 0]
-      Scale: [1, 1, 1]
-    CameraComponent:
-      Camera:
-        Projection type: 0
-        Orthographic near clip: -1
-        Orthographic far clip: 1
-        Orthographic size: 10
-        Perspective FOV: 1.46607661
-        Perspective near clip: 0
-        Perspective far clip: 100
-      Fix aspect ration: false
-      Primary: true

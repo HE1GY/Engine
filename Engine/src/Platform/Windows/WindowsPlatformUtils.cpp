@@ -20,7 +20,7 @@ namespace Engine
 
 		ZeroMemory(&ofn, sizeof(OPENFILENAMEA));
 		ofn.lStructSize = sizeof(OPENFILENAMEA);
-		ofn.hwndOwner = glfwGetWin32Window((GLFWwindow*)Application::get()->GetWindow()->get_native_window());
+		ofn.hwndOwner = glfwGetWin32Window((GLFWwindow*)Application::get()->GetWindow()->GetNativeWindow());
 		ofn.lpstrFile = sz_file;
 		ofn.nMaxFile = sizeof(sz_file);
 		ofn.lpstrFilter = filter;
@@ -39,7 +39,7 @@ namespace Engine
 
 		ZeroMemory(&ofn, sizeof(OPENFILENAMEA));
 		ofn.lStructSize = sizeof(OPENFILENAMEA);
-		ofn.hwndOwner = glfwGetWin32Window((GLFWwindow*)Application::get()->GetWindow()->get_native_window());
+		ofn.hwndOwner = glfwGetWin32Window((GLFWwindow*)Application::get()->GetWindow()->GetNativeWindow());
 		ofn.lpstrFile = sz_file;
 		ofn.nMaxFile = sizeof(sz_file);
 		ofn.lpstrFilter = filter;

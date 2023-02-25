@@ -56,20 +56,17 @@ namespace Engine
 	}
 
 	template<typename TVertex>
-	Ref<VertexArray> Batch<TVertex>::Flush()
-	{
-		m_va->Bind();
-		return m_va;
-	}
-	template<typename TVertex>
 	bool Batch<TVertex>::AddIfCan(TVertex vertex)
 	{
+		if (m_vertex_count >= Renderer2D::k_max_vertices)
+			return false;
+
 		*m_vertex_buffer_ptr = vertex;
 		m_vertex_buffer_ptr++;
 
 		m_vertex_count++;
 
-		return m_vertex_count <= Renderer2D::k_max_vertices;
+		return true;
 	}
 
 	template<typename TVertex>
@@ -82,11 +79,18 @@ namespace Engine
 	template<typename TVertex>
 	void Batch<TVertex>::End()
 	{
-		uint32_t size = (m_vertex_buffer_ptr - m_vertex_buffer_base) * sizeof(TVertex);
-		if (size)
+		if (m_vertex_count)
 		{
+			uint32_t size = m_vertex_count * sizeof(TVertex);
 			m_vb->SetData(m_vertex_buffer_base, size);
 		}
+	}
+
+	template<typename TVertex>
+	Ref<VertexArray> Batch<TVertex>::Flush()
+	{
+		m_va->Bind();
+		return m_va;
 	}
 
 }

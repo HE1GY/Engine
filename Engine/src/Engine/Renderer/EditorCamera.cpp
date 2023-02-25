@@ -59,9 +59,21 @@ namespace Engine
 		return speed;
 	}
 
-	void EditorCamera::OnUpdate(TimeStep ts)
+	void EditorCamera::OnUpdate(TimeStep ts, bool view_port_hovered)
 	{
-		if (Input::IsKeyPress(KeyCode::E_KEY_LEFT_ALT))
+		if (view_port_hovered)
+		{
+			const glm::vec2& mouse{ Input::GetMousePos().first, Input::GetMousePos().second };
+			glm::vec2 delta = (mouse - m_InitialMousePosition) * 0.003f;
+			m_InitialMousePosition = mouse;
+
+			if (Input::IsMouseButtonPress(MouseButtonCode::E_MOUSE_BUTTON_MIDDLE))
+				MousePan(delta);
+		}
+
+
+
+		/*if (Input::IsKeyPress(KeyCode::E_KEY_LEFT_ALT))
 		{
 			const glm::vec2& mouse{ Input::GetMousePos().first, Input::GetMousePos().second };
 			glm::vec2 delta = (mouse - m_InitialMousePosition) * 0.003f;
@@ -73,7 +85,7 @@ namespace Engine
 				MouseRotate(delta);
 			else if (Input::IsMouseButtonPress(MouseButtonCode::E_MOUSE_BUTTON_RIGHT))
 				MouseZoom(delta.y);
-		}
+		}*/
 
 		UpdateView();
 	}

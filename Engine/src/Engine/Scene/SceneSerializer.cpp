@@ -183,7 +183,7 @@ namespace Engine
 
 			emitter << YAML::Key << "Camera";
 			emitter << YAML::BeginMap;
-			emitter << YAML::Key << "Projection type" << YAML::Value << (int)component.camera.get_projection_type();
+			emitter << YAML::Key << "Projection type" << YAML::Value << (int)component.camera.GetProjectionType();
 			emitter << YAML::Key << "Orthographic near clip" << YAML::Value
 					<< component.camera.get_orthographic_near_clip();
 			emitter << YAML::Key << "Orthographic far clip" << YAML::Value
@@ -386,7 +386,7 @@ namespace Engine
 					auto& camera_comp = deserialized_entity.AddComponent<CameraComponent>();
 
 					camera_comp.camera.SetProjectionType(
-							((SceneCamera::ProjectionType)camera_node["Projection type"].as<int>()));
+							((ProjectionType)camera_node["Projection type"].as<int>()));
 					camera_comp.camera.SetOrthographic(camera_node["Orthographic size"].as<float>(),
 							camera_node["Orthographic near clip"].as<float>(),
 							camera_node["Orthographic far clip"].as<float>());
