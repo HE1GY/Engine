@@ -6,7 +6,7 @@ add_executable(EngineEditor src/EngineEditorApp.cpp
         src/EngineEditorLayer.cpp
         src/EngineEditorLayer.h
         src/Panel/SceneHierarchyPanel.cpp
-        src/Panel/SceneHierarchyPanel.h)
+        src/Panel/SceneHierarchyPanel.h src/Panel/ContentPanel.h src/Panel/ContentPanel.cpp)
 
 #config
 include_directories(${CMAKE_BINARY_DIR})

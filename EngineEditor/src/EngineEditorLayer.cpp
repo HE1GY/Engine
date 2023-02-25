@@ -205,7 +205,9 @@ namespace Engine
 		  DrawSettingsWindow();
 
 		  DrawToolbar();
+
 		  m_scene_hierarchy_panel.OnImGuiRender();
+		  m_content_panel.OnImGuiRender();
 		});
 	}
 

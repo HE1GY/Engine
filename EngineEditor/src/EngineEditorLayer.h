@@ -6,6 +6,7 @@
 #include "Panel/SceneHierarchyPanel.h"
 #include "Engine/Scene/SceneSerializer.h"
 #include "Engine/Renderer/EditorCamera.h"
+#include "Panel/ContentPanel.h"
 
 namespace Engine
 {
@@ -59,7 +60,6 @@ namespace Engine
 	private:
 
 		glm::vec2 m_viewport_size{ 0, 0 };
-
 		glm::vec2 m_viewport_bound[2]{};
 
 		Ref<FrameBuffer> m_frame_buffer;
@@ -70,6 +70,8 @@ namespace Engine
 		Ref<Scene> m_active_scene;
 
 		SceneHierarchyPanel m_scene_hierarchy_panel;
+		ContentPanel m_content_panel;
+
 		GizmoType m_gizmo_type{ GizmoType::TRANSLATE };
 
 		EditorCamera m_editor_camera;
