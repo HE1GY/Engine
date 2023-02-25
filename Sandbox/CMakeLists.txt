@@ -5,6 +5,8 @@ project(Sandbox)
 add_executable(Sandbox src/Sandbox.cpp
         src/Layers/Sandbox2D.cpp src/Layers/Sandbox2D.h src/ParticlesSystem.h src/ParticlesSystem.cpp src/Random.h src/Random.cpp)
 
+#config
+include_directories(${CMAKE_BINARY_DIR})
 
 if (DEBUG)
     add_compile_definitions(DEBUG)

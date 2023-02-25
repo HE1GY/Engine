@@ -76,6 +76,9 @@ target_include_directories(Engine
 
 target_precompile_headers(Engine PUBLIC src/pch.h)
 
+#config
+include_directories(${CMAKE_BINARY_DIR})
+
 if (DEBUG)
     add_compile_definitions(DEBUG)
 endif (DEBUG)

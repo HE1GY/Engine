@@ -1,3 +1,5 @@
+#include "config.h"
+
 #include <glm/ext/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
@@ -49,7 +51,7 @@ namespace Engine
 							{ ShaderDataType::Int, "a_tex_slot" },
 							{ ShaderDataType::Int, "a_entity_id" }})
 			);
-			quad_shader = Shader::Create("../../../Sandbox/assets/shaders/default_2D_shader.glsl");
+			quad_shader = Shader::Create(CMAKE_SOURCE_DIR"/Engine/assets/shaders/2D_quad_shader.glsl");
 
 			int sampler[Renderer2D::k_max_texture_slot];
 			for (int i = 0; i < Renderer2D::k_max_texture_slot; ++i)
@@ -68,7 +70,7 @@ namespace Engine
 							{ ShaderDataType::Float, "a_fade", },
 							{ ShaderDataType::Int, "a_entity_id" }
 					}));
-			circle_shader = Shader::Create("../../../Sandbox/assets/shaders/default_2D_circle_shader.glsl");
+			circle_shader = Shader::Create(CMAKE_SOURCE_DIR"/Engine/assets/shaders/2D_circle_shader.glsl");
 
 			line_batch = CreateScope<Batch<LineVertex>>(
 					BufferLayout({
@@ -76,7 +78,7 @@ namespace Engine
 							{ ShaderDataType::Float4, "a_color" },
 							{ ShaderDataType::Int, "a_entity_id" }
 					}));
-			line_shader = Shader::Create("../../../Sandbox/assets/shaders/default_2D_line_shader.glsl");
+			line_shader = Shader::Create(CMAKE_SOURCE_DIR"/Engine/assets/shaders/2D_line_shader.glsl");
 
 			quad_vertices[0] = { -0.5f, -0.5f, 0, 1 };
 			quad_vertices[1] = { 0.5f, -0.5f, 0, 1 };

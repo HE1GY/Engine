@@ -42,10 +42,9 @@ target_link_libraries(imgui PUBLIC glfw)
 
 target_link_libraries(imguizmo PUBLIC imgui)
 
+#config
+configure_file(config.h.in ${CMAKE_BINARY_DIR}/config.h)
 
-#game
-add_subdirectory(Arkanoid)
-target_link_libraries(Arkanoid PRIVATE Engine)
 
 
 
