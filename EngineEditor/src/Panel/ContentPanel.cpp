@@ -18,6 +18,8 @@ namespace Engine
 
 	void ContentPanel::OnImGuiRender()
 	{
+		//ImGui::ShowDemoWindow();
+
 		ImGui::Begin("Content Browser");
 
 		if (m_current_directory != s_root)
@@ -45,10 +47,10 @@ namespace Engine
 				{
 					m_current_directory = entry.path();
 				}
-				ImGui::PushTextWrapPos(ImGui::GetCursorPosX() + m_icon_size + m_padding);
+				ImGui::PushTextWrapPos(ImGui::GetCursorPosX() + m_icon_size);
 				float text_pos_x = ImGui::GetCursorPosX() + (m_icon_size / 2.0f)
 						- ImGui::CalcTextSize(relative.string().c_str(), NULL, false, m_icon_size).x / 2.0f;
-				
+
 				ImGui::SetCursorPosX(text_pos_x);
 				ImGui::Text(relative.string().c_str());
 				ImGui::PopTextWrapPos();
@@ -65,7 +67,17 @@ namespace Engine
 				{
 				}
 
-				ImGui::PushTextWrapPos(ImGui::GetCursorPosX() + m_icon_size + m_padding);
+				if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_None))
+				{
+					if (entry.path().extension() == ".engine")
+					{
+						size_t path_size = strlen(entry.path().string().c_str()) * sizeof(std::basic_string<char>);
+						ImGui::SetDragDropPayload("DND_SCENE", entry.path().string().c_str(), path_size);
+					}
+					ImGui::EndDragDropSource();
+				}
+
+				ImGui::PushTextWrapPos(ImGui::GetCursorPosX() + m_icon_size);
 				float text_pos_x = ImGui::GetCursorPosX() + (m_icon_size / 2.0f)
 						- ImGui::CalcTextSize(relative.string().c_str(), NULL, false, m_icon_size).x / 2.0f;
 

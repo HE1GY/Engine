@@ -272,10 +272,6 @@ namespace Engine
 				ImGui::Text("Hovered entity: %s  id=%d", m_hovered_entity.GetComponent<TagComponent>().tag.c_str(),
 						(int32_t)m_hovered_entity);
 			}
-			else
-			{
-				ImGui::Text("Dead entity id = %d", (int32_t)m_hovered_entity);
-			}
 		}
 		else
 		{
@@ -370,6 +366,17 @@ namespace Engine
 		if (m_scene_state == SceneState::Edit)
 		{
 			DrawGizmo();
+		}
+
+		if (ImGui::BeginDragDropTarget())
+		{
+			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("DND_SCENE"))
+			{
+				std::filesystem::path scene_path = (const char*)payload->Data;
+
+				OpenScene(scene_path);
+			}
+			ImGui::EndDragDropTarget();
 		}
 
 		ImGui::End();
@@ -511,16 +518,21 @@ namespace Engine
 		std::string file_path;
 		file_path = FileDialogs::OpenFile("*.engine");
 
-		if (!file_path.empty())
+		OpenScene(file_path);
+	}
+
+	void EngineEditorLayer::OpenScene(std::filesystem::path path)
+	{
+		if (!path.empty())
 		{
 			m_active_scene = CreateRef<Scene>();
 
 			SceneSerializer serializer(m_active_scene);
-			serializer.Deserialize(file_path);
+			serializer.Deserialize(path.string());
 
 			m_active_scene->OnViewResize((uint32_t)m_viewport_size.x, (uint32_t)m_viewport_size.y);
 			m_scene_hierarchy_panel.SetContext(m_active_scene);
-			m_editor_scene_path = file_path;
+			m_editor_scene_path = path;
 		}
 	}
 

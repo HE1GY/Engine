@@ -46,6 +46,7 @@ namespace Engine
 		bool OnMouseButtonPress(MouseButtonPressed& event);
 		void NewScene();
 		void OpenScene();
+		void OpenScene(std::filesystem::path path);
 		void SaveSceneAs();
 		void SaveScene();
 		void OnScenePlay();
