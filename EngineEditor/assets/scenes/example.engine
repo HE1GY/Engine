@@ -43,5 +43,6 @@ Entities:
         Perspective FOV: 1.30899692
         Perspective near clip: 0.00999999978
         Perspective far clip: 1000
+        Aspect ratio: 1.61270487
       Fix aspect ration: false
       Primary: true

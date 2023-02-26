@@ -3,7 +3,6 @@
 #include "glm/vec4.hpp"
 #include "glm/vec3.hpp"
 #include "Engine/Core/TimeStep.h"
-#include "Engine/Renderer/OrthographicCamera.h"
 
 namespace Engine
 {
@@ -22,7 +21,6 @@ namespace Engine
 		void Init(const ParticlesProp& prop);
 		void Emit(const glm::vec3 pos);
 		void OnUpdate(TimeStep ts);
-		void OnRenderer(OrthographicCamera& cam);
 	private:
 		struct Particle
 		{

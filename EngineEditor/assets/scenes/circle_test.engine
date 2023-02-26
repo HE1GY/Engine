@@ -16,6 +16,7 @@ Entities:
         Perspective FOV: 0.785398185
         Perspective near clip: 0.00999999978
         Perspective far clip: 1000
+        Aspect ratio: 1.61270487
       Fix aspect ration: false
       Primary: true
   - EntityID: 13654274066534280096
@@ -26,7 +27,7 @@ Entities:
       Rotation: [0, 0, 0]
       Scale: [8.36301517, 1, 1]
     SpriteRendererComponent:
-      Color: [1, 1, 1, 1]
+      Color: [0.525096536, 0.196657777, 0.196657777, 1]
     Rigidbody2DComponent:
       Body Type: Static
       Fixed Rotation: false
@@ -41,7 +42,7 @@ Entities:
     TagComponent:
       Tag: c
     TransformComponent:
-      Translation: [-0.0190761071, 4.07057762, 4.65661287e-10]
+      Translation: [-0.226982027, 3.83669496, 4.65661287e-10]
       Rotation: [0, 0, 0]
       Scale: [1, 1, 1]
     CircleRendererComponent:

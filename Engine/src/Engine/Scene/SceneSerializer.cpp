@@ -123,6 +123,7 @@ namespace Engine
 			break;
 		default:
 		CORE_ASSERT(false, "Unknown body type");
+			return "Kinematic";
 		}
 	}
 
@@ -142,6 +143,7 @@ namespace Engine
 		}
 
 		CORE_ASSERT(false, "Unknown body type");
+		return Rigidbody2DComponent::BodyType::Static;
 	}
 
 	static void SerializeEntity(YAML::Emitter& emitter, Entity& entity)
@@ -185,15 +187,17 @@ namespace Engine
 			emitter << YAML::BeginMap;
 			emitter << YAML::Key << "Projection type" << YAML::Value << (int)component.camera.GetProjectionType();
 			emitter << YAML::Key << "Orthographic near clip" << YAML::Value
-					<< component.camera.get_orthographic_near_clip();
+					<< component.camera.GetOrthographicNearClip();
 			emitter << YAML::Key << "Orthographic far clip" << YAML::Value
-					<< component.camera.get_orthographic_far_clip();
-			emitter << YAML::Key << "Orthographic size" << YAML::Value << component.camera.get_orthographic_size();
-			emitter << YAML::Key << "Perspective FOV" << YAML::Value << component.camera.get_perspective_FOV();
+					<< component.camera.GetOrthographicFarClip();
+			emitter << YAML::Key << "Orthographic size" << YAML::Value << component.camera.GetOrthographicSize();
+			emitter << YAML::Key << "Perspective FOV" << YAML::Value << component.camera.GetPerspectiveFov();
 			emitter << YAML::Key << "Perspective near clip" << YAML::Value
-					<< component.camera.get_perspective_near_clip();
+					<< component.camera.GetPerspectiveNearClip();
 			emitter << YAML::Key << "Perspective far clip" << YAML::Value
-					<< component.camera.get_perspective_far_clip();
+					<< component.camera.GetPerspectiveFarClip();
+			emitter << YAML::Key << "Aspect ratio" << YAML::Value
+					<< component.camera.GetAspectRatio();
 			emitter << YAML::EndMap;
 
 			emitter << YAML::Key << "Fix aspect ration" << YAML::Value << component.fix_aspect_ratio;
@@ -387,10 +391,12 @@ namespace Engine
 
 					camera_comp.camera.SetProjectionType(
 							((ProjectionType)camera_node["Projection type"].as<int>()));
-					camera_comp.camera.SetOrthographic(camera_node["Orthographic size"].as<float>(),
+					camera_comp.camera.SetOrthographic(camera_node["Aspect ratio"].as<float>(),
+							camera_node["Orthographic size"].as<float>(),
 							camera_node["Orthographic near clip"].as<float>(),
 							camera_node["Orthographic far clip"].as<float>());
-					camera_comp.camera.set_perspective(camera_node["Perspective FOV"].as<float>(),
+					camera_comp.camera.SetPerspective(camera_node["Aspect ratio"].as<float>(),
+							camera_node["Perspective FOV"].as<float>(),
 							camera_node["Perspective near clip"].as<float>(),
 							camera_node["Perspective far clip"].as<float>());
 

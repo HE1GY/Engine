@@ -80,7 +80,7 @@ namespace Engine
 
 		ImGuiIO& io = ImGui::GetIO();
 		Application* app = Application::get();
-		io.DisplaySize = ImVec2(app->GetWindow()->get_width(), app->GetWindow()->get_height());
+		io.DisplaySize = ImVec2(app->GetWindow()->GetWidth(), app->GetWindow()->GetHeight());
 
 		ImGui::Render();
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());

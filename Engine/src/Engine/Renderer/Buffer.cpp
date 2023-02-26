@@ -98,7 +98,7 @@ namespace Engine
 
 	Ref<VertexBuffer> VertexBuffer::Create(uint32_t size)
 	{
-		switch (RendererAPI::get_renderer_API())
+		switch (RendererAPI::GetRendererApi())
 		{
 		case RendererAPI::API::OpenGL:
 			return std::make_shared<OpenGLVertexBuffer>(size);
@@ -111,7 +111,7 @@ namespace Engine
 
 	Ref<VertexBuffer> VertexBuffer::Create(void* data, uint32_t size)
 	{
-		switch (RendererAPI::get_renderer_API())
+		switch (RendererAPI::GetRendererApi())
 		{
 		case RendererAPI::API::OpenGL:
 			return std::make_shared<OpenGLVertexBuffer>(data, size);
@@ -124,7 +124,7 @@ namespace Engine
 
 	Ref<IndexBuffer> IndexBuffer::Create(uint32_t* data, uint32_t count)
 	{
-		switch (RendererAPI::get_renderer_API())
+		switch (RendererAPI::GetRendererApi())
 		{
 		case RendererAPI::API::OpenGL:
 			return std::make_shared<OpenGLIndexBuffer>(data, count);
@@ -137,7 +137,7 @@ namespace Engine
 
 	Ref<UniformBuffer> UniformBuffer::Create(BufferLayout layout, uint32_t binding_point)
 	{
-		switch (RendererAPI::get_renderer_API())
+		switch (RendererAPI::GetRendererApi())
 		{
 		case RendererAPI::API::OpenGL:
 			return CreateRef<OpenGLUniformBuffer>(layout, binding_point);

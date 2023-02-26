@@ -344,9 +344,9 @@ namespace Engine
 
 		  if (cam_cmp.camera.GetProjectionType() == ProjectionType::Perspective)
 		  {
-			  float persp_FOV = glm::degrees(cam_cmp.camera.get_perspective_FOV());
-			  float persp_near_clip = cam_cmp.camera.get_perspective_near_clip();
-			  float persp_far_clip = cam_cmp.camera.get_perspective_far_clip();
+			  float persp_FOV = glm::degrees(cam_cmp.camera.GetPerspectiveFov());
+			  float persp_near_clip = cam_cmp.camera.GetPerspectiveNearClip();
+			  float persp_far_clip = cam_cmp.camera.GetPerspectiveFarClip();
 
 			  ImGui::Text("FOV");
 			  ImGui::SameLine();
@@ -358,16 +358,16 @@ namespace Engine
 			  ImGui::SameLine();
 			  ImGui::DragFloat("##Far clip", &persp_far_clip);
 
-			  cam_cmp.camera.set_perspective_FOV(glm::radians(persp_FOV));
-			  cam_cmp.camera.set_perspective_near_clip(persp_near_clip);
-			  cam_cmp.camera.set_perspective_far_clip(persp_far_clip);
+			  cam_cmp.camera.SetPerspectiveFov(glm::radians(persp_FOV));
+			  cam_cmp.camera.SetPerspectiveNearClip(persp_near_clip);
+			  cam_cmp.camera.SetPerspectiveFarClip(persp_far_clip);
 		  }
 
 		  if (cam_cmp.camera.GetProjectionType() == ProjectionType::Orthographic)
 		  {
-			  float ortho_size = cam_cmp.camera.get_orthographic_size();
-			  float ortho_near_clip = cam_cmp.camera.get_orthographic_near_clip();
-			  float ortho_far_clip = cam_cmp.camera.get_orthographic_far_clip();
+			  float ortho_size = cam_cmp.camera.GetOrthographicSize();
+			  float ortho_near_clip = cam_cmp.camera.GetOrthographicNearClip();
+			  float ortho_far_clip = cam_cmp.camera.GetOrthographicFarClip();
 
 			  ImGui::Text("Size");
 			  ImGui::SameLine();
@@ -379,9 +379,9 @@ namespace Engine
 			  ImGui::SameLine();
 			  ImGui::DragFloat("##Far clip", &ortho_far_clip);
 
-			  cam_cmp.camera.set_orthographic_size(ortho_size);
-			  cam_cmp.camera.set_orthographic_near_clip(ortho_near_clip);
-			  cam_cmp.camera.set_orthographic_far_clip(ortho_far_clip);
+			  cam_cmp.camera.SetOrthographicSize(ortho_size);
+			  cam_cmp.camera.SetOrthographicNearClip(ortho_near_clip);
+			  cam_cmp.camera.SetOrthographicFarClip(ortho_far_clip);
 
 			  ImGui::Text("Fixed aspect ratio");
 			  ImGui::SameLine();
@@ -536,6 +536,7 @@ namespace Engine
 		  ImGui::SameLine();
 		  ImGui::DragFloat("##Restitution Threshold", &component.restitution_threshold, 0.01f, 0.0f);
 		});
+
 	}
 
 	Entity SceneHierarchyPanel::GetSelectedEntity()

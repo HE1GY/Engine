@@ -8,7 +8,7 @@ namespace Engine
 
 	Ref<FrameBuffer> FrameBuffer::Create(const FrameBufferSpecification& spec)
 	{
-		switch (RendererAPI::get_renderer_API())
+		switch (RendererAPI::GetRendererApi())
 		{
 		case RendererAPI::API::OpenGL:
 			return CreateRef<OpenGLFrameBuffer>(spec);

@@ -8,7 +8,7 @@ namespace Engine
 {
 	Ref<Texture2D> Texture2D::Create(const std::string& path)
 	{
-		switch (RendererAPI::get_renderer_API())
+		switch (RendererAPI::GetRendererApi())
 		{
 		case RendererAPI::API::OpenGL:
 			return std::make_shared<OpenGLTexture2D>(path);
@@ -20,7 +20,7 @@ namespace Engine
 	}
 	Ref<Texture2D> Texture2D::Create(uint32_t width, uint32_t height)
 	{
-		switch (RendererAPI::get_renderer_API())
+		switch (RendererAPI::GetRendererApi())
 		{
 		case RendererAPI::API::OpenGL:
 			return std::make_shared<OpenGLTexture2D>(width, height);

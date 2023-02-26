@@ -100,7 +100,6 @@ namespace Engine
 		ed.Dispatch<MouseButtonPressed>(BIND_EVENT_FUNC(EngineEditorLayer::OnMouseButtonPress));
 
 		m_editor_camera.OnEvent(event);
-
 	}
 
 	void EngineEditorLayer::OnOverlayRender()
@@ -361,7 +360,8 @@ namespace Engine
 		}
 
 		uint32_t tex_id = m_frame_buffer->GetColorAttachmentRendererId(0);
-		ImGui::Image((void*)tex_id, ImVec2{ size.x, size.y }, ImVec2{ 0, 1 }, ImVec2{ 1, 0 });
+		ImGui::Image((ImTextureID)static_cast<uint64_t>(tex_id), ImVec2{ size.x, size.y }, ImVec2{ 0, 1 },
+				ImVec2{ 1, 0 });
 
 		if (m_scene_state == SceneState::Edit)
 		{
@@ -533,6 +533,7 @@ namespace Engine
 			m_active_scene->OnViewResize((uint32_t)m_viewport_size.x, (uint32_t)m_viewport_size.y);
 			m_scene_hierarchy_panel.SetContext(m_active_scene);
 			m_editor_scene_path = path;
+			m_hovered_entity = { entt::null, nullptr };
 		}
 	}
 

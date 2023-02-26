@@ -71,13 +71,13 @@ namespace Engine
 				{
 					if (entry.path().extension() == ".engine")
 					{
-						size_t path_size = strlen(entry.path().string().c_str()) * sizeof(std::basic_string<char>);
+						size_t path_size = (entry.path().string().size() + 1) * sizeof(char);
 						ImGui::SetDragDropPayload("DND_SCENE", entry.path().string().c_str(), path_size);
 					}
 
 					if (entry.path().extension() == ".png" || entry.path().extension() == ".jpeg")
 					{
-						size_t path_size = strlen(entry.path().string().c_str()) * sizeof(std::basic_string<char>);
+						size_t path_size = (entry.path().string().size() + 1) * sizeof(char);
 						ImGui::SetDragDropPayload("DND_TEXTURE", entry.path().string().c_str(), path_size);
 					}
 
@@ -99,7 +99,6 @@ namespace Engine
 		}
 
 		ImGui::NewLine();
-		ImGui::SetCursorPosY(ImGui::GetWindowContentRegionMax().y - 60);
 		ImGui::SliderFloat("Icon size", &m_icon_size, 50.0f, 100.0f, "%.1f");
 		ImGui::SliderFloat("Padding", &m_padding, 10.0f, 40.0f, "%.1f");
 

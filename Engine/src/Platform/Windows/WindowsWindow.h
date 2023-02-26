@@ -25,11 +25,11 @@ namespace Engine
 
 		virtual float get_current_time() override;
 
-		inline virtual unsigned int get_width() override
+		inline virtual unsigned int GetWidth() override
 		{
 			return m_window_data.props.width;
 		};
-		inline virtual unsigned int get_height() override
+		inline virtual unsigned int GetHeight() override
 		{
 			return m_window_data.props.height;
 		};

@@ -62,18 +62,5 @@ namespace Engine
 			}
 		}
 	}
-	void ParticlesSystem::OnRenderer(Engine::OrthographicCamera& cam)
-	{
-		Engine::Renderer2D::BeginScene(cam.get_projection_matrix(), cam.get_view_matrix());
-		for (auto& particle : m_particle_pool)
-		{
-			if (particle.is_active)
-			{
-				//Engine::Renderer2D::DrawQuad(particle.position, { particle.size.x, particle.size.y }, particle.color);//TODO::redo
-			}
-		}
-
-		Engine::Renderer2D::EndScene();
-	}
 
 }

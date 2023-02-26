@@ -1,9 +1,9 @@
 #pragma once
 
-#include "OrthographicCamera.h"
-#include "RendererCommand.h"
 #include "Shader.h"
 #include "Camera.h"
+#include "VertexArray.h"
+#include "RendererAPI.h"
 
 namespace Engine
 {
@@ -13,26 +13,15 @@ namespace Engine
 		static void Init();
 		static void ShutDown();
 
-		static void BeginScene(OrthographicCamera& camera);
+		static void BeginScene(const glm::mat4& projection, const glm::mat4& view);
 		static void EndScene();
 
 		static void OnWindowResized(uint32_t width, uint32_t height);
 
-		static void Submit(const std::shared_ptr<Shader>& shader, std::shared_ptr<VertexArray> vertex_array,
-				const glm::mat4& transform = glm::mat4(1.0f));
-
-		inline static RendererAPI::API get_renderer_API()
+		inline static RendererAPI::API GetRendererApi()
 		{
-			return RendererAPI::get_renderer_API();
+			return RendererAPI::GetRendererApi();
 		}
-
-	private:
-		struct SceneData
-		{
-			glm::mat4 view_projection_matrix;
-		};
-
-		static SceneData* s_scene_data;
 	};
 
 } // namespace Engine

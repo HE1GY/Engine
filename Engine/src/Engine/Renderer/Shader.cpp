@@ -10,7 +10,7 @@ namespace Engine
 {
 	Ref<Shader> Shader::Create(const std::string& name, const std::string& vertex_src, const std::string& fragment_src)
 	{
-		switch (RendererAPI::get_renderer_API())
+		switch (RendererAPI::GetRendererApi())
 		{
 
 		case RendererAPI::API::OpenGL:
@@ -24,7 +24,7 @@ namespace Engine
 
 	Ref<Shader> Shader::Create(const std::string& src_path)
 	{
-		switch (RendererAPI::get_renderer_API())
+		switch (RendererAPI::GetRendererApi())
 		{
 
 		case RendererAPI::API::OpenGL:

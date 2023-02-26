@@ -55,6 +55,7 @@ namespace Engine
 		template<typename T>
 		bool HasComponent() const
 		{
+			if (m_scene->m_registry.size() <= 0)return false;
 			return m_scene->m_registry.any_of<T>(m_entity_handler);
 		}
 

@@ -28,8 +28,8 @@ public:
 			vo_data->Bind();
 
 			vo_data->SetLayout({
-					{ "a_position", Engine::ShaderDataType::Float3, false },
-					{ "a_tex_coord", Engine::ShaderDataType::Float2, false },
+					{ Engine::ShaderDataType::Float3, "a_position", false },
+					{ Engine::ShaderDataType::Float2, "a_tex_coord", false },
 			});
 
 			uint32_t elements[] = {
@@ -54,7 +54,7 @@ public:
 			vo_data_box = Engine::VertexBuffer::Create(pos_box, sizeof(pos_box));
 			vo_data_box->Bind();
 
-			vo_data_box->SetLayout({{ "a_position", Engine::ShaderDataType::Float3, false }});
+			vo_data_box->SetLayout({{ Engine::ShaderDataType::Float3, "a_position", false }});
 
 			uint32_t elements_box[] = { 0, 1, 2, 2, 3, 0 };
 			Engine::Ref<Engine::IndexBuffer> vo_index_box;
@@ -79,7 +79,7 @@ public:
 		Engine::RendererCommand::SetClearColor({ 0.1f, 0.1f, 0.1f, 0.1f });
 		Engine::RendererCommand::Clear();
 
-		Engine::Renderer::BeginScene(m_camera_controller.get_camera());
+		Engine::Renderer::BeginScene(m_camera_controller.GetCamera());
 
 		float x{ 0 };
 		float y{ 0 };

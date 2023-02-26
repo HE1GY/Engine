@@ -24,8 +24,6 @@
 #include "Engine/Renderer/VertexArray.h"
 #include "Engine/Renderer/FrameBuffer.h"
 
-#include "Engine/Renderer/OrthographicCameraController.h"
-
 #include "Engine/Scene/Scene.h"
 #include "Engine/Scene/Entity.h"
 #include "Engine/Scene/Components.h"

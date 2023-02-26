@@ -33,7 +33,7 @@ namespace Engine
 
 		virtual float get_current_time() = 0;
 
-		virtual unsigned int get_width() = 0;
-		virtual unsigned int get_height() = 0;
+		virtual unsigned int GetWidth() = 0;
+		virtual unsigned int GetHeight() = 0;
 	};
 } // namespace Engine

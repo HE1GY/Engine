@@ -5,7 +5,7 @@
 #include "Engine.h"
 #include "Panel/SceneHierarchyPanel.h"
 #include "Engine/Scene/SceneSerializer.h"
-#include "Engine/Renderer/EditorCamera.h"
+#include "Engine/Scene/EditorCamera.h"
 #include "Panel/ContentPanel.h"
 
 namespace Engine

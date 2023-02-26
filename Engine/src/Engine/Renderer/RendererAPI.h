@@ -14,7 +14,7 @@ namespace Engine
 			OpenGL,
 		};
 
-		inline static API get_renderer_API()
+		inline static API GetRendererApi()
 		{
 			return s_render_API;
 		}

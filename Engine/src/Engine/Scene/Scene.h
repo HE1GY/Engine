@@ -1,6 +1,6 @@
 #pragma once
 
-#include <Engine/Renderer/EditorCamera.h>
+#include <Engine/Scene/EditorCamera.h>
 
 #include <entt/entt.hpp>
 

@@ -10,30 +10,15 @@ namespace Engine
 		SceneCamera() = default;
 		virtual ~SceneCamera() override = default;
 
-		void SetProjectionType(ProjectionType type)
+		void SetViewport(uint32_t width, uint32_t height)
 		{
-			m_projection_type = type;
+			m_aspect_ration = (float)width / (float)height;
+			CalculateProjection();
 		}
 
-		void SetViewport(uint32_t width, uint32_t height);
-		void SetOrthographic(float size, float near_clip, float far_clip);
-
-		void set_orthographic_size(float orthographic_size)
+		float GetAspectRatio() const
 		{
-			m_orthographic_size = orthographic_size;
-			RecalculateProjection();
-		}
-
-		void set_orthographic_near_clip(float value)
-		{
-			m_orthographic_near = value;
-			RecalculateProjection();
-		}
-
-		void set_orthographic_far_clip(float value)
-		{
-			m_orthographic_far = value;
-			RecalculateProjection();
+			return m_aspect_ration;
 		}
 
 		ProjectionType GetProjectionType() const
@@ -41,73 +26,66 @@ namespace Engine
 			return m_projection_type;
 		}
 
-		float get_orthographic_size() const
+		float GetOrthographicSize() const
 		{
-			return m_orthographic_size;
+			return m_ortho_size;
 		}
 
-		float get_orthographic_far_clip() const
+		float GetOrthographicFarClip() const
 		{
-			return m_orthographic_far;
-		}
-		float get_orthographic_near_clip() const
-		{
-			return m_orthographic_near;
+			return m_far_ortho;
 		}
 
-		const std::array<glm::vec2, 2>& GetOrthographicBound() const
+		float GetOrthographicNearClip() const
 		{
-			return m_orthographic_bound;
+			return m_near_ortho;
 		}
 
-		//perspective
-		void set_perspective(float FOV, float near_clip, float far_clip);
-
-		void set_perspective_FOV(float FOV)
+		void SetOrthographicSize(float size)
 		{
-			m_perspective_FOV = FOV;
-			RecalculateProjection();
+			m_ortho_size = size;
+			CalculateProjection();
+		}
+		void SetOrthographicNearClip(float near)
+		{
+			m_near_ortho = near;
+			CalculateProjection();
+		}
+		void SetOrthographicFarClip(float far)
+		{
+			m_far_ortho = far;
+			CalculateProjection();
 		}
 
-		void set_perspective_near_clip(float value)
+		float GetPerspectiveFov() const
 		{
-			m_perspective_near = value;
-			RecalculateProjection();
+			return m_fov;
 		}
 
-		void set_perspective_far_clip(float value)
+		float GetPerspectiveFarClip() const
 		{
-			m_perspective_far = value;
-			RecalculateProjection();
+			return m_far_persp;
 		}
 
-		float get_perspective_FOV() const
+		float GetPerspectiveNearClip() const
 		{
-			return m_perspective_FOV;
+			return m_near_persp;
 		}
 
-		float get_perspective_far_clip() const
+		void SetPerspectiveFov(float fov)
 		{
-			return m_perspective_far;
+			m_fov = fov;
+			CalculateProjection();
 		}
-		float get_perspective_near_clip() const
+		void SetPerspectiveNearClip(float near)
 		{
-			return m_perspective_near;
+			m_near_persp = near;
+			CalculateProjection();
 		}
-
-	private:
-		void RecalculateProjection();
-
-		ProjectionType m_projection_type{ ProjectionType::Orthographic };
-
-		float m_orthographic_size{ 10 };
-		float m_orthographic_near{ 1 };
-		float m_orthographic_far{ -1 };
-		std::array<glm::vec2, 2> m_orthographic_bound;
-
-		float m_perspective_FOV{ glm::radians(45.0f) };
-		float m_perspective_near{ 0.01f };
-		float m_perspective_far{ 1000.0f };
-		float m_aspect_ration{ 1.78f };
+		void SetPerspectiveFarClip(float far)
+		{
+			m_far_persp = far;
+			CalculateProjection();
+		}
 	};
 }

@@ -54,12 +54,12 @@ void Sandbox2D::OnUpdate(Engine::TimeStep ts)
 	{
 		auto [x, y] = Engine::Input::GetMousePos();
 
-		float width = Engine::Application::get()->GetWindow()->get_width();
-		float height = Engine::Application::get()->GetWindow()->get_height();
+		float width = Engine::Application::get()->GetWindow()->GetWidth();
+		float height = Engine::Application::get()->GetWindow()->GetHeight();
 
 		glm::vec4 clip_space = { (x / width) * 2 - 1, 1 - 2 * (y / height), 0, 1 }; // to get -1<x<1 and -1<y<1
 
-		glm::mat4 inverse_view_proj = glm::inverse(m_camera_controller.get_camera().GetViewProjectionMatrix());
+		glm::mat4 inverse_view_proj = glm::inverse(m_camera_controller.GetCamera().GetViewProjectionMatrix());
 		glm::vec4 world_space = inverse_view_proj * clip_space;
 		world_space /= world_space.w;
 
@@ -79,7 +79,8 @@ void Sandbox2D::OnUpdate(Engine::TimeStep ts)
 
 	{
 
-		Engine::Renderer2D::BeginScene(m_camera_controller.get_camera());
+		Engine::Renderer2D::BeginScene(m_camera_controller.GetCamera().GetProjectionMatrix(),
+				m_camera_controller.GetCamera().GetViewMatrix());
 
 		{
 			static float color_anim{ 0.1f };
@@ -99,7 +100,7 @@ void Sandbox2D::OnUpdate(Engine::TimeStep ts)
 				color_step *= -1;
 			}
 
-			for (int i = 0; i < 50; ++i)
+			/*for (int i = 0; i < 50; ++i)
 			{
 				for (int j = 0; j < 50; ++j)
 				{
@@ -112,12 +113,14 @@ void Sandbox2D::OnUpdate(Engine::TimeStep ts)
 		}
 
 		Engine::Renderer2D::DrawQuad({ 0, 0, 0 }, { 1, 1 }, m_wall);
-		Engine::Renderer2D::DrawQuad({ -1, 0.5f, 0 }, { 1, 2 }, m_tree);
+		Engine::Renderer2D::DrawQuad({ -1, 0.5f, 0 }, { 1, 2 }, m_tree);*/
+
+		}
 
 		Engine::Renderer2D::EndScene();
 
 		m_particles.OnUpdate(ts);
-		m_particles.OnRenderer(m_camera_controller.get_camera());
+		m_particles.OnRenderer(m_camera_controller.GetCamera());
 	}
 }
 
