@@ -1,5 +1,42 @@
-Scene: circle_test
+Scene: circle_test.engine
 Entities:
+  - EntityID: 8917539127877350119
+    TagComponent:
+      Tag: cam
+    TransformComponent:
+      Translation: [0, 0, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    CameraComponent:
+      Camera:
+        Projection type: 1
+        Orthographic near clip: 1
+        Orthographic far clip: -1
+        Orthographic size: 10
+        Perspective FOV: 0.785398185
+        Perspective near clip: 0.00999999978
+        Perspective far clip: 1000
+      Fix aspect ration: false
+      Primary: true
+  - EntityID: 13654274066534280096
+    TagComponent:
+      Tag: q
+    TransformComponent:
+      Translation: [0, -2.44329166, 0]
+      Rotation: [0, 0, 0]
+      Scale: [8.36301517, 1, 1]
+    SpriteRendererComponent:
+      Color: [1, 1, 1, 1]
+    Rigidbody2DComponent:
+      Body Type: Static
+      Fixed Rotation: false
+    BoxCollider2DComponent:
+      Offset: [0, 0]
+      Size: [0.5, 0.5]
+      Density: 1
+      Friction: 0.5
+      Restitution: 0
+      Restitution Threshold: 0.5
   - EntityID: 7243710602291039495
     TagComponent:
       Tag: c
@@ -20,23 +57,4 @@ Entities:
       Density: 1
       Friction: 0.5
       Restitution: 0.180000007
-      Restitution Threshold: 0.5
-  - EntityID: 13654274066534280096
-    TagComponent:
-      Tag: q
-    TransformComponent:
-      Translation: [0, -2.44329166, 0]
-      Rotation: [0, 0, 0]
-      Scale: [8.36301517, 1, 1]
-    SpriteRendererComponent:
-      Color: [0.818532825, 0.278111547, 0.278111547, 1]
-    Rigidbody2DComponent:
-      Body Type: Static
-      Fixed Rotation: false
-    BoxCollider2DComponent:
-      Offset: [0, 0]
-      Size: [0.5, 0.5]
-      Density: 1
-      Friction: 0.5
-      Restitution: 0
       Restitution Threshold: 0.5

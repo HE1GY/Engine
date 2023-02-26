@@ -74,6 +74,13 @@ namespace Engine
 						size_t path_size = strlen(entry.path().string().c_str()) * sizeof(std::basic_string<char>);
 						ImGui::SetDragDropPayload("DND_SCENE", entry.path().string().c_str(), path_size);
 					}
+
+					if (entry.path().extension() == ".png" || entry.path().extension() == ".jpeg")
+					{
+						size_t path_size = strlen(entry.path().string().c_str()) * sizeof(std::basic_string<char>);
+						ImGui::SetDragDropPayload("DND_TEXTURE", entry.path().string().c_str(), path_size);
+					}
+
 					ImGui::EndDragDropSource();
 				}
 

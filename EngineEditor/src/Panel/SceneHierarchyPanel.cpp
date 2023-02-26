@@ -396,6 +396,43 @@ namespace Engine
 				  ImGui::Text("Color");
 				  ImGui::SameLine();
 				  ImGui::ColorEdit4("##Color", glm::value_ptr(sprite_renderer.color));
+
+				  ImGui::Text("Texture");
+				  if (sprite_renderer.texture)
+				  {
+					  if (ImGui::ImageButton("##Texture", (ImTextureID)sprite_renderer.texture->GetRendererId(),
+							  ImVec2(100, 100), { 1, 1 }, { 0, 0 }, { 0, 0, 0, 0 },
+							  { sprite_renderer.color.r, sprite_renderer.color.g, sprite_renderer.color.b,
+								sprite_renderer.color.a }))
+					  {
+
+					  };
+				  }
+				  else
+				  {
+					  ImGui::ColorButton("##Texture", *(ImVec4*)glm::value_ptr(sprite_renderer.color),
+							  ImGuiColorEditFlags_NoBorder | ImGuiColorEditFlags_DisplayHSV, ImVec2(100, 100));
+				  }
+
+				  if (ImGui::BeginDragDropTarget())
+				  {
+					  if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("DND_TEXTURE"))
+					  {
+						  std::filesystem::path texture_path = (const char*)payload->Data;
+						  if (!texture_path.empty())
+						  {
+							  sprite_renderer.texture = Texture2D::Create(texture_path.string());
+						  }
+					  }
+					  ImGui::EndDragDropTarget();
+				  }
+
+				  ImGui::SameLine();
+				  if (ImGui::Button("Delete Texture", { 100, 20 }))
+				  {
+					  sprite_renderer.texture = nullptr;
+				  }
+
 				});
 
 		DrawComponent<CircleRendererComponent>("CircleRendererComponent", entity,
