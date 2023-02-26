@@ -12,6 +12,8 @@ namespace Engine
 	ContentPanel::ContentPanel()
 			:m_current_directory(s_root)
 	{
+		m_file_texture = Texture2D::Create(CMAKE_SOURCE_DIR"/EngineEditor/resources/icon/FileIcon.png");
+		m_folder_texture = Texture2D::Create(CMAKE_SOURCE_DIR"/EngineEditor/resources/icon/DirectoryIcon.png");
 	}
 
 	void ContentPanel::OnImGuiRender()
@@ -29,21 +31,58 @@ namespace Engine
 		for (const auto& entry : std::filesystem::directory_iterator(m_current_directory))
 		{
 			std::filesystem::path relative = std::filesystem::relative(entry, m_current_directory);
+
+			if (ImGui::GetCursorPosX() > ImGui::GetContentRegionMax().x)
+			{
+				ImGui::NewLine();
+			}
+
 			if (entry.is_directory())
 			{
-				if (ImGui::Button(relative.string().c_str()))
+				ImGui::BeginGroup();
+				if (ImGui::ImageButton(relative.string().c_str(), (ImTextureID)m_folder_texture->GetRendererId(),
+						{ m_icon_size, m_icon_size }, { 1, 1 }, { 0, 0 }))
 				{
 					m_current_directory = entry.path();
 				}
+				ImGui::PushTextWrapPos(ImGui::GetCursorPosX() + m_icon_size + m_padding);
+				float text_pos_x = ImGui::GetCursorPosX() + (m_icon_size / 2.0f)
+						- ImGui::CalcTextSize(relative.string().c_str(), NULL, false, m_icon_size).x / 2.0f;
+				
+				ImGui::SetCursorPosX(text_pos_x);
+				ImGui::Text(relative.string().c_str());
+				ImGui::PopTextWrapPos();
+
+				ImGui::EndGroup();
+
+				ImGui::SameLine(0, m_padding);
 			}
 			else
 			{
-				if (ImGui::Button(relative.string().c_str()))
+				ImGui::BeginGroup();
+				if (ImGui::ImageButton(relative.string().c_str(), (ImTextureID)m_file_texture->GetRendererId(),
+						{ m_icon_size, m_icon_size }, { 1, 1 }, { 0, 0 }))
 				{
-
 				}
+
+				ImGui::PushTextWrapPos(ImGui::GetCursorPosX() + m_icon_size + m_padding);
+				float text_pos_x = ImGui::GetCursorPosX() + (m_icon_size / 2.0f)
+						- ImGui::CalcTextSize(relative.string().c_str(), NULL, false, m_icon_size).x / 2.0f;
+
+				ImGui::SetCursorPosX(text_pos_x);
+				ImGui::Text(relative.string().c_str());
+				ImGui::PopTextWrapPos();
+
+				ImGui::EndGroup();
+
+				ImGui::SameLine(0, m_padding);
 			}
 		}
+
+		ImGui::NewLine();
+		ImGui::SetCursorPosY(ImGui::GetWindowContentRegionMax().y - 60);
+		ImGui::SliderFloat("Icon size", &m_icon_size, 50.0f, 100.0f, "%.1f");
+		ImGui::SliderFloat("Padding", &m_padding, 10.0f, 40.0f, "%.1f");
 
 		ImGui::End();
 	}
