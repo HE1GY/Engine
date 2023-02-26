@@ -14,11 +14,11 @@ namespace Engine
 		CreateFromCoord(Ref<Texture2D>& texture, const glm::vec2& coord_index, const glm::vec2& sprite_size,
 				const glm::vec2& coord_cell_size);
 
-		const glm::vec2* get_coords() const
+		const glm::vec2* GetCoords() const
 		{
 			return m_coords;
 		};
-		Ref<Texture2D> get_texture() const
+		Ref<Texture2D> GetTexture() const
 		{
 			return m_texture;
 		};

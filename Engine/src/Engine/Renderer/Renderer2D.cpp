@@ -235,17 +235,55 @@ namespace Engine
 		s_data->stats.quads++;
 	}
 
-	void Renderer2D::DrawQuad(const glm::mat4& transformation, const Ref<SubTexture2D>& texture,
+	void Renderer2D::DrawQuad(const glm::mat4& transformation, const Ref<SubTexture2D>& sub_texture,
 			const glm::vec4& color, int32_t entity_id)
 	{
-		/*//TODO sub texture
-		bool full = !s_data->quad_batch->Add(transformation, s_data->white_texture, color, entity_id);
+		uint32_t texture_slot{ 0 };
+		if (sub_texture)
+		{
+			for (int i = 1; i < s_data->texture_count; ++i)
+			{
+				if (sub_texture->GetTexture()->GetRendererId() == s_data->textures[i]->GetRendererId())
+				{
+					texture_slot = i;
+				}
+			}
+
+			if (texture_slot == 0 && s_data->texture_count < k_max_texture_slot)
+			{
+				texture_slot = s_data->texture_count;
+				s_data->textures[texture_slot] = sub_texture->GetTexture();
+				s_data->texture_count++;
+			}
+
+			if (s_data->texture_count == k_max_texture_slot)
+			{
+				texture_slot = k_max_texture_slot - 1;
+				s_data->quad_batch->End();
+				FlushQuad();
+				CORE_WARN(" Batch overflow. Too many Textures");
+			}
+		}
+
+		bool full = false;
+		for (int i = 0; i < 4; ++i)
+		{
+			full |= !s_data->quad_batch->AddIfCan(
+					{ transformation * s_data->quad_vertices[i],
+					  color,
+					  sub_texture->GetCoords()[i],
+					  texture_slot,
+					  entity_id });
+		}
 
 		if (full)
 		{
+			s_data->quad_batch->End();
 			FlushQuad();
-		}
-		s_data->stats.quads++;*/
+			CORE_WARN(" Batch overflow. Too many vertices");
+		};
+
+		s_data->stats.quads++;
 	}
 
 	void

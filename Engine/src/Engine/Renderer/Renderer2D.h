@@ -45,7 +45,7 @@ namespace Engine
 		static void DrawQuad(const glm::mat4& transformation,
 				const Ref<Texture>& texture, const glm::vec4& color, int32_t entity_id);
 
-		static void DrawQuad(const glm::mat4& transformation, const Ref<SubTexture2D>& texture,
+		static void DrawQuad(const glm::mat4& transformation, const Ref<SubTexture2D>& sub_texture,
 				const glm::vec4& color, int32_t entity_id);
 
 		static void DrawCircle(const glm::mat4& transformation, const glm::vec4& color, float thickness, float fade,

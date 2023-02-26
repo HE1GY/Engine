@@ -6,6 +6,7 @@
 #include <box2d/b2_polygon_shape.h>
 #include <box2d/b2_circle_shape.h>
 
+#include "config.h"
 #include "Scene.h"
 #include "Entity.h"
 #include "Components.h"
@@ -60,6 +61,7 @@ namespace Engine
 	Scene::Scene()
 	{
 	}
+
 	Scene::~Scene()
 	{
 		Clean();
@@ -180,6 +182,11 @@ namespace Engine
 			Renderer2D::DrawCircle(transform.get_transformation(), circle_renderer.color, circle_renderer.thickness,
 					circle_renderer.fade, (int32_t)entity);
 		}
+
+		Ref<Texture2D> tex = Texture2D::Create(
+				CMAKE_SOURCE_DIR"/EngineEditor/assets/textures/wallpaperflare.com_wallpaper.png");
+		Ref<SubTexture2D> sub_texture = SubTexture2D::CreateFromCoord(tex, { 2, 2 }, { 100, 100 }, { 100, 100 });
+		Renderer2D::DrawQuad(glm::mat4(1.0f), sub_texture, { 1, 1, 1, 1 }, -1);
 
 		Renderer2D::EndScene();
 	}
