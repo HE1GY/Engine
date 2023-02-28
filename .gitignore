@@ -9,3 +9,11 @@ out
 profiler_data
 precompiled
 
+# C#
+
+*.config
+*.csproj
+*.sln
+bin
+obj
+
