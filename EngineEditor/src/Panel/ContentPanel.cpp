@@ -42,7 +42,8 @@ namespace Engine
 			if (entry.is_directory())
 			{
 				ImGui::BeginGroup();
-				if (ImGui::ImageButton(relative.string().c_str(), (ImTextureID)m_folder_texture->GetRendererId(),
+				if (ImGui::ImageButton(relative.string().c_str(),
+						(ImTextureID)static_cast<uint64_t>(m_folder_texture->GetRendererId()),
 						{ m_icon_size, m_icon_size }, { 1, 1 }, { 0, 0 }))
 				{
 					m_current_directory = entry.path();
@@ -62,7 +63,8 @@ namespace Engine
 			else
 			{
 				ImGui::BeginGroup();
-				if (ImGui::ImageButton(relative.string().c_str(), (ImTextureID)m_file_texture->GetRendererId(),
+				if (ImGui::ImageButton(relative.string().c_str(),
+						(ImTextureID)static_cast<uint64_t>(m_file_texture->GetRendererId()),
 						{ m_icon_size, m_icon_size }, { 1, 1 }, { 0, 0 }))
 				{
 				}

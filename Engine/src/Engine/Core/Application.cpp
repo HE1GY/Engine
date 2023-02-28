@@ -5,6 +5,8 @@
 
 #include "Engine/Core/TimeStep.h"
 #include "Engine/Renderer/Renderer.h"
+#include "Engine/Script/ScriptEngine.h"
+
 
 namespace Engine
 {
@@ -23,6 +25,7 @@ namespace Engine
 		m_window->set_event_callback(BIND_EVENT_FUNC(Application::OnEvent));
 
 		Renderer::Init();
+		ScriptEngine::Init();
 
 		m_imgui_layer = new ImGuiLayer();
 		PushOverlay(m_imgui_layer);
@@ -33,6 +36,7 @@ namespace Engine
 		PROFILER_FUNCTION();
 		m_is_running = false;
 		Renderer::ShutDown();
+		ScriptEngine::ShutDown();
 	}
 
 	void Application::Run()

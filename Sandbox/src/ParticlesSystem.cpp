@@ -65,19 +65,5 @@ void ParticlesSystem::OnUpdate(Engine::TimeStep ts)
 		}
 	}
 }
-void ParticlesSystem::OnRenderer(Engine::OrthographicCamera& cam)
-{
-	Engine::Renderer2D::BeginScene(cam.GetProjectionMatrix(), cam.GetViewMatrix());
-	for (auto& particle : m_particle_pool)
-	{
-		if (particle.is_active)
-		{
-			glm::mat4 transform = glm::translate(glm::mat4(1.0f), particle.position);
-			Engine::Ref<Engine::Texture2D> texture;
-			Engine::Renderer2D::DrawQuad(transform, texture, particle.color, -1);
-		}
-	}
 
-	Engine::Renderer2D::EndScene();
-}
 

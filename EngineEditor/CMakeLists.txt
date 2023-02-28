@@ -12,6 +12,18 @@ add_executable(EngineEditor src/EngineEditorApp.cpp
 include_directories(${CMAKE_BINARY_DIR})
 
 
+
+#script engine
+add_custom_command(TARGET EngineEditor POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+       ${CMAKE_SOURCE_DIR}/external/precompiled/bin/mono/Debug/mono-2.0-sgen.dll
+       ${CMAKE_SOURCE_DIR}/external/precompiled/bin/mono/Debug/MonoPosixHelper.dll
+       $<TARGET_FILE_DIR:EngineEditor>)
+
+
+
+
+
 if (DEBUG)
     add_compile_definitions(DEBUG)
 endif (DEBUG)

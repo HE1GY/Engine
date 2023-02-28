@@ -9,7 +9,7 @@ class ExampleLayer : public Engine::Layer
 
 public:
 	ExampleLayer()
-			:Layer("ExampleLayer"), m_camera_controller(1280.0f / 720.0f, true)
+			:Layer("ExampleLayer")/*, m_camera_controller(1280.0f / 720.0f, true)*/
 	{
 		m_shader_lib.Load("texture", "../../../Sandbox/assets/shaders/2D_quad_shader.glsl");
 		m_shader_lib.Load("flat_color", "../../../Sandbox/assets/shaders/uniform_color_shader.glsl");
@@ -69,17 +69,17 @@ public:
 
 	void OnEvent(Engine::Event& event) override
 	{
-		m_camera_controller.OnEvent(event);
+		//m_camera_controller.OnEvent(event);
 	}
 
 	void OnUpdate(Engine::TimeStep ts) override
 	{
-		m_camera_controller.OnUpdate(ts);
+		//m_camera_controller.OnUpdate(ts);
 
 		Engine::RendererCommand::SetClearColor({ 0.1f, 0.1f, 0.1f, 0.1f });
 		Engine::RendererCommand::Clear();
 
-		Engine::Renderer::BeginScene(m_camera_controller.GetCamera());
+		//Engine::Renderer::BeginScene(m_camera_controller.GetCamera());
 
 		float x{ 0 };
 		float y{ 0 };
@@ -94,9 +94,9 @@ public:
 				auto flat_shader = m_shader_lib.Get("flat_color");
 				flat_shader->Bind();
 				flat_shader->SetVec4("u_color", m_uniform_color);
-				Engine::Renderer::Submit(flat_shader, m_vao_square,
+				/*Engine::Renderer::Submit(flat_shader, m_vao_square,
 						glm::translate(glm::mat4(1.0f), square_pos) *
-								glm::scale(glm::mat4(1.0f), { 0.1f, 0.1f, 0.1f }));
+								glm::scale(glm::mat4(1.0f), { 0.1f, 0.1f, 0.1f }));*/
 			}
 		}
 
@@ -104,12 +104,12 @@ public:
 		auto texture = m_shader_lib.Get("texture");
 		texture->Bind();
 		texture->SetInt("u_texture2D", 0);
-		Engine::Renderer::Submit(texture, m_vao_square_texture2d);
+		//Engine::Renderer::Submit(texture, m_vao_square_texture2d);
 
 		m_texture_2->Bind();
 		texture->Bind();
 		texture->SetInt("u_texture2D", 0);
-		Engine::Renderer::Submit(texture, m_vao_square_texture2d);
+		//Engine::Renderer::Submit(texture, m_vao_square_texture2d);
 
 		Engine::Renderer::EndScene();
 	}
@@ -131,7 +131,7 @@ private:
 	Engine::Ref<Engine::Texture2D> m_texture;
 	Engine::Ref<Engine::Texture2D> m_texture_2;
 
-	Engine::OrthographicCameraController m_camera_controller;
+//	Engine::OrthographicCameraController m_camera_controller;
 
 	glm::vec4 m_uniform_color{ 0.2, 0.8, 0.8, 1 };
 };

@@ -5,19 +5,19 @@
 
 namespace Engine
 {
-	class Engine_Editor : public Engine::Application
+	class EngineEditor : public Engine::Application
 	{
 	public:
-		Engine_Editor()
+		EngineEditor()
 				:Engine::Application(1600, 900, "Engine Editor")
 		{
 			PushLayer(new EngineEditorLayer());
 		}
 
-		~Engine_Editor() override = default;
+		~EngineEditor() override = default;
 	};
 }
 Engine::Application* CreateApplication()
 {
-	return new Engine::Engine_Editor();
+	return new Engine::EngineEditor();
 }

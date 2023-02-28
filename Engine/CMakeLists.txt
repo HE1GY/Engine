@@ -62,7 +62,16 @@ add_library(Engine STATIC
         src/Engine/Renderer/FrameBuffer.h
         src/Platform/OpenGL/OpenGLFrameBuffer.cpp
         src/Platform/OpenGL/OpenGLFrameBuffer.h
-        src/Engine/Systems/ParticlesSystem.cpp src/Engine/Systems/Random.cpp src/Engine/Scene/Scene.h src/Engine/Scene/Scene.cpp src/Engine/Scene/Entity.h src/Engine/Scene/Components.h src/Engine/Renderer/Camera.h src/Engine/Scene/SceneCamera.h src/Engine/Scene/ScriptableEntity.h src/Engine/Scene/SceneSerializer.h src/Engine/Scene/SceneSerializer.cpp src/Engine/Utils/FileDialogs.h src/Platform/Windows/WindowsPlatformUtils.cpp src/Platform/Windows/WindowsPlatformUtils.cpp src/Engine/Math/Math.h src/Engine/Math/Math.cpp src/Engine/Math/Math.cpp src/Engine/Scene/EditorCamera.cpp src/Engine/Scene/EditorCamera.h src/Platform/Linux/LinuxPlatformUtils.cpp src/Engine/Core/UUID.h src/Engine/Core/UUID.cpp src/Engine/Renderer/Batch.h src/Engine/Renderer/Batch_impl.h src/Engine/Renderer/Camera.cpp)
+        src/Engine/Systems/Random.cpp
+        src/Engine/Scene/Scene.h
+        src/Engine/Scene/Scene.cpp
+        src/Engine/Scene/Entity.h
+        src/Engine/Scene/Components.h
+        src/Engine/Renderer/Camera.h src/Engine/Scene/SceneCamera.h
+        src/Engine/Scene/ScriptableEntity.h src/Engine/Scene/SceneSerializer.h
+        src/Engine/Scene/SceneSerializer.cpp src/Engine/Utils/FileDialogs.h
+        src/Platform/Windows/WindowsPlatformUtils.cpp src/Platform/Windows/WindowsPlatformUtils.cpp src/Engine/Math/Math.h src/Engine/Math/Math.cpp src/Engine/Math/Math.cpp src/Engine/Scene/EditorCamera.cpp src/Engine/Scene/EditorCamera.h src/Platform/Linux/LinuxPlatformUtils.cpp src/Engine/Core/UUID.h src/Engine/Core/UUID.cpp src/Engine/Renderer/Batch.h src/Engine/Renderer/Batch_impl.h src/Engine/Renderer/Camera.cpp
+        src/Engine/Script/ScriptEngine.h src/Engine/Script/ScriptEngine.cpp)
 
 
 target_include_directories(Engine

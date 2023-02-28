@@ -114,7 +114,7 @@ namespace Engine
 				glVertexAttribPointer(m_vertexBuffer_index, element.GetComponentCount(),
 						ShaderDataTypeToOpenGL(element.type),
 						element.normalized ? GL_TRUE : GL_FALSE, layout.get_stride(),
-						(GLenum*)element.offset);
+						(GLenum*)static_cast<int32_t>(element.offset));
 				m_vertexBuffer_index++;
 				break;
 

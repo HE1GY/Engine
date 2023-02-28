@@ -1,5 +1,8 @@
 cmake_minimum_required(VERSION 3.23)
 
+
+set(CMAKE_SYSTEM_VERSION 10.0.22621.0)
+
 project(Engine)
 
 set(CMAKE_CXX_STANDARD 20)
@@ -44,6 +47,20 @@ target_link_libraries(imguizmo PUBLIC imgui)
 
 #config
 configure_file(config.h.in ${CMAKE_BINARY_DIR}/config.h)
+
+#precompiled
+target_include_directories(Engine PUBLIC external/precompiled/include)
+
+#script engine
+target_link_libraries(Engine PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/external/precompiled/lib/mono/Debug/eglib.lib)
+#target_link_libraries(Engine PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/external/precompiled/lib/mono/Debug/libmini-sgen.lib)
+#target_link_libraries(Engine PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/external/precompiled/lib/mono/Debug/libmonoruntime-sgen.lib)
+#target_link_libraries(Engine PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/external/precompiled/lib/mono/Debug/libmono-static-sgen.lib)
+target_link_libraries(Engine PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/external/precompiled/lib/mono/Debug/libmonoutils.lib)
+target_link_libraries(Engine PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/external/precompiled/lib/mono/Debug/mono-2.0-sgen.lib)
+target_link_libraries(Engine PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/external/precompiled/lib/mono/Debug/MonoPosixHelper.lib)
+
+
 
 
 

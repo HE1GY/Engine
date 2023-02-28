@@ -590,7 +590,7 @@ namespace Engine
 		ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(buttonActive.x, buttonActive.y, buttonActive.z, 0.5f));
 
 		ImGui::Begin("##toolbar", nullptr,
-				ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse);
+				/*ImGuiWindowFlags_NoDecoration |*/ ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse);
 
 		bool toolbarEnabled = (bool)m_active_scene;
 
@@ -600,6 +600,7 @@ namespace Engine
 
 		float size = ImGui::GetWindowHeight() - 4.0f;
 		ImGui::SetCursorPosX((ImGui::GetWindowContentRegionMax().x * 0.5f) - (size * 0.5f));
+
 
 		bool hasPlayButton = m_scene_state == SceneState::Edit || m_scene_state == SceneState::Play;
 		//bool hasSimulateButton = m_scene_state == SceneState::Edit || m_scene_state == SceneState::Simulate;
@@ -663,7 +664,8 @@ namespace Engine
 				}
 			}
 		}
-		*/ImGui::PopStyleVar(2);
+		*/
+		ImGui::PopStyleVar(2);
 		ImGui::PopStyleColor(3);
 		ImGui::End();
 	}

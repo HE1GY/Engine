@@ -4,7 +4,7 @@
 #include <random>
 
 Sandbox2D::Sandbox2D()
-		:Layer("Sandbox2D"), m_camera_controller(1280.0f / 720.0f, true)
+		:Layer("Sandbox2D")
 {
 }
 
@@ -14,14 +14,6 @@ void Sandbox2D::OnAttach()
 	m_texture_sprites = Engine::Texture2D::Create("../../../Sandbox/assets/textures/RPGpack_sheet_2X.png");
 	m_wall = Engine::SubTexture2D::CreateFromCoord(m_texture_sprites, { 9, 9 }, { 128, 128 }, { 128, 128 });
 	m_tree = Engine::SubTexture2D::CreateFromCoord(m_texture_sprites, { 0, 1 }, { 128, 256 }, { 128, 128 });
-
-	ParticlesProp prop;
-	prop.life_time = 2;
-	prop.start_size = { 0.05, 0.05, 1 };
-	prop.end_size = { 0.005, 0.005, 1 };
-	prop.start_color = glm::vec4{ 0.9, 0.3, 0.1, 1 };
-	prop.end_color = glm::vec4{ 0.7, 0.2, 0.1, 0.1 };
-	m_particles.Init(prop);
 
 }
 
@@ -46,7 +38,7 @@ void Sandbox2D::OnImGuiRender()
 }
 void Sandbox2D::OnEvent(Engine::Event& event)
 {
-	m_camera_controller.OnEvent(event);
+
 }
 void Sandbox2D::OnUpdate(Engine::TimeStep ts)
 {
@@ -58,7 +50,7 @@ void Sandbox2D::OnUpdate(Engine::TimeStep ts)
 		float height = Engine::Application::get()->GetWindow()->GetHeight();
 
 		glm::vec4 clip_space = { (x / width) * 2 - 1, 1 - 2 * (y / height), 0, 1 }; // to get -1<x<1 and -1<y<1
-
+/*
 		glm::mat4 inverse_view_proj = glm::inverse(m_camera_controller.GetCamera().GetViewProjectionMatrix());
 		glm::vec4 world_space = inverse_view_proj * clip_space;
 		world_space /= world_space.w;
@@ -66,11 +58,11 @@ void Sandbox2D::OnUpdate(Engine::TimeStep ts)
 		for (int i = 0; i < 50; ++i)
 		{
 			m_particles.Emit({ world_space.x, world_space.y, 0 });
-		}
+		}*/
 	}
 
 	m_fps = (float)1 / ts;
-	m_camera_controller.OnUpdate(ts);
+	//m_camera_controller.OnUpdate(ts);
 
 	Engine::RendererCommand::SetClearColor({ 0.1f, 0.1f, 0.1f, 0.1f });
 	Engine::RendererCommand::Clear();
@@ -79,8 +71,8 @@ void Sandbox2D::OnUpdate(Engine::TimeStep ts)
 
 	{
 
-		Engine::Renderer2D::BeginScene(m_camera_controller.GetCamera().GetProjectionMatrix(),
-				m_camera_controller.GetCamera().GetViewMatrix());
+		/*Engine::Renderer2D::BeginScene(m_camera_controller.GetCamera().GetProjectionMatrix(),
+				m_camera_controller.GetCamera().GetViewMatrix());*/
 
 		{
 			static float color_anim{ 0.1f };
@@ -119,8 +111,8 @@ void Sandbox2D::OnUpdate(Engine::TimeStep ts)
 
 		Engine::Renderer2D::EndScene();
 
-		m_particles.OnUpdate(ts);
-		m_particles.OnRenderer(m_camera_controller.GetCamera());
+		/*	m_particles.OnUpdate(ts);
+			m_particles.OnRenderer(m_camera_controller.GetCamera());*/
 	}
 }
 

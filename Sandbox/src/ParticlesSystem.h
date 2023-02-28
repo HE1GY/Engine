@@ -3,7 +3,6 @@
 #include "glm/vec4.hpp"
 #include "glm/vec3.hpp"
 #include "Engine/Core/TimeStep.h"
-#include "Engine/Renderer/OrthographicCamera.h"
 
 struct ParticlesProp
 {
@@ -20,7 +19,6 @@ public:
 	void Init(const ParticlesProp& prop);
 	void Emit(const glm::vec3 pos);
 	void OnUpdate(Engine::TimeStep ts);
-	void OnRenderer(Engine::OrthographicCamera& cam);
 private:
 	struct Particle
 	{

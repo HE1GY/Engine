@@ -400,7 +400,8 @@ namespace Engine
 				  ImGui::Text("Texture");
 				  if (sprite_renderer.texture)
 				  {
-					  if (ImGui::ImageButton("##Texture", (ImTextureID)sprite_renderer.texture->GetRendererId(),
+					  if (ImGui::ImageButton("##Texture",
+							  (ImTextureID)static_cast<uint64_t>(sprite_renderer.texture->GetRendererId()),
 							  ImVec2(100, 100), { 1, 1 }, { 0, 0 }, { 0, 0, 0, 0 },
 							  { sprite_renderer.color.r, sprite_renderer.color.g, sprite_renderer.color.b,
 								sprite_renderer.color.a }))
