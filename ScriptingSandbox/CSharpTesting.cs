@@ -1,11 +1,11 @@
 ﻿using System;
 
-namespace ScriptingSanbox
+namespace ScriptingSandbox
 {
 
     public class CSharpTesting
     {
-        public float MyPublicFloatVar = 5.0f;
+        public float MyPublicFloatVar = 1.0f;
 
         private string m_Name = "Hello";
         public string Name
@@ -25,6 +25,7 @@ namespace ScriptingSanbox
 
         private void IncrementFloatVar(float value)
         {
+            Console.WriteLine("Increment = {0:F}", value);
             MyPublicFloatVar += value;
         }
 

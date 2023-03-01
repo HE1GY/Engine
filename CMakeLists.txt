@@ -53,12 +53,18 @@ target_include_directories(Engine PUBLIC external/precompiled/include)
 
 #script engine
 target_link_libraries(Engine PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/external/precompiled/lib/mono/Debug/eglib.lib)
-#target_link_libraries(Engine PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/external/precompiled/lib/mono/Debug/libmini-sgen.lib)
-#target_link_libraries(Engine PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/external/precompiled/lib/mono/Debug/libmonoruntime-sgen.lib)
-#target_link_libraries(Engine PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/external/precompiled/lib/mono/Debug/libmono-static-sgen.lib)
+target_link_libraries(Engine PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/external/precompiled/lib/mono/Debug/libmini-sgen.lib)
+target_link_libraries(Engine PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/external/precompiled/lib/mono/Debug/libmonoruntime-sgen.lib)
+target_link_libraries(Engine PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/external/precompiled/lib/mono/Debug/libmono-static-sgen.lib)
 target_link_libraries(Engine PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/external/precompiled/lib/mono/Debug/libmonoutils.lib)
 target_link_libraries(Engine PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/external/precompiled/lib/mono/Debug/mono-2.0-sgen.lib)
 target_link_libraries(Engine PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/external/precompiled/lib/mono/Debug/MonoPosixHelper.lib)
+
+#windows
+target_link_libraries(Engine PUBLIC Ws2_32.lib)
+target_link_libraries(Engine PUBLIC Winmm.lib)
+target_link_libraries(Engine PUBLIC Version.lib)
+target_link_libraries(Engine PUBLIC Bcrypt.lib)
 
 
 

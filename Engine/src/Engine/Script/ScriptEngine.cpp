@@ -3,66 +3,52 @@
 #include "config.h"
 #include "ScriptEngine.h"
 #include "Engine/Core/Core.h"
-//#include <mono/metadata/attrdefs.h>
+#include <mono/metadata/attrdefs.h>
 
 namespace Engine
 {
-	static char* ReadBytes(const std::string& filepath, uint32_t* outSize)
+	template<typename T>
+	struct ScriptField
 	{
-		std::ifstream stream(filepath, std::ios::binary | std::ios::ate);
+		Accessibility access{ Accessibility::None };
+		T value;
+		MonoClassField* mono_field = nullptr;
+	};
 
-		if (!stream)
-		{
-			CORE_ASSERT(false, "Failed to open file {0}",filepath);
-			return nullptr;
-		}
+	static char* ReadBytes(const std::string& file_path, uint32_t* out_size)
+	{
+		std::ifstream stream(file_path, std::ios::binary | std::ios::ate);
+
+		CORE_ASSERT(stream, "Failed to open file {0}", file_path);
 
 		std::streampos end = stream.tellg();
 		stream.seekg(0, std::ios::beg);
 		uint32_t size = end - stream.tellg();
 
-		if (size == 0)
-		{
-			CORE_ASSERT(false, "File {0}  is empty!", filepath);
-			return nullptr;
-		}
+		CORE_ASSERT(size, "File {0}  is empty!", file_path);
 
 		char* buffer = new char[size];
 		stream.read((char*)buffer, size);
 		stream.close();
 
-		*outSize = size;
+		*out_size = size;
 		return buffer;
 	}
 
-
-	static MonoAssembly* LoadCSharpAssembly(const std::string& assemblyPath)
+	static MonoAssembly* LoadCSharpAssembly(const std::string& assembly_path)
 	{
-		uint32_t fileSize = 0;
-		char* fileData = ReadBytes(assemblyPath, &fileSize);
+		uint32_t file_size = 0;
+		char* file_data = ReadBytes(assembly_path, &file_size);
 
-		// NOTE: We can't use this image for anything other than loading the assembly because this image doesn't have a reference to the assembly
 		MonoImageOpenStatus status;
-		MonoImage* image = mono_image_open_from_data_full(fileData, fileSize, 1, &status, 0);
+		MonoImage* image = mono_image_open_from_data_full(file_data, file_size, 1, &status, 0);
+		CORE_ASSERT((status == MONO_IMAGE_OK), "Mono ERROR: {0}", mono_image_strerror(status));
 
-		if (status != MONO_IMAGE_OK)
-		{
-			const char* errorMessage = mono_image_strerror(status);
-			CORE_ASSERT(false, "Mono ERROR: {0}", errorMessage);
-			return nullptr;
-		}
-
-		MonoAssembly* assembly = mono_assembly_load_from_full(image, assemblyPath.c_str(), &status, 0);
+		MonoAssembly* assembly = mono_assembly_load_from_full(image, assembly_path.c_str(), &status, 0);
+		CORE_ASSERT(assembly, "Mono failed to load assembly!");
 		mono_image_close(image);
 
-		if (assembly == nullptr)
-		{
-			CORE_ASSERT(false, "Mono failed to load assembly!");
-			return nullptr;
-		}
-
-		// Don't forget to free the file data
-		delete[] fileData;
+		delete[] file_data;
 
 		return assembly;
 	}
@@ -70,18 +56,20 @@ namespace Engine
 	static void PrintAssemblyTypes(MonoAssembly* assembly)
 	{
 		MonoImage* image = mono_assembly_get_image(assembly);
-		const MonoTableInfo* typeDefinitionsTable = mono_image_get_table_info(image, MONO_TABLE_TYPEDEF);
-		int32_t numTypes = mono_table_info_get_rows(typeDefinitionsTable);
+		const MonoTableInfo* type_definitions_table = mono_image_get_table_info(image, MONO_TABLE_TYPEDEF);
+		int32_t types_count = mono_table_info_get_rows(type_definitions_table);
 
-		for (int32_t i = 0; i < numTypes; i++)
+		INFO("Assembly Info:");
+		for (int32_t i = 0; i < types_count; i++)
 		{
 			uint32_t cols[MONO_TYPEDEF_SIZE];
-			mono_metadata_decode_row(typeDefinitionsTable, i, cols, MONO_TYPEDEF_SIZE);
+			mono_metadata_decode_row(type_definitions_table, i, cols, MONO_TYPEDEF_SIZE);
 
-			const char* nameSpace = mono_metadata_string_heap(image, cols[MONO_TYPEDEF_NAMESPACE]);
+			const char* name_space = mono_metadata_string_heap(image, cols[MONO_TYPEDEF_NAMESPACE]);
 			const char* name = mono_metadata_string_heap(image, cols[MONO_TYPEDEF_NAME]);
 
-			printf("%s.%s\n", nameSpace, name);
+			INFO("Namespace {0}", name_space);
+			INFO("Type name {0}", name);
 		}
 	}
 
@@ -89,126 +77,173 @@ namespace Engine
 	{
 		MonoImage* image = mono_assembly_get_image(assembly);
 		MonoClass* klass = mono_class_from_name(image, namespaceName, className);
-
-		if (klass == nullptr)
-		{
-			CORE_ASSERT(false, "Mono: failed to load class !");
-			return nullptr;
-		}
+		CORE_ASSERT(klass, "Mono: failed to load class !");
 
 		return klass;
 	}
 
-
-	static enum class Accessibility : uint8_t
+	static MonoObject* GetInstance(MonoDomain* domain, MonoClass* klass)
 	{
-		None = 0,
-		Private = (1 << 0),
-		Internal = (1 << 1),
-		Protected = (1 << 2),
-		Public = (1 << 3)
-	};
+		MonoObject* class_instance = mono_object_new(domain, klass);
+		CORE_ASSERT(class_instance, "Failed to create instance of class");
+		mono_runtime_object_init(class_instance);
 
-	/*static uint8_t GetFieldAccessibility(MonoClassField* field)
+		return class_instance;
+	}
+
+	template<typename... Args>
+	static void CallMethod(MonoClass* klass, MonoObject* instance, const std::string& method_name, Args... args)
+	{
+		constexpr size_t param_count = sizeof...(args);
+
+		MonoMethod* method = mono_class_get_method_from_name(klass, method_name.c_str(), param_count);
+		CORE_ASSERT(method, "There is not method_name with name = {0}", method_name);
+
+		std::array<void*, param_count> params;
+		if (param_count)
+		{
+			size_t index = 0;
+			auto AddToArray = [&](auto& arg)
+			{
+			  params[index++] = &arg;
+			};
+
+			(AddToArray(args), ...);
+		}
+
+		MonoObject* exception = nullptr;
+		mono_runtime_invoke(method, instance, params.data(), &exception);
+
+		CORE_ASSERT((exception == nullptr), "Unhandled exception from script", method_name);
+	}
+
+	static uint8_t GetFieldAccessibility(MonoClassField* field)
 	{
 		uint8_t accessibility = (uint8_t)Accessibility::None;
 		uint32_t accessFlag = mono_field_get_flags(field) & MONO_FIELD_ATTR_FIELD_ACCESS_MASK;
 
 		switch (accessFlag)
 		{
-		case MONO_FIELD_ATTR_PRIVATE: {
+		case MONO_FIELD_ATTR_PRIVATE:
+		{
 			accessibility = (uint8_t)Accessibility::Private;
 			break;
 		}
-		case MONO_FIELD_ATTR_FAM_AND_ASSEM: {
+		case MONO_FIELD_ATTR_FAM_AND_ASSEM:
+		{
 			accessibility |= (uint8_t)Accessibility::Protected;
 			accessibility |= (uint8_t)Accessibility::Internal;
 			break;
 		}
-		case MONO_FIELD_ATTR_ASSEMBLY: {
+		case MONO_FIELD_ATTR_ASSEMBLY:
+		{
 			accessibility = (uint8_t)Accessibility::Internal;
 			break;
 		}
-		case MONO_FIELD_ATTR_FAMILY: {
+		case MONO_FIELD_ATTR_FAMILY:
+		{
 			accessibility = (uint8_t)Accessibility::Protected;
 			break;
 		}
-		case MONO_FIELD_ATTR_FAM_OR_ASSEM: {
+		case MONO_FIELD_ATTR_FAM_OR_ASSEM:
+		{
 			accessibility |= (uint8_t)Accessibility::Private;
 			accessibility |= (uint8_t)Accessibility::Protected;
 			break;
 		}
-		case MONO_FIELD_ATTR_PUBLIC: {
+		case MONO_FIELD_ATTR_PUBLIC:
+		{
 			accessibility = (uint8_t)Accessibility::Public;
 			break;
 		}
 		}
 
 		return accessibility;
-	}*/
+	}
 
+	template<typename T>
+	static ScriptField<T> GetFiled(MonoClass* klass, MonoObject* instance, const std::string& filed_name)
+	{
+		MonoClassField* mono_field = mono_class_get_field_from_name(klass, filed_name.c_str());
+		uint8_t floatFieldAccessibility = GetFieldAccessibility(mono_field);
 
-	//static // Gets the accessibility level of the given property
-	//		uint8_t
-	//		GetPropertyAccessbility(MonoProperty* property)
-	//{
-	//	uint8_t accessibility = (uint8_t)Accessibility::None;
+		float value;
+		mono_field_get_value(instance, mono_field, &value);
 
-	//	// Get a reference to the property's getter method
-	//	MonoMethod* propertyGetter = mono_property_get_get_method(property);
-	//	if (propertyGetter != nullptr)
-	//	{
-	//		// Extract the access flags from the getters flags
-	//		uint32_t accessFlag = mono_method_get_flags(propertyGetter, nullptr) & MONO_METHOD_ATTR_ACCESS_MASK;
+		ScriptField<T> field{ (Accessibility)floatFieldAccessibility, value, mono_field };
+		return field;
+	}
 
-	//		switch (accessFlag)
-	//		{
-	//		case MONO_FIELD_ATTR_PRIVATE: {
-	//			accessibility = (uint8_t)Accessibility::Private;
-	//			break;
-	//		}
-	//		case MONO_FIELD_ATTR_FAM_AND_ASSEM: {
-	//			accessibility |= (uint8_t)Accessibility::Protected;
-	//			accessibility |= (uint8_t)Accessibility::Internal;
-	//			break;
-	//		}
-	//		case MONO_FIELD_ATTR_ASSEMBLY: {
-	//			accessibility = (uint8_t)Accessibility::Internal;
-	//			break;
-	//		}
-	//		case MONO_FIELD_ATTR_FAMILY: {
-	//			accessibility = (uint8_t)Accessibility::Protected;
-	//			break;
-	//		}
-	//		case MONO_FIELD_ATTR_FAM_OR_ASSEM: {
-	//			accessibility |= (uint8_t)Accessibility::Private;
-	//			accessibility |= (uint8_t)Accessibility::Protected;
-	//			break;
-	//		}
-	//		case MONO_FIELD_ATTR_PUBLIC: {
-	//			accessibility = (uint8_t)Accessibility::Public;
-	//			break;
-	//		}
-	//		}
-	//	}
+	template<typename T>
+	static void SetFiled(MonoObject* instance, ScriptField<T> field, T value)
+	{
+		mono_field_set_value(instance, field.mono_field, &value);
+	}
 
-	//	// Get a reference to the property's setter method
-	//	MonoMethod* propertySetter = mono_property_get_set_method(property);
-	//	if (propertySetter != nullptr)
-	//	{
-	//		// Extract the access flags from the setters flags
-	//		uint32_t accessFlag = mono_method_get_flags(propertySetter, nullptr) & MONO_METHOD_ATTR_ACCESS_MASK;
-	//		if (accessFlag != MONO_FIELD_ATTR_PUBLIC)
-	//			accessibility = (uint8_t)Accessibility::Private;
-	//	}
-	//	else
-	//	{
-	//		accessibility = (uint8_t)Accessibility::Private;
-	//	}
+	static uint8_t GetPropertyAccessibility(MonoProperty* property)
+	{
+		uint8_t accessibility = (uint8_t)Accessibility::None;
 
-	//	return accessibility;
-	//}
+		// Get a reference to the property's getter method
+		MonoMethod* propertyGetter = mono_property_get_get_method(property);
+		if (propertyGetter != nullptr)
+		{
+			// Extract the access flags from the getters flags
+			uint32_t accessFlag = mono_method_get_flags(propertyGetter, nullptr) & MONO_METHOD_ATTR_ACCESS_MASK;
 
+			switch (accessFlag)
+			{
+			case MONO_FIELD_ATTR_PRIVATE:
+			{
+				accessibility = (uint8_t)Accessibility::Private;
+				break;
+			}
+			case MONO_FIELD_ATTR_FAM_AND_ASSEM:
+			{
+				accessibility |= (uint8_t)Accessibility::Protected;
+				accessibility |= (uint8_t)Accessibility::Internal;
+				break;
+			}
+			case MONO_FIELD_ATTR_ASSEMBLY:
+			{
+				accessibility = (uint8_t)Accessibility::Internal;
+				break;
+			}
+			case MONO_FIELD_ATTR_FAMILY:
+			{
+				accessibility = (uint8_t)Accessibility::Protected;
+				break;
+			}
+			case MONO_FIELD_ATTR_FAM_OR_ASSEM:
+			{
+				accessibility |= (uint8_t)Accessibility::Private;
+				accessibility |= (uint8_t)Accessibility::Protected;
+				break;
+			}
+			case MONO_FIELD_ATTR_PUBLIC:
+			{
+				accessibility = (uint8_t)Accessibility::Public;
+				break;
+			}
+			}
+		}
+
+		// Get a reference to the property's setter method
+		MonoMethod* propertySetter = mono_property_get_set_method(property);
+		if (propertySetter != nullptr)
+		{
+			// Extract the access flags from the setters flags
+			uint32_t accessFlag = mono_method_get_flags(propertySetter, nullptr) & MONO_METHOD_ATTR_ACCESS_MASK;
+			if (accessFlag != MONO_FIELD_ATTR_PUBLIC)
+				accessibility = (uint8_t)Accessibility::Private;
+		}
+		else
+		{
+			accessibility = (uint8_t)Accessibility::Private;
+		}
+
+		return accessibility;
+	}
 
 	static bool CheckMonoError(MonoError& error)
 	{
@@ -232,6 +267,7 @@ namespace Engine
 
 		MonoError error;
 		char* utf8 = mono_string_to_utf8_checked(monoString, &error);
+		//char* utf8 = mono_string_to_utf8(monoString);
 		if (CheckMonoError(error))
 			return "";
 		std::string result(utf8);
@@ -239,148 +275,75 @@ namespace Engine
 		return result;
 	}
 
+	void ScriptEngine::InitMono()
+	{
+		mono_set_assemblies_path(CMAKE_SOURCE_DIR"/external/precompiled/lib/mono/4.5");
 
-	ScriptEngineData* ScriptEngine::s_data=nullptr;
+		s_data->root_domain = mono_jit_init("EngineScriptRuntime");
+		CORE_ASSERT(s_data->root_domain, "Failed to init mono");
+
+		s_data->app_domain = mono_domain_create_appdomain((char*)"EngineAppDomain", nullptr);
+		mono_domain_set(s_data->app_domain, true);
+	}
+
+	ScriptEngineData* ScriptEngine::s_data = nullptr;
 
 	void ScriptEngine::Init()
 	{
 		s_data = new ScriptEngineData();
 
-		mono_set_assemblies_path(CMAKE_SOURCE_DIR"/external/precompiled/lib/mono/4.5");
+		InitMono();
 
-		s_data->root_domain = mono_jit_init("EngineScriptRuntime");
-		if (s_data->root_domain == nullptr)
+		MonoAssembly* assembly = LoadCSharpAssembly(CMAKE_SOURCE_DIR "/ScriptingSandbox/bin/ScriptingSandbox.dll");
+
+		PrintAssemblyTypes(assembly);
+
+		MonoClass* CSharpTesting_class = GetClassInAssembly(assembly, "ScriptingSandbox", "CSharpTesting");
+
+		MonoObject* CSharpTesting_class_instance = GetInstance(s_data->app_domain, CSharpTesting_class);
+
+		CallMethod(CSharpTesting_class, CSharpTesting_class_instance, "PrintFloatVar");
+
+		CallMethod(CSharpTesting_class, CSharpTesting_class_instance, "IncrementFloatVar", 1.0f);
+
+		CallMethod(CSharpTesting_class, CSharpTesting_class_instance, "PrintFloatVar");
+
+		auto MyPublicFloatVar = GetFiled<float>(CSharpTesting_class, CSharpTesting_class_instance, "MyPublicFloatVar");
+
+		if ((uint8_t)MyPublicFloatVar.access & (uint8_t)Accessibility::Public)
 		{
-			CORE_ASSERT(false, "Failed to init mono");
-			return;
+			SetFiled<float>(CSharpTesting_class_instance, MyPublicFloatVar, -1.0f);
 		}
 
-		s_data->app_domain = mono_domain_create_appdomain((char*)"EngineAppDomain", nullptr);
-		mono_domain_set(s_data->app_domain, true);
+		CallMethod(CSharpTesting_class, CSharpTesting_class_instance, "PrintFloatVar");
 
-		MonoAssembly* ass = LoadCSharpAssembly(CMAKE_SOURCE_DIR "/ScriptingSandbox/bin/Debug/ScriptingSandbox.dll");
-		PrintAssemblyTypes(ass);
+		MonoProperty* nameProperty = mono_class_get_property_from_name(CSharpTesting_class, "Name");
+		uint8_t namePropertyAccessibility = GetPropertyAccessibility(nameProperty);
 
-		// Get a reference to the class we want to instantiate
-		MonoClass* testingClass=GetClassInAssembly(ass, "ScriptingSanbox", "CSharpTesting");
-
-		// Allocate an instance of our class
-		MonoObject* classInstance = mono_object_new(s_data->app_domain, testingClass);
-
-		if (classInstance == nullptr)
+		if (namePropertyAccessibility & (uint8_t)Accessibility::Public)
 		{
-			CORE_ASSERT(false, "Failed to create instance of class");
+			MonoString* nameValue = (MonoString*)mono_property_get_value(nameProperty, CSharpTesting_class_instance,
+					nullptr,
+					nullptr);
+			std::string nameStr = MonoStringToUTF8(nameValue);
+
+			// Modify and assign the value back to the property by invoking the setter method
+			nameStr += ", World!";
+			nameValue = mono_string_new(s_data->app_domain, nameStr.c_str());
+			mono_property_set_value(nameProperty, CSharpTesting_class_instance, (void**)&nameValue, nullptr);
 		}
 
-		// Call the parameterless (default) constructor
-		mono_runtime_object_init(classInstance);
-
-
-		////////////////////// call 
-		MonoClass* instanceClass = mono_object_get_class(classInstance);
-		{
-		
-		std::string method_name = "PrintFloatVar";
-
-		MonoMethod* method = mono_class_get_method_from_name(instanceClass, method_name.c_str(), 0);
-
-		if (method == nullptr)
-		{
-			CORE_ASSERT(false, "Thire is no method with name = {0}", method_name);
-			return;
-		}
-
-		// Call the C# method on the objectInstance instance, and get any potential exceptions
-		MonoObject* exception = nullptr;//for another side exeption (from script  side)
-		mono_runtime_invoke(method, classInstance, nullptr, &exception);
-		}
-
-		{
-		std::string method_name_2 = "IncrementFloatVar";
-
-		MonoMethod* method = mono_class_get_method_from_name(instanceClass, method_name_2.c_str(), 1);
-
-		if (method == nullptr)
-		{
-			CORE_ASSERT(false, "Thire is no method with name = {0}", method_name_2);
-			return;
-		}
-
-		// Call the C# method on the objectInstance instance, and get any potential exceptions
-		MonoObject* exception = nullptr;//for another side exeption (from script  side)
-
-		float value = 10;
-		void* param = &value;
-		mono_runtime_invoke(method, classInstance, &param, &exception);
-		}
-
-		{
-
-		std::string method_name = "PrintFloatVar";
-
-		MonoMethod* method = mono_class_get_method_from_name(instanceClass, method_name.c_str(), 0);
-
-		if (method == nullptr)
-		{
-			CORE_ASSERT(false, "Thire is no method with name = {0}", method_name);
-			return;
-		}
-
-		// Call the C# method on the objectInstance instance, and get any potential exceptions
-		MonoObject* exception = nullptr;//for another side exeption (from script  side)
-		mono_runtime_invoke(method, classInstance, nullptr, &exception);
-		}
-
-
-
-		//// Get a reference to the public field called "MyPublicFloatVar"
-		//MonoClassField* floatField = mono_class_get_field_from_name(testingClass, "MyPublicFloatVar");
-		//uint8_t floatFieldAccessibility = GetFieldAccessibility(floatField);
-
-		//if (floatFieldAccessibility & (uint8_t)Accessibility::Public)
-		//{
-		//	float value;
-		//mono_field_get_value(classInstance, floatField, &value);
-
-		//	// Increment value by 10 and assign it back to the variable
-		//	value += 10.0f;
-		//mono_field_set_value(classInstance, floatField, &value);
-		//}
-
-
-		//// Get a reference to the private field called "m_Name"
-		//MonoClassField* nameField = mono_class_get_field_from_name(testingClass, "m_Name");
-		//uint8_t nameFieldAccessibility = GetFieldAccessibility(nameField);
-
-		//if (nameFieldAccessibility & (uint8_t)Accessibility::Private)
-		//{
-		//// We shouldn't write to this field
-		//}
-
-
-		//// Get a reference to the public property called "Name"
-		//MonoProperty* nameProperty = mono_class_get_property_from_name(testingClass, "Name");
-		//uint8_t namePropertyAccessibility = GetPropertyAccessbility(nameProperty);
-
-		//if (namePropertyAccessibility & (uint8_t)Accessibility::Public)
-		//{
-		//MonoString* nameValue = (MonoString*)mono_property_get_value(nameProperty, classInstance, nullptr, nullptr);
-		//std::string nameStr = MonoStringToUTF8(nameValue);
-
-		//// Modify and assign the value back to the property by invoking the setter method
-		//nameStr += ", World!";
-		//nameValue = mono_string_new(s_data->app_domain, nameStr.c_str());
-		//mono_property_set_value(nameProperty, classInstance, (void**)&nameValue, nullptr);
-		//}
-
-
-
-		delete ass;
+		delete assembly;
 	}
+
 	void ScriptEngine::ShutDown()
 	{
-		delete s_data->root_domain;
-		delete s_data->app_domain;
+		//mono_domain_unload(s_data->app_domain);
+		s_data->app_domain = nullptr;
+
+		//mono_jit_cleanup(s_data->root_domain);
+		s_data->root_domain = nullptr;
+
 		delete s_data;
 	}
 } // Engine
