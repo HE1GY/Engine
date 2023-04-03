@@ -1,0 +1,7 @@
+E:\dev\Engine\ScriptingSanbox\bin\Debug\ScriptingSanbox.dll.config
+E:\dev\Engine\ScriptingSanbox\bin\Debug\ScriptingSanbox.dll
+E:\dev\Engine\ScriptingSanbox\bin\Debug\ScriptingSanbox.pdb
+E:\dev\Engine\ScriptingSanbox\obj\Debug\ScriptingSanbox.csproj.AssemblyReference.cache
+E:\dev\Engine\ScriptingSanbox\obj\Debug\ScriptingSanbox.csproj.CoreCompileInputs.cache
+E:\dev\Engine\ScriptingSanbox\obj\Debug\ScriptingSanbox.dll
+E:\dev\Engine\ScriptingSanbox\obj\Debug\ScriptingSanbox.pdb

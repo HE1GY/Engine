@@ -1,0 +1,14 @@
+E:\dev\Engine\ScriptingSanbox\bin\Debug\ScriptingSandbox.dll.config
+E:\dev\Engine\ScriptingSanbox\bin\Debug\ScriptingSandbox.dll
+E:\dev\Engine\ScriptingSanbox\bin\Debug\ScriptingSandbox.pdb
+E:\dev\Engine\ScriptingSanbox\obj\Debug\ScriptingSandbox.csproj.AssemblyReference.cache
+E:\dev\Engine\ScriptingSanbox\obj\Debug\ScriptingSandbox.csproj.CoreCompileInputs.cache
+E:\dev\Engine\ScriptingSanbox\obj\Debug\ScriptingSandbox.dll
+E:\dev\Engine\ScriptingSanbox\obj\Debug\ScriptingSandbox.pdb
+E:\dev\Engine\ScriptingSandbox\obj\Debug\ScriptingSandbox.csproj.AssemblyReference.cache
+E:\dev\Engine\ScriptingSandbox\obj\Debug\ScriptingSandbox.csproj.CoreCompileInputs.cache
+E:\dev\Engine\ScriptingSandbox\obj\Debug\ScriptingSandbox.dll
+E:\dev\Engine\ScriptingSandbox\obj\Debug\ScriptingSandbox.pdb
+E:\dev\Engine\ScriptingSandbox\bin\ScriptingSandbox.dll.config
+E:\dev\Engine\ScriptingSandbox\bin\ScriptingSandbox.dll
+E:\dev\Engine\ScriptingSandbox\bin\ScriptingSandbox.pdb
